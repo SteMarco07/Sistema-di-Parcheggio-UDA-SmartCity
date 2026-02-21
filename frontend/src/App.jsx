@@ -38,10 +38,11 @@ function App() {
       {/* Area Main: Occupa tutto lo spazio restante (100vh - 64px) */}
       <div className="h-[calc(100vh-64px)] w-full px-6 py-7 flex justify-center">
 
-        <div className="flex w-full max-w-[1750px] h-full gap-4 items-stretch">
+        {/* stack on small screens, side-by-side on md+ */}
+        <div className="flex flex-col md:flex-row w-full max-w-[1750px] h-full gap-4 items-stretch">
 
-          {/* Mappa (70%) */}
-          <div className="w-[70%] h-full rounded-xl overflow-hidden shadow-lg ">
+          {/* Mappa: full width on mobile with set height, desktop uses full height */}
+          <div className="w-full md:w-[70%] h-[50vh] md:h-full rounded-xl overflow-hidden shadow-lg border border-gray-200">
             <MapContainer
               center={position}
               zoom={zoom}
@@ -55,9 +56,9 @@ function App() {
             </MapContainer>
           </div>
 
-          {/* Elenco (30%) - h-full e overflow-y-auto sono fondamentali qui */}
-          <div className="w-[30%] h-full bg-white overflow-hidden">
-            <div className="h-full overflow-y-auto">
+          {/* Elenco: full width on mobile, desktop uses 30% and scrolls */}
+          <div className="w-full md:w-[30%] h-auto md:h-full bg-white overflow-hidden">
+            <div className="h-auto md:h-full overflow-y-auto">
               <ElencoParcheggi />
             </div>
           </div>

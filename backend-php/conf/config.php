@@ -1,16 +1,19 @@
 <?php
 
-const DB_HOST = 'database';
-const DB_NAME = 'negozio_db';
-const DB_USER = 'user';
-const DB_PASSWORD = 'userpassword';
-const DB_CHAR = 'utf8';
+const DB_HOST = 'database'; //può essere un indirizzo IP o un nome DNS
 
-//Sottocartella dove viene eseguita l'applicazione
-const BASE_PATH = '';
+const DB_NAME = 'parcheggi'; 
 
-//Attiva il gestore di errori personalizzato
-const MY_ERROR_HANDLER = true;
+const DB_USER = 'root';
 
-//Cartella dove verranno memorizzate le immagini
-const IMAGES = 'images';
+const DB_PASS = 'rootpassword';
+
+const BASEPATH = '/parcheggi';
+
+return [
+    'DB_HOST' => DB_HOST,
+    'DB_NAME' => DB_NAME,
+    'DB_USER' => DB_USER,
+    'DB_PASS' => DB_PASS,
+    'BASEPATH' => BASEPATH
+];

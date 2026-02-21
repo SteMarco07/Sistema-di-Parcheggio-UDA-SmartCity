@@ -4,16 +4,14 @@
 namespace Util;
 use PDO;
 
-//Include il file con i parametri di connessione
-require_once '../conf/config.php';
+
 /**
  * Classe per gestire la connessione al database
  */
 
 class Connection
 {
-
-    //statico perchè è un attributo di classe istanziato una sola volta
+    //Statico perchè è un attributo di classe istanziato una sola volta
     private static PDO $pdo;
 
     /**
@@ -24,11 +22,15 @@ class Connection
 
     }
 
-    public static function getInstance(): PDO
+    public static function getInstance($config): PDO
     {
         if (!isset($pdo)) {
-            $DSN = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=' . DB_CHAR;
-            $pdo = new PDO($DSN, DB_USER, DB_PASSWORD);
+            $DSN = 'mysql:host=' . $config['DB_HOST'] . ';dbname=' . $config['DB_NAME'];
+            $pdo = new PDO($DSN, $config['DB_USER'], $config['DB_PASS']);
+            //Impostiamo la "forma" dei dati che verranno restituiti da una
+            //query come delle mappe associative
+            $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
+
         }
         return $pdo;
     }

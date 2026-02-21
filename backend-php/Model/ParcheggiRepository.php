@@ -19,4 +19,12 @@ class ParcheggiRepository{
         ]);
         return $stmt->fetch();
     }
+
+    public function getAllParcheggi() : array {
+        $pdo = Connection::getInstance($this->config);
+        $stmt = $pdo->prepare('SELECT * FROM parcheggi');
+        $stmt->execute([]);
+        return $stmt->fetch();
+    }
+
 }

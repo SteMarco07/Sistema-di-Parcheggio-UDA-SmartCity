@@ -3,53 +3,43 @@
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
+
+require '../vendor/autoload.php';
+require 'Controller/TennistaController.php';
+
+use League\Plates\Engine;
 use Util\Connection;
+use Controller\TennistaController;
+use DI\Container as Container;
 
-require './vendor/autoload.php';
-require './conf/config.php';
+//Istruzione super importante per il deployment
+//Include il file di configurazione con le credenziali di accesso al database
+$config = require 'conf/config.php';
 
-$pdo = Connection::getInstance();
+$container = new Container();
+
+AppFactory::setContainer($container);
+
 
 $app = AppFactory::create();
+$app->setBasePath($config['BASEPATH']);
+
 
 $app->get('/', function (Request $request, Response $response, $args): Response {
-    global $pdo;
 
-    $pagina = $templates->render('routes', []);
-    $response->getBody()->write($pagina);
+    $response->getBody()->write("rotta default");
 
     return $response;
 });
 
 // Restituisce tutti i parcheggi presenti
-$app->get('/park', function (Request $request, Response $response, $args): Response {
-    global $pdo;
-
-    //Restituisce le rotte in JSON, che verranno poi interpretate dal frontend
-    $response->getBody()->write($pagina)->withHeader('Content-Type', 'application/json');
-
-    return $response;
-});
+$app->get('/park', );
 
 // Restituisce un parcheggio specifico
-$app->get('/park/{park_id}', function (Request $request, Response $response, $args): Response {
-
-    $park_id = $args['park_id'];
-
-    // Logica di selezione
-
-    if ($park) {
-        $response->getBody()->write(json_encode($park));
-    } else {
-        $response = $response->withStatus(404);
-    }
-
-    return $response;
-});
+$app->get('/park/{park_id}',  ParcheggiController::class . ':getParcheggioById');
 
 // Modifica una nuova prenotazione
 $app->post('/reservation', function (Request $request, Response $response, $args): Response {
-    global $pdo;
 
     // Prende l'ID dal body
     $park_id = $request->getParsedBody()['park_id'];
@@ -61,7 +51,6 @@ $app->post('/reservation', function (Request $request, Response $response, $args
 
 // L'amministratore deve poter modificare un parcheggio
 $app->put('/park', function (Request $request, Response $response, $args): Response {
-    global $pdo;
 
     $park_id = $request->getParsedBody()['park_id'];
 

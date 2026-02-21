@@ -5,26 +5,28 @@ import Navbar from './Navbar.jsx';
 import ElencoParcheggi from './ElencoParcheggi.jsx';
 
 function App() {
+  const storedClick = JSON.parse(localStorage.getItem('lastClick'));
+  const initialPosition = storedClick && storedClick.lat != null && storedClick.lng != null
+    ? [storedClick.lat, storedClick.lng]
+    : [45.55584514965588, 10.216172766008182];
 
-  const [position, setPosition] = useState(JSON.parse(localStorage.getItem('lastClick'))
-    || [45.55584514965588, 10.216172766008182])
-  const [zoom, setZoom] = useState(JSON.parse(localStorage.getItem('lastZoom')) || 18)
+  const [position] = useState(initialPosition);
+  const [zoom] = useState(() => JSON.parse(localStorage.getItem('lastZoom')) || 18);
+
   function ClickLogger() {
     useMapEvents({
       click(e) {
-        const { lat, lng } = e.latlng
-        const zoom = e.target.getZoom()
-        // console.log('Clicked at:', lat, lng)
-        localStorage.setItem('lastClick', JSON.stringify({ lat, lng }))
-        localStorage.setItem('lastZoom', JSON.stringify(zoom))
+        const { lat, lng } = e.latlng;
+        const zoom = e.target.getZoom();
+        localStorage.setItem('lastClick', JSON.stringify({ lat, lng }));
+        localStorage.setItem('lastZoom', JSON.stringify(zoom));
       }
-    })
+    });
+    return null;
   }
 
-
-
   return (
-    <div className = "">
+    <div>
       <Navbar />
       <div className="join join-horizontal gap-5 mx-10 mt-10 px-auto">
         <div className="join join-item w-1100 h-82vh rounded-box" style={{ width: '1100px', height: '82vh', overflow: 'hidden' }}>
@@ -37,9 +39,7 @@ function App() {
           </MapContainer>
         </div>
         <ElencoParcheggi className="join join-item" />
-
       </div>
-
     </div>
   );
 }

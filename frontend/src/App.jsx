@@ -25,22 +25,47 @@ function App() {
     return null;
   }
 
-  return (
-    <div>
+  return (<>
+    {/* Navbar fixed to top so it remains across pages */}
+    <div className="fixed top-0 left-0 right-0 z-50">
       <Navbar />
-      <div className="join join-horizontal gap-5 mx-10 mt-10 px-auto">
-        <div className="join join-item w-1100 h-82vh rounded-box" style={{ width: '1100px', height: '82vh', overflow: 'hidden' }}>
-          <MapContainer center={position} zoom={zoom} style={{ height: '100%', width: '100%', zIndex: 0 }}>
-            <TileLayer
-              url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
-              attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a> contributors'
-            />
-            <ClickLogger />
-          </MapContainer>
+    </div>
+
+    <div className="min-h-screen flex flex-col bg-gray-100">
+      {/* Spacer equal to navbar height to avoid overlap */}
+      <div className="h-16 flex-none" aria-hidden />
+
+      {/* Area Main: Occupa tutto lo spazio restante (100vh - 64px) */}
+      <div className="h-[calc(100vh-64px)] w-full px-6 py-7 flex justify-center">
+
+        <div className="flex w-full max-w-[1750px] h-full gap-4 items-stretch">
+
+          {/* Mappa (70%) */}
+          <div className="w-[70%] h-full rounded-xl overflow-hidden shadow-lg ">
+            <MapContainer
+              center={position}
+              zoom={zoom}
+              style={{ height: '100%', width: '100%' }}
+            >
+              <TileLayer
+                url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
+                attribution='&copy; OpenStreetMap'
+              />
+              <ClickLogger />
+            </MapContainer>
+          </div>
+
+          {/* Elenco (30%) - h-full e overflow-y-auto sono fondamentali qui */}
+          <div className="w-[30%] h-full bg-white overflow-hidden">
+            <div className="h-full overflow-y-auto">
+              <ElencoParcheggi />
+            </div>
+          </div>
+
         </div>
-        <ElencoParcheggi className="join join-item" />
       </div>
     </div>
+  </>
   );
 }
 

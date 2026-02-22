@@ -1,7 +1,7 @@
 import 'leaflet/dist/leaflet.css';
 import { useEffect } from 'react'
 
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useStore } from './store.jsx'
 
 import Navbar from './components/Navbar.jsx';
@@ -24,6 +24,7 @@ function App() {
       <div className="min-h-screen flex flex-col bg-gray-100">
         <div className="h-16 flex-none" aria-hidden />
         <Routes>
+          <Route path="/" element={<Navigate to="/auth" replace />} />
 
           <Route path="/parcheggi" element={
             <>
@@ -39,10 +40,10 @@ function App() {
               <PaginaPrenotazioni />
             </>
           }
-
           />
+
           <Route path="/auth" element={
-              <PaginaAutenticazione />
+            <PaginaAutenticazione />
           }
           />
         </Routes>

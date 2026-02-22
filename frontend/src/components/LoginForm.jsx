@@ -23,11 +23,13 @@ function LoginForm() {
         <>
             <h1 className="text-3xl font-bold">Accesso</h1>
             <form onSubmit={handleSubmit} className="space-y-4 px-5 w-full h-full mt-10">
+                {/* Campo email */}
                 <div>
                     <label className="label"><span className="label-text">Email</span></label>
                     <input type="email" value={email} placeholder="Inserisci la tua Email" onChange={(e) => setEmail(e.target.value)} required className="input input-bordered w-full" />
                 </div>
 
+                {/* Campo password */}
                 <div>
                     <label className="label"><span className="label-text">Password</span></label>
                     <input type="password" value={password} placeholder="Inserisci la tua Password" onChange={(e) => setPassword(e.target.value)} required className="input input-bordered w-full"/>
@@ -49,6 +51,7 @@ function LoginForm() {
                 </div>
             </form>
 
+            {/* Link per passare al form di registrazione */}
             <div className="flex flex-col items-center mb-0">
                 <div className="flex flex-horizontal gap-2 items-center">
                     <p>Non hai un account?</p>

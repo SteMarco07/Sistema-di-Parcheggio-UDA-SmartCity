@@ -24,8 +24,10 @@ function App() {
       <div className="min-h-screen flex flex-col bg-gray-100">
         <div className="h-16 flex-none" aria-hidden />
         <Routes>
+          {/* Indirizzamento automatico verso la pagina di autenticazione */}
           <Route path="/" element={<Navigate to="/auth" replace />} />
 
+          {/* Rotta verso la pagina con la mappa ed elenco dei parcheggi */}
           <Route path="/parcheggi" element={
             <>
               <Navbar />
@@ -33,7 +35,7 @@ function App() {
             </>
           }
           />
-
+          {/* Rotta verso la pagina con le prenotazioni */}
           <Route path="/prenotazioni" element={
             <>
               <Navbar />
@@ -42,11 +44,13 @@ function App() {
           }
           />
 
+          {/* Rotta verso la pagina di autenticazione */}
           <Route path="/auth" element={
             <PaginaAutenticazione />
           }
           />
         </Routes>
+        
       </div>
     </BrowserRouter>
   );

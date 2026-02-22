@@ -31,31 +31,37 @@ function SignupForm() {
             <h1 className="text-3xl font-bold">Registrazione</h1>
             <form onSubmit={handleSubmit} className="flex flex-col justify-between px-5 w-full h-full mt-10">
                 <div className="flex-1 space-y-4">
+                    {/* Campo nome */}
                     <div>
                         <label className="label"><span className="label-text">Nome</span></label>
                         <input type="text" value={name} placeholder="Inserisci il tuo nome" onChange={(e) => setName(e.target.value)} required className="input input-bordered w-full" />
                     </div>
 
+                    {/* Campo cognome */}
                     <div>
                         <label className="label"><span className="label-text">Cognome</span></label>
                         <input type="text" value={surname} placeholder="Inserisci il tuo cognome" onChange={(e) => setSurname(e.target.value)} required className="input input-bordered w-full" />
                     </div>
 
+                    {/* Campo email */}
                     <div>
                         <label className="label"><span className="label-text">Email</span></label>
                         <input type="email" value={email} placeholder="Inserisci il tuo indirizzo email" onChange={(e) => setEmail(e.target.value)} required className="input input-bordered w-full" />
                     </div>
 
+                    {/* Campo targa */}
                     <div>
                         <label className="label"><span className="label-text">Targa</span></label>
                         <input type="text" value={targa} placeholder="Inserisci la targa del tuo veicolo" onChange={(e) => setTarga(e.target.value)} required className="input input-bordered w-full" />
                     </div>
 
+                    {/* Campo password */}
                     <div>
                         <label className="label"><span className="label-text">Password</span></label>
                         <input type="password" value={password} placeholder="Inserisci la tua password" onChange={(e) => setPassword(e.target.value)} required className="input input-bordered w-full" />
                     </div>
 
+                    {/* Campo conferma password */}
                     <div>
                         <label className="label"><span className="label-text">Conferma password</span></label>
                         <input type="password" value={confirm} placeholder="Conferma la tua password" onChange={(e) => setConfirm(e.target.value)} required className="input input-bordered w-full" />
@@ -69,6 +75,7 @@ function SignupForm() {
 
             </form>
 
+            {/* Link per passare al form di login */}
             <div className="flex flex-col items-center mb-4">
                 <div className="flex gap-2 items-center">
                     <p>Hai già un account?</p>

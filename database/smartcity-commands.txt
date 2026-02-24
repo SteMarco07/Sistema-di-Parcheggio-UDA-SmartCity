@@ -1,0 +1,31 @@
+CREATE DATABASE smartcity;
+USE smartcity;
+
+CREATE TABLE parking_lot(
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    name char(50) UNIQUE NOT NULL,
+    total_spots INT NOT NULL
+);
+
+CREATE TABLE reservation(
+    uuid UUID PRIMARY KEY,
+    first_name char(100) NOT NULL,
+    last_name char(100) NOT NULL,
+    license_plate char(10) NOT NULL,
+    start_time DATETIME NOT NULL,
+    end_time DATETIME NOT NULL,
+    status ENUM('ACTIVE', 'CANCELLED', 'EXPIRED'),
+    id_parking_lot INTEGER NOT NULL,
+    CONSTRAINT fk_id_parking_lot
+        FOREIGN KEY (id_parking_lot)
+            REFERENCES parking_lot(id)
+);
+
+CREATE INDEX indx_license_plate
+    ON reservation(license_plate);
+
+CREATE INDEX indx_start_time
+    ON reservation(start_time);
+
+CREATE INDEX indx_end_time
+    ON reservation(end_time);

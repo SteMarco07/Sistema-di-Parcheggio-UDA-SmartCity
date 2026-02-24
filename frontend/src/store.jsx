@@ -9,6 +9,15 @@ export const useStore = create((set, get) => ({
     error: null,
     position: [45.55584514965588, 10.216172766008182],
     zoom: 18,
+    authMode: "login",
+    utente: {
+        nome: "",
+        cognome: "",
+        email: "",
+        taga: [],
+        password: ""
+    },
+
 
     // Modifica posizione e salva su localStorage
     modifyPosition: (newPosition) => {
@@ -44,6 +53,19 @@ export const useStore = create((set, get) => ({
             set({ zoom: storedZoom });
         }
 
+    },
+
+    // Modifica modalità di autenticazione (login/signup)
+    setAuthMode: (mode) => {
+        if (mode == 'login' || mode == 'signup') {
+            set({ authMode: mode });
+        }
+
+        if (mode == 0) {
+            set({ authMode: 'login' });
+        } else {
+            set({ authMode: 'signup' });
+        }
     },
 
     // 1. Fetch dei dati (Asincrona)

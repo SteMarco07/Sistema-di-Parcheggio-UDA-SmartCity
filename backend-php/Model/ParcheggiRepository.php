@@ -41,4 +41,15 @@ class ParcheggiRepository{
         return $this->getParcheggioById($id);
     }
 
+    public function deleteReservation(string $id) : string
+    {
+        //Logica di modifica
+        $stmt = $this->pdo->prepare('DELETE * FROM prenotazioni
+                                     WHERE id = :id');
+        $stmt->execute([
+            'id' => $id
+        ]);
+        return $id;
+    }
+
 }

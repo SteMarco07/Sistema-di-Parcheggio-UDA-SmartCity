@@ -1,11 +1,14 @@
 import 'leaflet/dist/leaflet.css';
 import { useEffect } from 'react'
 
-import { BrowserRouter, Routes, Route } from 'react-router-dom'
+import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useStore } from './store.jsx'
+
 import Navbar from './components/Navbar.jsx';
+
 import PaginaParcheggi from './pages/PaginaParcheggi.jsx';
 import PaginaPrenotazioni from './pages/PaginaPrenotazioni.jsx';
+import PaginaAutenticazione from './pages/PaginaAutenticazione.jsx';
 
 function App() {
   const { loadFromLocalStorage } = useStore();
@@ -16,16 +19,38 @@ function App() {
 
   return (
     <BrowserRouter>
-      <div className="fixed top-0 left-0 right-0 z-50">
-        <Navbar />
-      </div>
+
 
       <div className="min-h-screen flex flex-col bg-gray-100">
         <div className="h-16 flex-none" aria-hidden />
         <Routes>
-          <Route path="/parcheggi" element={<PaginaParcheggi />} />
-          <Route path="/prenotazioni" element={<PaginaPrenotazioni />} />
+          {/* Indirizzamento automatico verso la pagina di autenticazione */}
+          <Route path="/" element={<Navigate to="/auth" replace />} />
+
+          {/* Rotta verso la pagina con la mappa ed elenco dei parcheggi */}
+          <Route path="/parcheggi" element={
+            <>
+              <Navbar />
+              <PaginaParcheggi />
+            </>
+          }
+          />
+          {/* Rotta verso la pagina con le prenotazioni */}
+          <Route path="/prenotazioni" element={
+            <>
+              <Navbar />
+              <PaginaPrenotazioni />
+            </>
+          }
+          />
+
+          {/* Rotta verso la pagina di autenticazione */}
+          <Route path="/auth" element={
+            <PaginaAutenticazione />
+          }
+          />
         </Routes>
+        
       </div>
     </BrowserRouter>
   );

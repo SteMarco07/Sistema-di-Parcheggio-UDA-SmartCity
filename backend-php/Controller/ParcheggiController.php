@@ -56,5 +56,14 @@ class ParcheggiController{
             ->withHeader('Content-Type', 'application/json');
     }
 
-
+    public function deleteReservation(Request $request, Response $response, array $args) : Response {
+        $id = $request->getParsedBody()['park_id'];
+        $this->parcheggiRepository->deleteReservation(
+            $id
+        );
+        $response->getBody()->write('park_id');
+        $response->withStatus(204);
+        return $response
+                ->withHeader('Content-Type', 'application/json');
+    }
 }   

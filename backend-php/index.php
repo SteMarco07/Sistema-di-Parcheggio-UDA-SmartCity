@@ -73,17 +73,8 @@ $app->put('/park', function (Request $request, Response $response, $args): Respo
     return $response->withStatus(201);
 });
 
-// Elimina una prenotazione, dal lato utente
-$app->delete('/reservation/{reservation_id}', function (Request $request, Response $response, $args): Response {
-    global $pdo;
-
-    $reservation_id = $args['reservation_id'];
-
-    // Logica di eliminazione
-
-    $response = $response->withStatus(204);
-    return $response;
-});
+// Elimina una prenotazione, dal lato utente (id nel body)
+$app->delete('/reservation', ParcheggiController::class . ':deleteReservation');
 
 // L'amministratore deve poter eliminare un parcheggio
 $app->delete('/park/{park_id}', function (Request $request, Response $response, $args): Response {

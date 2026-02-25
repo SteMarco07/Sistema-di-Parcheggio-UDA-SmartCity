@@ -60,6 +60,8 @@ CREATE TABLE `reservation` (
   PRIMARY KEY (`uuid`),
   KEY `fk_id_parking_lot` (`id_parking_lot`),
   KEY `indx_license_plate` (`license_plate`),
+  KEY `indx_start_time` (`start_time`),
+  KEY `indx_end_time` (`end_time`),
   CONSTRAINT `fk_id_parking_lot` FOREIGN KEY (`id_parking_lot`) REFERENCES `parking_lot` (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;

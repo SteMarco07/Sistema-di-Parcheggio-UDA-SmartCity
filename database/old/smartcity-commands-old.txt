@@ -24,3 +24,8 @@ CREATE TABLE reservation(
 CREATE INDEX indx_license_plate
     ON reservation(license_plate);
 
+CREATE INDEX indx_start_time
+    ON reservation(start_time);
+
+CREATE INDEX indx_end_time
+    ON reservation(end_time);

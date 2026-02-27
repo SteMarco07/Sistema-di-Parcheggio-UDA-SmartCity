@@ -6,7 +6,7 @@ function Navbar() {
             <div className="flex-1">
                 <div className="join join-horizontal">
                     <Menu className="join join-item" />
-                    <a className="btn btn-ghost text-3xl join join-item">Parcheggio</a>
+                    <a className="btn btn-ghost text-3xl join join-item" href = "/parcheggi">Parcheggio</a>
                 </div>
             </div>
 

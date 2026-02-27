@@ -2,7 +2,7 @@
 
 const DB_HOST = 'database'; //può essere un indirizzo IP o un nome DNS
 
-const DB_NAME = 'parcheggi'; 
+const DB_NAME = 'smartcity'; 
 
 const DB_USER = 'root';
 

@@ -5,7 +5,7 @@ use Psr\Http\Message\ServerRequestInterface as Request;
 use Slim\Factory\AppFactory;
 
 require './vendor/autoload.php';
-require 'Controller/ParcheggiController.php';
+require './Controller/ParcheggiController.php';
 
 use League\Plates\Engine;
 use Controller\ParcheggiController;
@@ -16,9 +16,9 @@ use DI\Container as Container;
 $config = require 'conf/config.php';
 
 $container = new Container();
+$container->set('config', $config);
 
 AppFactory::setContainer($container);
-
 
 $app = AppFactory::create();
 $app->setBasePath($config['BASEPATH']);

@@ -39,15 +39,17 @@ export const api = {
         return [
             {
                 id: 1,
+                nome: 'Prenotazione 1',
                 parkingId: 1,
                 userId: 1,
                 startTime: '2024-06-01T10:00:00Z',
-                endTime: '2024-06-01T12:00:00Z',
+                endTime: '2024-06-02T12:00:00Z',
                 lat: 45.555643027580615,
                 lng: 10.21607865816928
             },
             {
                 id: 2,
+                nome: 'Prenotazione 2',
                 parkingId: 2,
                 userId: 2,
                 startTime: '2024-06-01T10:00:00Z',
@@ -57,6 +59,7 @@ export const api = {
             },
             {
                 id: 3,
+                nome: 'Prenotazione 3',
                 parkingId: 3,
                 userId: 3,
                 startTime: '2024-06-01T10:00:00Z',

@@ -46,6 +46,7 @@ class ParcheggiController{
 
     public function userCreateReservation(Request $request, Response $response, array $args) : Response {
         $prenotazione = $this->parcheggiRepository->userCreateReservation(
+            $request->getParsedBody()['id'],
             $request->getParsedBody()['first_name'],
             $request->getParsedBody()['last_name'],
             $request->getParsedBody()['license_plate'],

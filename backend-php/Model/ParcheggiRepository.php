@@ -14,7 +14,7 @@ class ParcheggiRepository{
     }
 
     public function getParcheggioById(string $id) : array {
-        $stmt = $this->pdo->prepare('SELECT * FROM parcheggi WHERE parcheggio_id = :id');
+        $stmt = $this->pdo->prepare('SELECT * FROM parking_lot WHERE id = :id');
         $stmt->execute([
             'id' => $id
         ]);
@@ -22,17 +22,18 @@ class ParcheggiRepository{
     }
 
     public function getAllParcheggi() : array {
-        $stmt = $this->pdo->prepare('SELECT * FROM parcheggi');
+        $stmt = $this->pdo->prepare('SELECT * FROM parking_lot');
         $stmt->execute([]);
-        return $stmt->fetch();
+        return $stmt->fetchAll();
     }
 
-    public function userCreateReservation(string $first_name, string $last_name, string $license_plate, string $start_time, string $end_time, string $id_parking_lot) : array
+    public function userCreateReservation(string $id, string $first_name, string $last_name, string $license_plate, string $start_time, string $end_time, string $id_parking_lot) : array
     {
         //Logica di creazione
-        $stmt = $this->pdo->prepare('INSERT INTO prenotazioni (first_name, last_name, license_plate, start_time, end_time, status, id_parking_lot) 
-                                            VALUES (:first_name, :last_name, :license_plate, :start_time, :end_time, :status, :id_parking_lot)');
+        $stmt = $this->pdo->prepare('INSERT INTO reservation (uuid, first_name, last_name, license_plate, start_time, end_time, status, id_parking_lot) 
+                                            VALUES (:id,:first_name, :last_name, :license_plate, :start_time, :end_time, :status, :id_parking_lot)');
         $stmt->execute([
+            'id' => $id,
             'first_name' => $first_name,
             'last_name' => $last_name,
             'license_plate' => $license_plate,

@@ -2,6 +2,7 @@
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Slim\Exception\HttpUnauthorizedException;
 use Slim\Factory\AppFactory;
 
 require './vendor/autoload.php';
@@ -21,8 +22,41 @@ $container->set('config', $config);
 AppFactory::setContainer($container);
 
 $app = AppFactory::create();
-$app->setBasePath($config['BASEPATH']);
 
+$app->setBasePath($config['BASEPATH']);
+$app->addBodyParsingMiddleware();
+
+$customErrorHandler = function (
+    Request $request,
+    Throwable $exception,
+    bool $displayErrorDetails,
+    bool $logErrors,
+    bool $logErrorDetails
+) use ($app) {
+    $payload = ['error' => $exception->getMessage()];
+
+    $response = $app->getResponseFactory()->createResponse();
+    $engine = $app->getContainer()->get('template');
+
+    if ($exception instanceof \Slim\Exception\HttpNotFoundException) {
+        $response ->getBody()->write($engine->render('404', $payload));
+    } else if ($exception instanceof HttpUnauthorizedException) {
+        $response ->getBody()->write($engine->render('401', $payload));
+    }
+
+    $response->getBody()->write(
+        json_encode($payload, JSON_UNESCAPED_UNICODE)
+    );
+
+    return $response
+        ->withHeader('Content-Type', 'application/json')
+        ->withStatus(500);
+};
+
+$errorMiddleware = $app->addErrorMiddleware(true, true, true);
+if ($config['PRODUCTION']) {
+    $errorMiddleware->setDefaultErrorHandler($customErrorHandler);
+}
 
 $app->get('/', function (Request $request, Response $response, $args): Response {
 

@@ -1,10 +1,25 @@
+import React, { useState } from 'react';
+import { useStore } from '../../store.jsx';
+
+
 function ParcheggioCard({ parcheggio }) {
+
+  const [p, setParcheggio] = useState(parcheggio);
+
+  const {modifyPosition, modifyZoom} = useStore();
+
+  function handleClick() {
+    modifyPosition([p.lat, p.lng]);
+    modifyZoom(18);
+  }
+    
+
   return (
-    <div>
-      <h3>{parcheggio.nome}</h3>
-      <p>Indirizzo: {parcheggio.indirizzo || "Indirizzo"}</p>
-      <p>Posti disponibili: {parcheggio.postiDisponibili || 0}</p>
-      <p>Descrizione: {parcheggio.descrizione || "Descrizione"}</p>
+    <div onClick={handleClick}>
+      <h1 className="text-xl font-bold">{p.nome}</h1>
+      <p>Indirizzo: {p.indirizzo || "Indirizzo"}</p>
+      <p>Posti disponibili: {p.postiDisponibili || 0}</p>
+      <p>Descrizione: {p.descrizione || "Descrizione"}</p>
     </div>
   );
 }

@@ -1,9 +1,10 @@
 function ParcheggioPopup({parcheggio}) {
 
     return (
-        <>
-            <h1>{parcheggio.nome}</h1>
-        </>
+        <div className="w-full">
+            <h1 className="text-xl font-bold">{parcheggio.nome}</h1>
+            <p>Prezzo orario: €{parcheggio.prezzo_orario}</p>
+        </div>
     )
 
 }

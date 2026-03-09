@@ -1,6 +1,7 @@
 <?php
 
 namespace Model;
+use DateTime;
 use Util\Connection;
 
 class ParcheggiRepository{
@@ -61,28 +62,27 @@ class ParcheggiRepository{
         return $this->getParcheggioById($id_parking_lot);
     }
 
-    public function editUserReservation(string $id, Date $data_inizio, Date $data_fine) : array
+    public function editUserReservation(string $id, string $license_plate, string $start_time, string $end_time) : string
     {
         //Logica di modifica
-        $stmt = $this->pdo->prepare('UPDATE prenotazioni 
-                                            SET orario_inizio = :orario_inizio , orario_fine = :orario_fine 
-                                            WHERE id = :id');
+        $stmt = $this->pdo->prepare('UPDATE reservation 
+                                            SET license_plate = :license_plate, start_time = :start_time , end_time = :end_time 
+                                            WHERE uuid = :id');
         $stmt->execute([
             'id' => $id,
-            'orario_inizio' => $data_inizio,
-            'orario_fine' => $data_fine
+            'license_plate' => $license_plate,
+            'start_time' => $start_time,
+            'end_time' => $end_time
         ]);
-        return $this->getParcheggioById($id);
+        return 'ok';
     }
 
     public function deleteReservation(string $id) : string
     {
-        //Logica di modifica
-        $stmt = $this->pdo->prepare('DELETE * FROM prenotazioni
-                                    WHERE id = :id');
-        $stmt->execute([
-            'id' => $id
-        ]);
+        //Logica di eliminazione
+        $stmt = $this->pdo->prepare('DELETE FROM reservation
+                                    WHERE uuid = :id');
+        $stmt->execute([ 'id' => $id ]);
         return $id;
     }
 

@@ -23,12 +23,12 @@ class ParcheggiController{
 
     public function getParcheggioById(Request $request, Response $response, array $args): Response
     {
-        $parcheggio = $this->parcheggiRepository->getParcheggioById($args['park_id']);
+        $parcheggio = $this->parcheggiRepository->getParcheggioById($args['id']);
         if ($parcheggio) {
             $response->getBody()->write(json_encode($parcheggio));
             $response->withStatus(200);
         } else {
-            $response->getBody()->write([]);
+            $response->getBody()->write(json_encode(['error' => 'Parcheggio non trovato']));
             $response->withStatus(404);
         }
 
@@ -79,9 +79,10 @@ class ParcheggiController{
 
     public function userEditReservation(Request $request, Response $response, array $args) : Response {
         $prenotazione = $this->parcheggiRepository->editUserReservation(
-            $request->getParsedBody()['park_id'],
-            $request->getParsedBody()['data_inizio'],
-            $request->getParsedBody()['data_fine']
+            $request->getParsedBody()['id'],
+            $request->getParsedBody()['license_plate'],
+            $request->getParsedBody()['start_time'],
+            $request->getParsedBody()['end_time']
         );
         $response->getBody()->write(json_encode($prenotazione));
         $response->withStatus(200);
@@ -90,14 +91,15 @@ class ParcheggiController{
     }
 
     public function deleteReservation(Request $request, Response $response, array $args) : Response {
-        $id = $request->getParsedBody()['park_id'];
+        $id = $request->getParsedBody()['id'];
         $this->parcheggiRepository->deleteReservation(
             $id
         );
-        $response->getBody()->write('park_id');
-        $response->withStatus(204);
+        $response->getBody()->write(json_encode(['id' => $id]));
+        $response->withStatus(200);
         return $response
                 ->withHeader('Content-Type', 'application/json');
     }
+
 
 }

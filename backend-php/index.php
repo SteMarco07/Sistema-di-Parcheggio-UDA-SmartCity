@@ -90,22 +90,28 @@ $app->get('/park', ParcheggiController::class . ':getAllParcheggi');
 // Restituisce un parcheggio specifico
 $app->get('/park/{park_id}',  ParcheggiController::class . ':getParcheggioById' );
 
-
-// Restituisce tutte le prenotazioni che ha fatto un utente
-$app->get('/reservaton/{id}',  ParcheggiController::class . ':getReservatonByUserId' );
-
-
-// Restituisce tutte le prenotazioni che ha fatto un utente
-$app->get('/user/reservation/{user_id}',  ParcheggiController::class . ':getReservatonByUserId' );
-
 // Crea una nuova prenotazione, l'ID del parcheggio e le date di inizio e fine sono nel body
 $app->put('/reservation', ParcheggiController::class . ':userCreateReservation' );
 
 // Modifica una prenotazione esistente, l'ID e le date di inizio e fine sono nel body
 $app->post('/reservation', ParcheggiController::class . ':userEditReservation' );
 
-// L'amministratore deve poter modificare un parcheggio
+// Elimina una prenotazione, dal lato utente (id nel body)
+$app->delete('/reservation', ParcheggiController::class . ':deleteReservation');
+
+// L'amministratore deve poter creare un parcheggio
 $app->put('/park', function (Request $request, Response $response, $args): Response {
+    global $pdo;
+
+    $park_id = $request->getParsedBody()['park_id'];
+
+    //Logica di creazione
+
+    return $response->withStatus(201);
+});
+
+// L'amministratore deve poter modificare un parcheggio
+$app->post('/park', function (Request $request, Response $response, $args): Response {
 
     $park_id = $request->getParsedBody()['park_id'];
 
@@ -113,21 +119,6 @@ $app->put('/park', function (Request $request, Response $response, $args): Respo
 
     return $response->withStatus(204);
 });
-
-
-// // L'amministratore deve poter creare un parcheggio
-// $app->put('/park', function (Request $request, Response $response, $args): Response {
-//     global $pdo;
-
-//     $park_id = $request->getParsedBody()['park_id'];
-
-//     //Logica di creazione
-
-//     return $response->withStatus(201);
-// });
-
-// Elimina una prenotazione, dal lato utente (id nel body)
-$app->delete('/reservation', ParcheggiController::class . ':deleteReservation');
 
 // L'amministratore deve poter eliminare un parcheggio
 $app->delete('/park/{park_id}', function (Request $request, Response $response, $args): Response {

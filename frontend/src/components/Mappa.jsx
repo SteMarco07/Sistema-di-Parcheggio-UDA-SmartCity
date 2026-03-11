@@ -1,6 +1,9 @@
 import { useEffect } from 'react'
-import { MapContainer, TileLayer, useMap, useMapEvents } from 'react-leaflet'
+import { MapContainer, TileLayer, useMap, useMapEvents, Marker, Popup } from 'react-leaflet'
 import { useStore } from '../store.jsx'
+import ParcheggioCardPopup from './parcheggi/ParcheggioPopup.jsx';
+import ParcheggioPopup from './parcheggi/ParcheggioPopup.jsx';
+
 
 function MapSync() {
   const map = useMap()
@@ -32,11 +35,20 @@ function CenterLogger() {
 }
 
 function Mappa() {
-  const { position, zoom } = useStore()
+  const { parcheggi, position, zoom } = useStore()
 
   return (
     <MapContainer center={position} zoom={zoom} style={{ height: '100%', width: '100%', zIndex: 0 }}>
       <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OpenStreetMap' />
+      {
+        parcheggi.map((parcheggio) => (
+          <Marker key={parcheggio.id} position={[parcheggio.lat, parcheggio.lng]}>
+            <Popup>
+             <ParcheggioPopup parcheggio={parcheggio} />
+            </Popup>
+          </Marker>
+        ))
+      }
       <MapSync />
       <CenterLogger />
     </MapContainer>

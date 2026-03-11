@@ -6,7 +6,8 @@ export const useStore = create((set, get) => ({
     // STATO INIZIALE
     parcheggi: [],
     prenotazioni: [],
-    isLoading: false,
+    isLoading: false,    
+    fieldsets: [],
     error: null,
     position: [45.55584514965588, 10.216172766008182],
     zoom: 18,
@@ -18,6 +19,13 @@ export const useStore = create((set, get) => ({
         taga: [],
         password: ""
     },
+
+    // aggiungi dentro create(...)
+
+    addFieldset: () =>
+    set((state) => ({
+        fieldsets: [...state.fieldsets, { id: Date.now() }],
+    })),
 
 
     // Modifica posizione e salva su localStorage

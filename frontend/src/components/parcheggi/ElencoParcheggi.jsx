@@ -1,12 +1,13 @@
-import pIcon from '../assets/p_parcheggio.svg';
-import { useStore } from '../store';
+import pIcon from '../../assets/p_parcheggio.svg';
+import { useStore } from '../../store';
+import ParcheggioCard from './ParcheggioCard.jsx';
 
 
 function ElencoParcheggi() {
   const { parcheggi } = useStore();
 
   return (
-    <div className="join border border-black rounded-box join-vertical gap-4 h-full">
+    <div className="join border border-black rounded-box join-vertical gap-4 h-full ">
       <div className="join-item">
         <div className="flex items-center gap-4 px-4 py-3">
           <img src={pIcon} alt="P" className="h-10 w-10" />
@@ -16,8 +17,7 @@ function ElencoParcheggi() {
         {parcheggi.map((item) => (
           <div key={item.id} className="card card-border w-full bg-base-90 shadow-xl mb-4">
             <div className="card-body">
-              <h2 className="card-title">{item.name}</h2>
-              <p>{item.description}</p>
+              <ParcheggioCard parcheggio={item} />
             </div>
           </div>
         ))}

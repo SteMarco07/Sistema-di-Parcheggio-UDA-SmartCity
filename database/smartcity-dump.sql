@@ -1,9 +1,9 @@
 /*M!999999\- enable the sandbox mode */ 
--- MariaDB dump 10.19  Distrib 10.11.15-MariaDB, for debian-linux-gnu (x86_64)
+-- MariaDB dump 10.19  Distrib 10.11.14-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: smartcity
 -- ------------------------------------------------------
--- Server version	10.11.15-MariaDB-ubu2204
+-- Server version	10.11.14-MariaDB-ubu2204
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -27,6 +27,8 @@ CREATE TABLE `parking_lot` (
   `id` int(11) NOT NULL AUTO_INCREMENT,
   `name` char(50) NOT NULL,
   `total_spots` int(11) NOT NULL,
+  `latitude` float(23,20) NOT NULL,
+  `longitude` float(23,20) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -82,4 +84,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-02-24 17:00:29
+-- Dump completed on 2026-03-01  9:00:09

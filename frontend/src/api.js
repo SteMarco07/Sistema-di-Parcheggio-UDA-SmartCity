@@ -1,6 +1,6 @@
 import { use } from "react"
 
-const BASE = 'http://127.0.0.1:11000'
+const BASE = 'http://127.0.0.1:9080/parcheggi'
 
 async function request(path, options = {}) {
     const res = await fetch(BASE + path, options)

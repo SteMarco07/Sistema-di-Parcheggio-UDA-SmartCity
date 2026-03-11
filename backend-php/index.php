@@ -2,10 +2,12 @@
 
 use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
+use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
+use Slim\Exception\HttpUnauthorizedException;
 use Slim\Factory\AppFactory;
 
 require './vendor/autoload.php';
-require 'Controller/ParcheggiController.php';
+require './Controller/ParcheggiController.php';
 
 use League\Plates\Engine;
 use Controller\ParcheggiController;
@@ -16,14 +18,65 @@ use DI\Container as Container;
 $config = require 'conf/config.php';
 
 $container = new Container();
+$container->set('config', $config);
 
 AppFactory::setContainer($container);
 
-
 $app = AppFactory::create();
-$app->setBasePath($config['BASEPATH']);
 
-//Rotta di default per debugging
+$app->setBasePath($config['BASEPATH']);
+$app->addBodyParsingMiddleware();
+
+// CORS middleware
+$corsMiddleware = function (Request $request, RequestHandler $handler) use ($app) {
+    $response = $handler->handle($request);
+
+    return $response
+        ->withHeader('Access-Control-Allow-Origin', '*')
+        ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
+        ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
+        ->withHeader('Access-Control-Allow-Credentials', 'true');
+};
+
+$app->add($corsMiddleware);
+
+// Global preflight route (matches any route) like Slim v3 cookbook
+$app->options('/{routes:.+}', function (Request $request, Response $response, $args) {
+    return $response;
+});
+
+$customErrorHandler = function (
+    Request $request,
+    Throwable $exception,
+    bool $displayErrorDetails,
+    bool $logErrors,
+    bool $logErrorDetails
+) use ($app) {
+    $payload = ['error' => $exception->getMessage()];
+
+    $response = $app->getResponseFactory()->createResponse();
+    $engine = $app->getContainer()->get('template');
+
+    if ($exception instanceof \Slim\Exception\HttpNotFoundException) {
+        $response ->getBody()->write($engine->render('404', $payload));
+    } else if ($exception instanceof HttpUnauthorizedException) {
+        $response ->getBody()->write($engine->render('401', $payload));
+    }
+
+    $response->getBody()->write(
+        json_encode($payload, JSON_UNESCAPED_UNICODE)
+    );
+
+    return $response
+        ->withHeader('Content-Type', 'application/json')
+        ->withStatus(500);
+};
+
+$errorMiddleware = $app->addErrorMiddleware(true, true, true);
+if ($config['PRODUCTION']) {
+    $errorMiddleware->setDefaultErrorHandler($customErrorHandler);
+}
+
 $app->get('/', function (Request $request, Response $response, $args): Response {
 
     $response->getBody()->write("rotta default");
@@ -43,8 +96,22 @@ $app->put('/reservation', ParcheggiController::class . ':userCreateReservation' 
 // Modifica una prenotazione esistente, l'ID e le date di inizio e fine sono nel body
 $app->post('/reservation', ParcheggiController::class . ':userEditReservation' );
 
-// L'amministratore deve poter modificare un parcheggio
+// Elimina una prenotazione, dal lato utente (id nel body)
+$app->delete('/reservation', ParcheggiController::class . ':deleteReservation');
+
+// L'amministratore deve poter creare un parcheggio
 $app->put('/park', function (Request $request, Response $response, $args): Response {
+    global $pdo;
+
+    $park_id = $request->getParsedBody()['park_id'];
+
+    //Logica di creazione
+
+    return $response->withStatus(201);
+});
+
+// L'amministratore deve poter modificare un parcheggio
+$app->post('/park', function (Request $request, Response $response, $args): Response {
 
     $park_id = $request->getParsedBody()['park_id'];
 
@@ -52,21 +119,6 @@ $app->put('/park', function (Request $request, Response $response, $args): Respo
 
     return $response->withStatus(204);
 });
-
-
-// // L'amministratore deve poter creare un parcheggio
-// $app->put('/park', function (Request $request, Response $response, $args): Response {
-//     global $pdo;
-
-//     $park_id = $request->getParsedBody()['park_id'];
-
-//     //Logica di creazione
-
-//     return $response->withStatus(201);
-// });
-
-// Elimina una prenotazione, dal lato utente (id nel body)
-$app->delete('/reservation', ParcheggiController::class . ':deleteReservation');
 
 // L'amministratore deve poter eliminare un parcheggio
 $app->delete('/park/{park_id}', function (Request $request, Response $response, $args): Response {

@@ -49,9 +49,11 @@ function OrarioParcheggi() {
             <div className="card-body p-3 sm:p-4">
 
                 <div className="flex flex-col lg:flex-row items-start lg:items-center gap-3">
+                    <input type="text" placeholder="Cerca..." className="input input-bordered flex flex-row items-center gap-2 w-full border border-base-300 rounded-lg p-2 pt-3" />
 
                     {/* INGRESSO */}
                     <div className="w-full relative">
+                        
                         <div className="absolute -top-2 left-3 px-1 bg-base-100 text-xs text-neutral font-medium">
                             Ingresso
                         </div>

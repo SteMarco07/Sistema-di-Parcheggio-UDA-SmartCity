@@ -44,6 +44,7 @@ const PaginaProfilo = ({ user: propUser }) => {
     }
 
     return (
+        
         <div className="min-h-screen py-12 px-4 sm:px-6 lg:px-8 bg-linear-to-b from-indigo-50 to-white">
             <div className="max-w-3xl mx-auto">
                 <header className="mb-8 text-center">

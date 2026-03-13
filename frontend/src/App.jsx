@@ -63,7 +63,10 @@ function App() {
           }
           />
           <Route path="/profilo" element={
-            <PaginaProfilo />
+            <>
+              <Navbar />
+              <PaginaProfilo />
+            </>
           }
           />
         </Routes>

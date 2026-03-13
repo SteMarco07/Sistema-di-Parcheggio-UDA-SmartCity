@@ -7,30 +7,49 @@ import 'react-datepicker/dist/react-datepicker.css';
 registerLocale('it', it);
 
 function OrarioParcheggi() {
-
     const now = new Date();
+    now.setMinutes(0, 0, 0); // arrotonda all'ora
 
-    // arrotonda all'ora
-    const start = new Date(now);
-    start.setMinutes(0);
-    start.setSeconds(0);
+    const startInitial = new Date(now);
+    const endInitial = new Date(startInitial);
+    endInitial.setHours(startInitial.getHours() + 1);
 
-    const end = new Date(start);
-    end.setHours(start.getHours() + 1);
+    const [startDateTime, setStartDateTime] = useState(startInitial);
+    const [endDateTime, setEndDateTime] = useState(endInitial);
 
-    const formatHour = (date) =>
-        `${date.getHours().toString().padStart(2, '0')}:00`;
+    const formatHour = (date) => `${date.getHours().toString().padStart(2, '0')}:00`;
 
-    const [startDate, setStartDate] = useState(start);
-    const [startTime, setStartTime] = useState(formatHour(start));
+    const timeSlots = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
 
-    const [endDate, setEndDate] = useState(end);
-    const [endTime, setEndTime] = useState(formatHour(end));
+    // Gestisce sia cambio data che ora di ingresso
+    const handleStartChange = (newDate) => {
+        const newStart = new Date(newDate);
+        newStart.setMinutes(0, 0, 0);
 
-    // genera solo ore intere
-    const timeSlots = Array.from({ length: 24 }, (_, i) =>
-        `${i.toString().padStart(2, '0')}:00`
-    );
+        setStartDateTime(newStart);
+
+        const newEnd = new Date(newStart);
+        newEnd.setHours(newEnd.getHours() + 1);
+        setEndDateTime(newEnd);
+    };
+
+    const handleStartTimeChange = (time) => {
+        const [hours] = time.split(':').map(Number);
+        const newStart = new Date(startDateTime);
+        newStart.setHours(hours, 0, 0, 0);
+        setStartDateTime(newStart);
+
+        const newEnd = new Date(newStart);
+        newEnd.setHours(newEnd.getHours() + 1);
+        setEndDateTime(newEnd);
+    };
+
+    const handleEndTimeChange = (time) => {
+        const [hours] = time.split(':').map(Number);
+        const newEnd = new Date(endDateTime);
+        newEnd.setHours(hours, 0, 0, 0);
+        setEndDateTime(newEnd);
+    };
 
     const CustomInput = ({ value, onClick, placeholder }) => (
         <div className="relative">
@@ -57,13 +76,12 @@ function OrarioParcheggi() {
                         <div className="absolute -top-2 left-3 px-1 bg-base-100 text-xs text-neutral font-medium">
                             Ingresso
                         </div>
-
                         <div className="flex flex-row items-center gap-2 w-full border border-base-300 rounded-lg p-2 pt-3">
 
                             <div className="flex-1">
                                 <DatePicker
-                                    selected={startDate}
-                                    onChange={(date) => setStartDate(date)}
+                                    selected={startDateTime}
+                                    onChange={handleStartChange}
                                     dateFormat="dd/MM/yyyy"
                                     minDate={new Date()}
                                     locale="it"
@@ -73,8 +91,8 @@ function OrarioParcheggi() {
 
                             <select
                                 className="select select-bordered w-24"
-                                value={startTime}
-                                onChange={(e) => setStartTime(e.target.value)}
+                                value={formatHour(startDateTime)}
+                                onChange={(e) => handleStartTimeChange(e.target.value)}
                             >
                                 {timeSlots.map(time => (
                                     <option key={time}>{time}</option>
@@ -89,24 +107,23 @@ function OrarioParcheggi() {
                         <div className="absolute -top-2 left-3 px-1 bg-base-100 text-xs text-neutral font-medium">
                             Uscita
                         </div>
-
                         <div className="flex flex-row items-center gap-2 w-full border border-base-300 rounded-lg p-2 pt-3">
 
                             <div className="flex-1">
                                 <DatePicker
-                                    selected={endDate}
-                                    onChange={(date) => setEndDate(date)}
+                                    selected={endDateTime}
+                                    onChange={(date) => setEndDateTime(date)}
                                     dateFormat="dd/MM/yyyy"
                                     locale="it"
-                                    minDate={startDate}
+                                    minDate={startDateTime}
                                     customInput={<CustomInput placeholder="Data" />}
                                 />
                             </div>
 
                             <select
                                 className="select select-bordered w-24"
-                                value={endTime}
-                                onChange={(e) => setEndTime(e.target.value)}
+                                value={formatHour(endDateTime)}
+                                onChange={handleEndTimeChange}
                             >
                                 {timeSlots.map(time => (
                                     <option key={time}>{time}</option>

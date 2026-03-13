@@ -11,42 +11,42 @@ const PaginaProfilo = ({ user: propUser }) => {
         }
     })();
 
-    const user = propUser || storedUser || {
+    const user = {
         nome: 'Mario',
         cognome: 'Rossi',
-        username: 'mrossi',
+        email: 'mrossi@example.com',
         targa: 'AB123CD'
     };
 
-    const containerStyle = { padding: 20, maxWidth: 800, margin: '0 auto' };
-    const cardStyle = { border: '1px solid #e6e6e6', borderRadius: 8, padding: 16, background: '#fff' };
-    const rowStyle = { display: 'flex', justifyContent: 'space-between', padding: '10px 0', borderBottom: '1px solid #f0f0f0' };
-    const labelStyle = { color: '#666', fontWeight: 600 };
-    const valueStyle = { color: '#222' };
-
     return (
-        <div style={containerStyle}>
-            <h1 style={{ marginBottom: 12 }}>Profilo</h1>
+        <div className="px-6 py-8 max-w-2xl mx-auto">
+            <h1 className="text-5xl font-bold mb-16 text-center">Profilo</h1>
 
-            <div style={cardStyle}>
-                <div style={rowStyle}>
-                    <div style={labelStyle}>Nome</div>
-                    <div style={valueStyle}>{user.nome}</div>
-                </div>
+            <div className="card bg-base-100 shadow-md card-xl">
+                <div className="card-body">
+                    <div className="space-y-3">
+                        
+                        {
+                            Object.keys(user).map((field) => (
+                                <div key={field} className="flex justify-between items-center py-3 gap-10">
+                                    <div className="label text-lg"><span className="label-text">{field.charAt(0).toUpperCase() + field.slice(1)} </span></div>
+                                    <div className="text-lg">{user[field]}</div>
+                                </div>
+                            ))}
+                    </div>
 
-                <div style={rowStyle}>
-                    <div style={labelStyle}>Cognome</div>
-                    <div style={valueStyle}>{user.cognome}</div>
-                </div>
-
-                <div style={rowStyle}>
-                    <div style={labelStyle}>Username</div>
-                    <div style={valueStyle}>{user.username}</div>
-                </div>
-
-                <div style={{ ...rowStyle, borderBottom: 'none' }}>
-                    <div style={labelStyle}>Targa</div>
-                    <div style={valueStyle}>{user.targa}</div>
+                    <div className="mt-6 flex items-center justify-around">
+                        <button className="btn btn-success"
+                        onClick={() => {
+                            window.location.href = '/parcheggi';
+                        }}
+                        >Home</button>
+                        <button className="btn btn-error"
+                        onClick={() => {
+                            window.location.href = '/auth';
+                        }}
+                        >Logout</button>
+                    </div>
                 </div>
             </div>
         </div>

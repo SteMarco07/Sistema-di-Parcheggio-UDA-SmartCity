@@ -63,6 +63,7 @@ function OrarioParcheggi() {
                                     selected={startDate}
                                     onChange={(date) => setStartDate(date)}
                                     dateFormat="dd/MM/yyyy"
+                                    minDate={new Date()}
                                     locale="it"
                                     customInput={<CustomInput placeholder="Data" />}
                                 />
@@ -95,6 +96,7 @@ function OrarioParcheggi() {
                                     onChange={(date) => setEndDate(date)}
                                     dateFormat="dd/MM/yyyy"
                                     locale="it"
+                                    minDate={startDate}
                                     customInput={<CustomInput placeholder="Data" />}
                                 />
                             </div>

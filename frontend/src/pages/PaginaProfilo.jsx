@@ -77,15 +77,7 @@ const PaginaProfilo = ({ user: propUser }) => {
                                         <span className="wrap-break-word max-w-xs">{user[field]}</span>
                                      
                                          <div className="flex items-center gap-2">
-                                            {field === 'email' && (
-                                                <button
-                                                    title="Invia email"
-                                                    className="btn btn-ghost btn-sm"
-                                                    onClick={() => window.location.href = `mailto:${user.email}`}
-                                                >
-                                                    <img src="src/assets/icona_invia_email.svg" alt="Invia email" className="h-4 w-4 text-gray-500" />
-                                                </button>
-                                            )}
+                                            
 
                                             <button
                                                 title="Copia"

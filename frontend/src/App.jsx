@@ -9,7 +9,6 @@ import Navbar from './components/Navbar.jsx';
 import PaginaParcheggi from './pages/PaginaParcheggi.jsx';
 import PaginaPrenotazioni from './pages/PaginaPrenotazioni.jsx';
 import PaginaAutenticazione from './pages/PaginaAutenticazione.jsx';
-import PaginaCarrello from './pages/PaginaCarrello.jsx';
 import PaginaProfilo from './pages/PaginaProfilo.jsx';
 
 function App() {
@@ -44,15 +43,6 @@ function App() {
             <>
               <Navbar />
               <PaginaPrenotazioni />
-            </>
-          }
-          />
-
-          {/* Rotta verso la pagina per acquistare prenotazioni */}
-          <Route path="/carrello" element={
-            <>
-              <Navbar />
-              <PaginaCarrello />
             </>
           }
           />

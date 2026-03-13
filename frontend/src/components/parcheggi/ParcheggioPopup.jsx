@@ -9,7 +9,7 @@ function ParcheggioPopup({parcheggio}) {
             <h1 className="text-xl font-bold">{parcheggio.nome}</h1>
             <p>Prezzo orario: €{parcheggio.prezzo_orario}</p>
             <div className="flex justify-center items-center">
-                <button class="btn btn-neutral" onClick={() => navigate('/carrello')}>Seleziona</button>
+                <button class="btn btn-neutral" onClick={() => navigate('/prenotazioni')}>Seleziona</button>
             </div>
             </div>
     )

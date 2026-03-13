@@ -16,17 +16,16 @@ function Navbar() {
                     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                         <div className="w-10 rounded-full">
                             <img
-                                alt="user avatar"
-                                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" />
+                                src="https://img.daisyui.com/images/stock/photo-1534528741775-53994a69daeb.webp" 
+                                alt="P"/>
                         </div>
                     </div>
                     <ul tabIndex={-1} className="menu menu-sm dropdown-content bg-base-100 rounded-box z-10 mt-3 w-52 p-2 shadow">
                         <li>
-                            <a className="justify-between">
-                                Profile
+                            <a className="justify-between" href="/profilo">
+                                Profilo
                             </a>
                         </li>
-                        <li><a>Settings</a></li>
                         <li><a href="/auth">Logout</a></li>
                     </ul>
                 </div>

@@ -10,6 +10,7 @@ import PaginaParcheggi from './pages/PaginaParcheggi.jsx';
 import PaginaPrenotazioni from './pages/PaginaPrenotazioni.jsx';
 import PaginaAutenticazione from './pages/PaginaAutenticazione.jsx';
 import PaginaCarrello from './pages/PaginaCarrello.jsx';
+import PaginaProfilo from './pages/PaginaProfilo.jsx';
 
 function App() {
   const { loadFromLocalStorage, fetchParcheggi, fetchPrenotazioni } = useStore();
@@ -59,6 +60,10 @@ function App() {
           {/* Rotta verso la pagina di autenticazione */}
           <Route path="/auth" element={
             <PaginaAutenticazione />
+          }
+          />
+          <Route path="/profilo" element={
+            <PaginaProfilo />
           }
           />
         </Routes>

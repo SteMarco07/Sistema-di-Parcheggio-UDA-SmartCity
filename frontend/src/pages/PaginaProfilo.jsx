@@ -83,7 +83,7 @@ const PaginaProfilo = ({ user: propUser }) => {
                                                     className="btn btn-ghost btn-sm"
                                                     onClick={() => window.location.href = `mailto:${user.email}`}
                                                 >
-                                                    <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M3 8l7.89 5.26a2 2 0 002.22 0L21 8M5 19h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v10a2 2 0 002 2z" /></svg>
+                                                    <img src="src/assets/icona_invia_email.svg" alt="Invia email" className="h-4 w-4 text-gray-500" />
                                                 </button>
                                             )}
 
@@ -92,7 +92,7 @@ const PaginaProfilo = ({ user: propUser }) => {
                                                 className="btn btn-ghost btn-sm"
                                                 onClick={() => copyToClipboard(user[field])}
                                             >
-                                                <svg xmlns="http://www.w3.org/2000/svg" className="h-4 w-4 text-gray-500" viewBox="0 0 24 24" fill="none" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M8 16h8M8 12h8M8 8h8M4 6h.01M4 18h.01M4 12h.01" /></svg>
+                                                <img src="src/assets/icona_copia_testo.svg" alt="Copia" className="h-4 w-4 text-gray-500" />
                                             </button>
                                         </div>
                                     </dd>

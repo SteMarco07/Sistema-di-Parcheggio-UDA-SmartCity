@@ -39,19 +39,7 @@ function OrarioParcheggi() {
                 {/* flex column su mobile e row su desktop */}
                 <div className="flex flex-col lg:flex-row items-start lg:items-center gap-3">
                     
-                    {/* Select parcheggio */}
-                    <div className="w-full lg:w-auto">
-                        <select 
-                            className="select select-bordered w-full lg:w-40"
-                            value={selectedOption}
-                            onChange={(e) => setSelectedOption(e.target.value)}
-                        >
-                            <option disabled value="">Scegli parcheggio</option>
-                            <option>Boom</option>
-                            <option>Tung</option>
-                            <option>Laaa</option>
-                        </select>
-                    </div>
+                     
 
                     {/* Data e Ora Ingresso */}
                     <div className="w-full relative">

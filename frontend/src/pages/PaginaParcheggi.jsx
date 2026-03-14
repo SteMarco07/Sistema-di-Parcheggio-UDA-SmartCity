@@ -25,12 +25,12 @@ function PaginaParcheggi() {
                 
                 {/* Mappa: full width su mobile con altezza fissa, desktop usa altezza piena */}
                 <div className="w-full md:w-[75%] h-[50vh] md:h-full rounded-xl overflow-hidden shadow-lg border border-gray-200">
-                    <Mappa />
+                    <Mappa ricerca={ricerca} />
                 </div>
 
                 {/* Elenco: full width su mobile, desktop usa 30% e scrolla */}
                 <div className="w-full md:w-[25%] h-[40vh] md:h-full bg-white overflow-hidden">
-                    <ElencoParcheggi ricerca={ricerca}/>
+                    <ElencoParcheggi ricerca={ricerca} />
                 </div>
 
             </div>

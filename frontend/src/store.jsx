@@ -6,9 +6,9 @@ export const useStore = create((set, get) => ({
     // STATO INIZIALE
     parcheggi: [],
     parcheggiFiltrati: [],
-    ricerca : "",
+    ricerca: "",
     prenotazioni: [],
-    isLoading: false,    
+    isLoading: false,
     fieldsets: [],
     error: null,
     position: [45.55584514965588, 10.216172766008182],
@@ -40,9 +40,9 @@ export const useStore = create((set, get) => ({
     })(),
 
     addFieldset: () =>
-    set((state) => ({
-        fieldsets: [...state.fieldsets, { id: Date.now() }],
-    })),
+        set((state) => ({
+            fieldsets: [...state.fieldsets, { id: Date.now() }],
+        })),
 
 
     // Modifica posizione e salva su localStorage
@@ -102,7 +102,7 @@ export const useStore = create((set, get) => ({
         } catch (e) {
             // ignore storage errors
         }
-        set({ utente: userData});
+        set({ utente: userData });
     },
 
     clearUser: () => {
@@ -149,6 +149,23 @@ export const useStore = create((set, get) => ({
             (p.descrizione ?? "").toLowerCase().includes(ricerca.toLowerCase())
         );
         set({ parcheggiFiltrati: filtrati });
+    },
+
+    deleteParcheggio: async (id) => {
+        set({ isLoading: true, error: null });
+        try {
+            const data = await api.deleteParcheggio(id);
+            if (data && data.successo) {
+                const filtrati = get().parcheggi.filter((p) => p.id !== data.id);
+
+                set({ parcheggi: filtrati, parcheggiFiltrati: filtrati, isLoading: false });
+                console.log("Eliminato parcheggio con id:", data.id);
+            } else {
+                set({ isLoading: false });
+            }
+        } catch (err) {
+            set({ error: err.message, isLoading: false });
+        }
     }
 
 }));

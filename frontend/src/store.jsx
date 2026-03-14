@@ -23,7 +23,8 @@ export const useStore = create((set, get) => ({
                 email: "",
                 targa: "",
                 password: "",
-                iniziali: ""
+                iniziali: "",
+                admin: false,
             };
         } catch (e) {
             return {
@@ -32,7 +33,8 @@ export const useStore = create((set, get) => ({
                 email: "",
                 targa: "",
                 password: "",
-                iniziali: ""
+                iniziali: "",
+                admin: false,
             };
         }
     })(),

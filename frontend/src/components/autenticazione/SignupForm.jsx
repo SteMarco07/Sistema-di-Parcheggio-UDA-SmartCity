@@ -24,12 +24,15 @@ function SignupForm() {
             return;
         }
 
+        const initials = `${(name || '').charAt(0)}${(surname || '').charAt(0)}`.toUpperCase();
+
         setUser({
             nome: name,
             cognome: surname,
             email: email,
-            targa: [targa],
-            password: password
+            targa: targa,
+            password: password,
+            iniziali: initials
         });
 
         navigate('/parcheggi');

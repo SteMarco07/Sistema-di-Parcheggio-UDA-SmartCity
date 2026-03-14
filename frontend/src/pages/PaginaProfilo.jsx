@@ -1,37 +1,13 @@
 import React from 'react';
+import { useStore } from '../store.jsx';
 
-const PaginaProfilo = ({ user: propUser }) => {
-    // prova a leggere l'utente dal localStorage, altrimenti usa i prop o valori di fallback
-    const storedUser = (() => {
-        try {
-            const raw = localStorage.getItem('user');
-            return raw ? JSON.parse(raw) : null;
-        } catch {
-            return null;
-        }
-    })();
-
-    const defaultUser = {
-        nome: 'Mario',
-        cognome: 'Rossi',
-        email: 'mrossi@example.com',
-        targa: 'AB123CD'
-    };
-
-    const user = storedUser || propUser || defaultUser;
-
-    const initials = `${(user.nome || '').charAt(0)}${(user.cognome || '').charAt(0)}`.toUpperCase();
+const PaginaProfilo = () => {
+    // ora prendo direttamente l'utente dallo store; fallback semplice con stringhe vuote
+    const { utente, clearUser } = useStore();
+    const user = utente || { nome: '', cognome: '', email: '', targa: '' };
 
     const fieldsOrder = ['nome', 'cognome', 'email', 'targa'];
-    const labelFor = (field) => {
-        switch (field) {
-            case 'nome': return 'Nome';
-            case 'cognome': return 'Cognome';
-            case 'email': return 'Email';
-            case 'targa': return 'Targa';
-            default: return field;
-        }
-    };
+    const labels = { nome: 'Nome', cognome: 'Cognome', email: 'Email', targa: 'Targa' };
 
     const [copied, setCopied] = React.useState('');
 
@@ -57,7 +33,7 @@ const PaginaProfilo = ({ user: propUser }) => {
                         <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6">
                             <div className="flex items-center gap-4">
                                 <div className="w-20 h-20 rounded-full bg-linear-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-2xl font-bold shadow-md">
-                                    {initials}
+                                    {user.iniziali || '--'}
                                 </div>
                                 <div>
                                     <div className="text-lg font-semibold text-gray-800">{user.nome} {user.cognome}</div>
@@ -73,7 +49,7 @@ const PaginaProfilo = ({ user: propUser }) => {
                         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-6">
                             {fieldsOrder.map((field) => (
                                 <div key={field} className="flex flex-col">
-                                    <dt className="text-xs text-gray-400 uppercase tracking-wider mb-1">{labelFor(field)}</dt>
+                                    <dt className="text-xs text-gray-400 uppercase tracking-wider mb-1">{labels[field]}</dt>
                                     <dd className="flex items-center justify-between text-gray-700">
                                         <span className="wrap-break-word max-w-xs">{user[field]}</span>
                                      
@@ -107,7 +83,10 @@ const PaginaProfilo = ({ user: propUser }) => {
                                 >Modifica profilo</button>
                                 <button
                                     className="btn btn-error flex-1"
-                                    onClick={() => window.location.href = '/auth'}
+                                    onClick={() => {
+                                        window.location.href = '/auth'
+                                        clearUser();
+                                    }}
                                 >Logout</button>
                             </div>
                         </div>

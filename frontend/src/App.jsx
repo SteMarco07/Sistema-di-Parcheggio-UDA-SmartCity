@@ -1,5 +1,5 @@
 import 'leaflet/dist/leaflet.css';
-import { useEffect } from 'react'
+import { use, useEffect } from 'react'
 
 import { BrowserRouter, Routes, Route, Navigate } from 'react-router-dom'
 import { useStore } from './store.jsx'
@@ -12,13 +12,17 @@ import PaginaAutenticazione from './pages/PaginaAutenticazione.jsx';
 import PaginaProfilo from './pages/PaginaProfilo.jsx';
 
 function App() {
-  const { loadFromLocalStorage, fetchParcheggi, fetchPrenotazioni } = useStore();
+  const { loadFromLocalStorage, fetchParcheggi, fetchPrenotazioni, utente } = useStore();
 
   useEffect(() => {
     loadFromLocalStorage();
     fetchParcheggi();
     fetchPrenotazioni();
   }, [loadFromLocalStorage, fetchParcheggi, fetchPrenotazioni]);
+
+  useEffect(() => {
+    console.log("Utente cambiato:", utente);
+  }, [utente]);
 
   return (
     <BrowserRouter>

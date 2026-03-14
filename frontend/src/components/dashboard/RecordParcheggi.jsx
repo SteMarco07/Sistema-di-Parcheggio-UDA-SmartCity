@@ -18,8 +18,8 @@ function RecordParcheggi({ numero, parcheggio }) {
             <td>{parcheggio.prezzo_orario} €/h</td>
             <td>{parcheggio.lat}</td>
             <td>{parcheggio.lng}</td>
-            <td><button className="btn btn-warning" onClick={onEdit}>Modifica</button></td>
-            <td><button className="btn btn-error" onClick={onDelete}>Elimina</button></td>
+            <td><button className="btn btn-ghost" onClick={onEdit}><img src="src/assets/modifica.svg" alt="Modifica" className='h-8 ' /></button></td>
+            <td><button className="btn btn-ghost" onClick={onDelete}><img src="src/assets/cestino.svg" alt="Elimina" className='h-8 ' /></button></td>
         </tr>
     );
 

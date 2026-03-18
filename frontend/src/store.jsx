@@ -147,6 +147,12 @@ export const useStore = create((set, get) => ({
             (p.descrizione ?? "").toLowerCase().includes(ricerca.toLowerCase())
         );
         set({ parcheggiFiltrati: filtrati });
+    },
+
+    addPrenotazione: ({prenotazione}) => {
+        // console.log(prenotazione)
+        prenotazione.id = get().prenotazioni.length+1;
+        set({ prenotazioni: [...get().prenotazioni, prenotazione] });
     }
 
 }));

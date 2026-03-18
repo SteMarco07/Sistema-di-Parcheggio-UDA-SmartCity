@@ -5,30 +5,21 @@ import DatePicker from "react-datepicker";
 import { registerLocale } from "react-datepicker";
 import it from "date-fns/locale/it";
 import "react-datepicker/dist/react-datepicker.css";
+import { useStore } from "../store.jsx";
 
 registerLocale("it", it);
 
 function PaginaPrenotazioni() {
-  const [prenotazioni, setPrenotazioni] = useState([]);
+  const { prenotazioni, eliminaPrenotazione, modificaPrenotazione } = useStore();
   const [prenotazioneDaModificare, setPrenotazioneDaModificare] = useState(null);
 
-  useEffect(() => {
-    setPrenotazioni(api.fetchPrenotazioni());
-  }, []);
 
-  const eliminaPrenotazione = (id) => {
-    setPrenotazioni(prenotazioni.filter((p) => p.id !== id));
-  };
 
   const apriModifica = (prenotazione) => setPrenotazioneDaModificare(prenotazione);
   const chiudiModifica = () => setPrenotazioneDaModificare(null);
 
   const salvaModifiche = (prenotazioneModificata) => {
-    setPrenotazioni(
-      prenotazioni.map((p) =>
-        p.id === prenotazioneModificata.id ? prenotazioneModificata : p
-      )
-    );
+    modificaPrenotazione({ prenotazioneModificata });
     chiudiModifica();
   };
 

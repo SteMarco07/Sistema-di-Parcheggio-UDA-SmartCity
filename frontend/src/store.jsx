@@ -150,9 +150,23 @@ export const useStore = create((set, get) => ({
     },
 
     addPrenotazione: ({prenotazione}) => {
-        // console.log(prenotazione)
         prenotazione.id = get().prenotazioni.length+1;
+        console.log(`Lo store aggiunge ${JSON.stringify(prenotazione)}`)
         set({ prenotazioni: [...get().prenotazioni, prenotazione] });
+    },
+
+    modificaPrenotazione: ({prenotazioneModificata}) => {
+        set({
+            prenotazioni: get().prenotazioni.map((p) =>
+                p.id === prenotazioneModificata.id ? prenotazioneModificata : p
+            )
+        });
+    },
+
+    eliminaPrenotazione: (id) => {
+        set({
+            prenotazioni: get().prenotazioni.filter((p) => p.id !== id)
+        });
     }
 
 }));

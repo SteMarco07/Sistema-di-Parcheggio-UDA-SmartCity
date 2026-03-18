@@ -20,7 +20,7 @@ function ParcheggioPopup({ parcheggio }) {
                         startTime: '2024-06-01T10:00:00Z',
                         endTime: '2024-06-01T12:00:00Z'
                     }
-                    // console.log(prenotazione)
+                    console.log(`Aggiungo ${JSON.stringify(prenotazione)} da popup`)
                     addPrenotazione({ prenotazione })
                     navigate('/prenotazioni')
                 }

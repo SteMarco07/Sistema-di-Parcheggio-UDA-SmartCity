@@ -1,20 +1,48 @@
 import { useNavigate } from 'react-router-dom';
+import { useState } from 'react';
+import { createPortal } from 'react-dom';
 import { useStore } from '../../store.jsx';
 
 function ParcheggioPopup({ parcheggio }) {
     const { addPrenotazione, getTimeStampInizio, getTimeStampFine } = useStore();
+
     const navigate = useNavigate();
 
+    const [modalOpen, setModalOpen] = useState(false);
+    const [preview, setPreview] = useState({ start: null, end: null });
+
     const handlePrenota = () => {
+        // prepara dati di anteprima e apre il modal di conferma
+        setPreview({ start: getTimeStampInizio(), end: getTimeStampFine() });
+        setModalOpen(true);
+    };
+
+    const formatTs = (ts) => {
+        try { return ts ? new Date(ts).toLocaleString() : '—'; } catch (e) { return String(ts); }
+    };
+
+    const calcDurationHours = () => {
+        if (!preview.start || !preview.end) return 0;
+        return Math.max(0, (preview.end - preview.start) / (1000 * 60 * 60));
+    };
+
+    const calcEstimatedPrice = () => {
+        const hours = calcDurationHours();
+        const price = parseFloat(parcheggio.prezzo_orario) || 0;
+        return (hours * price).toFixed(2);
+    };
+
+    const confirmPrenotazione = () => {
         const prenotazione = {
             id: 0,
             parkingId: parcheggio.id,
             nome: parcheggio.nome,
             userId: 0,
-            startTime: getTimeStampInizio(),
-            endTime: getTimeStampFine(),
+            startTime: preview.start,
+            endTime: preview.end,
         };
         addPrenotazione({ prenotazione });
+        setModalOpen(false);
         navigate('/prenotazioni');
     };
 
@@ -56,6 +84,61 @@ function ParcheggioPopup({ parcheggio }) {
                 </svg>
                 Prenota ora
             </button>
+
+            {/* Modal di conferma prenotazione (portal su document.body) */}
+            {modalOpen && createPortal(
+                <div className="modal modal-open">
+                    <div className="modal-box max-w-xl">
+                        <header className="flex items-center gap-4">
+                            <div>
+                                <h3 className="font-extrabold text-2xl">Conferma prenotazione</h3>
+                                <p className="text-sm text-gray-500">Verifica i dettagli e conferma la tua prenotazione.</p>
+                            </div>
+                        </header>
+
+                        <div className="divider my-4" />
+
+                        <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
+                            <div>
+                                <dt className="text-xs text-gray-400 uppercase tracking-wider">Parcheggio</dt>
+                                <dd className="text-gray-800 font-medium">{parcheggio.nome}</dd>
+                            </div>
+                            <div>
+                                <dt className="text-xs text-gray-400 uppercase tracking-wider">Prezzo orario</dt>
+                                <dd className="text-gray-800">€{parcheggio.prezzo_orario} / ora</dd>
+                            </div>
+                            <div>
+                                <dt className="text-xs text-gray-400 uppercase tracking-wider">Inizio</dt>
+                                <dd className="text-gray-800">{formatTs(preview.start)}</dd>
+                            </div>
+                            <div>
+                                <dt className="text-xs text-gray-400 uppercase tracking-wider">Fine</dt>
+                                <dd className="text-gray-800">{formatTs(preview.end)}</dd>
+                            </div>
+                        </dl>
+
+                        <div className="divider"/>
+
+                        <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mt-3">
+                            <div>
+                                <div className=" text-xs text-gray-400 uppercase tracking-wider">Durata stimata</div>
+                                <div className="text-lg font-semibold">{calcDurationHours().toFixed(2)} ore</div>
+                            </div>
+
+                            <div>
+                                <div className=" text-xs text-gray-400 uppercase tracking-wider">Totale stimato</div>
+                                <div className="text-lg font-semibold text-primary">€{calcEstimatedPrice()}</div>
+                            </div>
+                        </div>
+
+                        <div className="modal-action mt-4">
+                            <button className="btn btn-ghost" onClick={() => setModalOpen(false)}>Annulla</button>
+                            <button className="btn btn-primary" onClick={confirmPrenotazione}>Conferma</button>
+                        </div>
+                    </div>
+                </div>,
+                document.body
+            )}
 
         </div>
     );

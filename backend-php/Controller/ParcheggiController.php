@@ -2,14 +2,16 @@
 
 namespace Controller;
 
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
 require_once 'Model/ParcheggiRepository.php';
 use Model\ParcheggiRepository;
 
-class ParcheggiController{
+class ParcheggiController {
 
     private $container;
     private $parcheggiRepository;
@@ -21,9 +23,9 @@ class ParcheggiController{
     }
 
     public function getParcheggioById(Request $request, Response $response, array $args): Response {
-        $parcheggio = $this->parcheggiRepository->getParcheggioById($args['id']);
-        if ($parcheggio) {
-            $response->getBody()->write(json_encode($parcheggio));
+        $parking_lots = $this->parcheggiRepository->getParcheggioById($args['id']);
+        if ($parking_lots) {
+            $response->getBody()->write(json_encode($parking_lots));
             $response->withStatus(200);
         } else {
             $response->getBody()->write(json_encode(['error' => 'Parcheggio non trovato']));
@@ -35,28 +37,36 @@ class ParcheggiController{
     }
 
     public function getAllParcheggi(Request $request, Response $response, array $args) : Response {
-        $parcheggi = $this->parcheggiRepository->getAllParcheggi();
-        $response->getBody()->write(json_encode($parcheggi));
+        $parking_lots = $this->parcheggiRepository->getAllParcheggi();
+        $response->getBody()->write(json_encode($parking_lots));
 
         return $response
             ->withHeader('Content-Type', 'application/json');
     }
 
     public function getReservatonById(Request $request, Response $response, array $args): Response {
-        $pren_id = $args['pren_id'];
-
-        $prenotazioni = $this->parcheggiRepository->getReservationById($pren_id);
-        $response->getBody()->write(json_encode($prenotazioni));
+        $reservation = $this->parcheggiRepository->getReservationById($args['uuid']);
+        if ($reservation) {
+            $response->getBody()->write(json_encode($reservation));
+            $response->withStatus(200);
+        } else {
+            $response->getBody()->write(json_encode(['error' => 'Prenotazione non trovata']));
+            $response->withStatus(404);
+        }
 
         return $response
             ->withHeader('Content-Type', 'application/json');
     }
 
     public function getReservatonByUserId(Request $request, Response $response, array $args): Response {
-        $user_id = $args['user_id'];
-
-        $prenotazioni = $this->parcheggiRepository->getReservationByUserId($user_id);
-        $response->getBody()->write(json_encode($prenotazioni));
+        $reservation = $this->parcheggiRepository->getReservationByUserId($args['uuid']);
+        if ($reservation) {
+            $response->getBody()->write(json_encode($reservation));
+            $response->withStatus(200);
+        } else {
+            $response->getBody()->write(json_encode(['error' => 'Prenotazione non trovata']));
+            $response->withStatus(404);
+        }
 
         return $response
             ->withHeader('Content-Type', 'application/json');
@@ -86,17 +96,18 @@ class ParcheggiController{
             $request->getParsedBody()['id'],
             $request->getParsedBody()['license_plate'],
             $request->getParsedBody()['start_time'],
-            $request->getParsedBody()['end_time']
+            $request->getParsedBody()['end_time'],
+            $request->getParsedBody()['id_parking_lot']
         );
 
         $response->getBody()->write(json_encode($prenotazione));
 
         return $response
             ->withHeader('Content-Type', 'application/json')
-            ->withStatus(200);
+            ->withStatus(201);
     }
 
-    public function deleteReservation(Request $request, Response $response, array $args) : Response {
+    public function userDeleteReservation(Request $request, Response $response, array $args) : Response {
         $id = $request->getParsedBody()['id'];
         $this->parcheggiRepository->deleteReservation($id);
 

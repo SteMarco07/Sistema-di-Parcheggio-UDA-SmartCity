@@ -8,6 +8,9 @@ export const useStore = create((set, get) => ({
     parcheggiFiltrati: [],
     ricerca: "",
     prenotazioni: [],
+    oggettoInModifica: null,
+    showEditModal: false,
+    showDeleteModal: false,
     isLoading: false,
     fieldsets: [],
     error: null,
@@ -182,6 +185,24 @@ export const useStore = create((set, get) => ({
         } catch (err) {
             set({ error: err.message, isLoading: false });
         }
+    },
+
+
+
+    mostraModaleModifica: (oggettoModifica) => {
+        set({ showEditModal: true, oggettoInModifica: oggettoModifica });
+    },
+
+    nascondiModaleModifica: () => {
+        set({ showEditModal: false, oggettoInModifica: null });
+    },
+
+    mostraModaleElimina: (oggettoElimina) => {
+        set({ showDeleteModal: true, oggettoInModifica: oggettoElimina });
+    },
+
+    nascondiModaleElimina: () => {
+        set({ showDeleteModal: false, oggettoInModifica: null });
     }
 
 }));

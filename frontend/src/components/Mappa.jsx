@@ -5,7 +5,7 @@ import { useStore } from '../store.jsx'
 import ParcheggioPopup from './parcheggi/ParcheggioPopup.jsx'
 import ClusteredMarkers from './Markers.jsx'
 
-const MAPBOX_TOKEN = ''
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || ''
 
 function add3DBuildings(map) {
   map.addLayer({

@@ -30,10 +30,10 @@ function ClusteredMarkers({ parcheggi, onMarkerClick }) {
   }, [parcheggi, updateClusters])
 
   useEffect(() => {
-  if (!map) return
-  map.on('move', updateClusters)
-  return () => map.off('move', updateClusters)
-}, [map, updateClusters])
+    if (!map) return
+    map.on('move', updateClusters)
+    return () => map.off('move', updateClusters)
+  }, [map, updateClusters])
 
 
 
@@ -77,8 +77,8 @@ function getMarkerColor(parcheggio) {
 
   const ratio = posti_liberi / posti_totali
 
-  if (ratio > 0.5)  return '#22C55E' // verde 
-  if (ratio > 0.2)  return '#F59E0B' // giallo
+  if (ratio > 0.5) return '#22C55E' // verde 
+  if (ratio > 0.2) return '#F59E0B' // giallo
   if (ratio > 0) return '#FF7236'    // arancio
   return '#EF4444'                   // rosso  
 }
@@ -98,7 +98,7 @@ function SingleMarker({ parcheggio, onClick }) {
           width: 32, height: 32,
           borderRadius: '50% 50% 50% 0',
           transform: 'rotate(-45deg)',
-          background: color,           
+          background: color,
           boxShadow: '0 2px 8px rgba(0,0,0,.18)',
           display: 'flex', alignItems: 'center', justifyContent: 'center',
         }}>

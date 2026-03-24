@@ -11,7 +11,6 @@ require './Controller/ParcheggiController.php';
 
 use League\Plates\Engine;
 use Controller\ParcheggiController;
-use Util\Authenticator;
 use DI\Container as Container;
 
 //Istruzione super importante per il deployment
@@ -40,40 +39,6 @@ $corsMiddleware = function (Request $request, RequestHandler $handler) use ($app
 };
 
 $app->add($corsMiddleware);
-
-//Gestione del middleware di autenticazione
-
-$authMiddleware = function(Request $request, RequestHandler $handler) use ($app): Response {
-    global $config;
-
-    $routeName = $request->getUri()->getPath();
-
-    // Route della parte pubblica
-    $publicRoute = $config['BASEPATH'] . '/';
-
-    //Se è una route pubblica non fa nulla
-    if (str_starts_with($routeName, $publicRoute)) {
-        return $handler->handle($request);
-    }
-
-    $user = Authenticator::getUser();
-
-    if ($routeName === $config['BASEPATH'] . '/login') {
-        return $handler->handle($request);
-    }
-    if ($routeName === $config['BASEPATH'] . '/') {
-        return $handler->handle($request);
-    }
-    if ($user !== null) {
-        //Vengono "agganciate" le informazioni sul nome
-        $request = $request->withAttribute('user', $user);
-        return $handler->handle($request);
-    }
-    else{
-        throw new HttpUnauthorizedException($request);
-    }
-
-};
 
 // Global preflight route (matches any route) like Slim v3 cookbook
 $app->options('/{routes:.+}', function (Request $request, Response $response, $args) { return $response; });

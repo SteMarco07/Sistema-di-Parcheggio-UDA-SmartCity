@@ -210,6 +210,22 @@ export const useStore = create((set, get) => ({
         }
     },
 
+    modificaPrenotazione: async (id, payload) => {
+        set({ isLoading: true, error: null });
+        try {
+            const data = await api.modificaPrenotazione(id, payload);
+            if (data && data.successo) {
+                const prenotazioni = get().prenotazioni.map((p) => p.id === id ? { ...p, ...data.prenotazione } : p);
+                set({ prenotazioni, isLoading: false });
+                console.log("Modificata prenotazione con id:", id);
+            } else {
+                set({ isLoading: false });
+            }
+        } catch (err) {
+            set({ error: err.message, isLoading: false });
+        }
+    },
+
 
 
     mostraModaleModificaPark: (oggettoModifica) => {

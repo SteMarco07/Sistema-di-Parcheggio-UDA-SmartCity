@@ -93,4 +93,12 @@ export const api = {
         }
     }
 
+    ,
+    modificaPrenotazione: (id, payload) => {
+        return {
+            prenotazione: payload,
+            successo: true
+        }
+    }
+
 }

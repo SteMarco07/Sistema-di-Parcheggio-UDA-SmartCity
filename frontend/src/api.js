@@ -69,6 +69,33 @@ export const api = {
                 userId: 3,
                 startTime: '2024-06-01T10:00:00Z',
                 endTime: '2024-06-01T12:00:00Z'
+            },
+
+            {
+                id: 4,
+                nome: 'Prenotazione 4',
+                parkingId: 3,
+                userId: 3,
+                startTime: '2025-06-01T10:00:00Z',
+                endTime: '2025-06-01T12:00:00Z'
+            },
+
+            {
+                id: 5,
+                nome: 'Prenotazione 5',
+                parkingId: 3,
+                userId: 3,
+                startTime: '2026-03-01T10:00:00Z',
+                endTime: '2026-03-01T12:00:00Z'
+            },
+
+            {
+                id: 6,
+                nome: 'Prenotazione 6',
+                parkingId: 3,
+                userId: 3,
+                startTime: '2026-03-01T10:00:00Z',
+                endTime: '2026-03-01T12:00:00Z'
             }
         ]
     },

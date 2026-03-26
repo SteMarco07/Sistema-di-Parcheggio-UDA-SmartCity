@@ -5,9 +5,9 @@ import { useStore } from "../../store.jsx";
 function TableParcheggi() {
     const {
         parcheggi, modificaParcheggio, deleteParcheggio,
-        oggettoInModifica,
-        showEditModal, nascondiModaleModifica,
-        showDeleteModal, nascondiModaleElimina
+        oggettoInModificaPark,
+        showEditModalPark, nascondiModaleModificaPark,
+        showDeleteModalPark, nascondiModaleEliminaPark
     } = useStore();
 
     const [busy, setBusy] = useState(false);
@@ -15,10 +15,10 @@ function TableParcheggi() {
     const handleConfirmDelete = async () => {
         setBusy(true);
         try {
-            await deleteParcheggio(oggettoInModifica.id);
+            await deleteParcheggio(oggettoInModificaPark.id);
         } finally {
             setBusy(false);
-            nascondiModaleElimina();
+            nascondiModaleEliminaPark();
         }
     }
 
@@ -26,8 +26,8 @@ function TableParcheggi() {
 
     window.addEventListener('keydown', (e) => {
         if (e.key === 'Escape') {
-            nascondiModaleElimina();
-            nascondiModaleModifica();
+            nascondiModaleEliminaPark();
+            nascondiModaleModificaPark();
         }
     });
 
@@ -61,10 +61,10 @@ function TableParcheggi() {
 
                 {
                     /* Modale modifica parcheggio */
-                    showEditModal && (
+                    showEditModalPark && (
                         <div className="modal modal-open">
                             <div className="modal-box">
-                                <h3 className="font-bold text-lg mb-5">Modifica {oggettoInModifica?.nome}</h3>
+                                <h3 className="font-bold text-lg mb-5">Modifica {oggettoInModificaPark?.nome}</h3>
                                 <form
                                     onSubmit={async (e) => {
                                         e.preventDefault();
@@ -79,10 +79,10 @@ function TableParcheggi() {
                                                 lng: parseFloat(form.get('lng')) || 0,
                                             };
 
-                                            modificaParcheggio(oggettoInModifica?.id, payload);
+                                            modificaParcheggio(oggettoInModificaPark?.id, payload);
 
 
-                                            nascondiModaleModifica();
+                                            nascondiModaleModificaPark();
 
                                         } catch (err) {
                                             console.error('Impossibile salvare il parcheggio:', err);
@@ -99,7 +99,7 @@ function TableParcheggi() {
                                         <input
                                             name="nome"
                                             type="text"
-                                            defaultValue={oggettoInModifica?.nome}
+                                            defaultValue={oggettoInModificaPark?.nome}
                                             className="input input-bordered w-full"
                                             required
                                         />
@@ -109,7 +109,7 @@ function TableParcheggi() {
                                         </label>
                                         <textarea
                                             name="descrizione"
-                                            defaultValue={oggettoInModifica?.descrizione}
+                                            defaultValue={oggettoInModificaPark?.descrizione}
                                             className="textarea textarea-bordered w-full"
                                             rows={3}
                                         />
@@ -121,7 +121,7 @@ function TableParcheggi() {
                                             name="prezzo_orario"
                                             type="number"
                                             step="0.01"
-                                            defaultValue={oggettoInModifica?.prezzo_orario}
+                                            defaultValue={oggettoInModificaPark?.prezzo_orario}
                                             className="input input-bordered w-full"
                                             required
                                         />
@@ -135,7 +135,7 @@ function TableParcheggi() {
                                                     name="lat"
                                                     type="number"
                                                     step="any"
-                                                    defaultValue={oggettoInModifica?.lat}
+                                                    defaultValue={oggettoInModificaPark?.lat}
                                                     className="input input-bordered w-full"
                                                     required
                                                 />
@@ -149,7 +149,7 @@ function TableParcheggi() {
                                                     name="lng"
                                                     type="number"
                                                     step="any"
-                                                    defaultValue={oggettoInModifica?.lng}
+                                                    defaultValue={oggettoInModificaPark?.lng}
                                                     className="input input-bordered w-full"
                                                     required
                                                 />
@@ -161,7 +161,7 @@ function TableParcheggi() {
                                         <button
                                             type="button"
                                             className="btn"
-                                            onClick={() => nascondiModaleModifica()}
+                                            onClick={() => nascondiModaleModificaPark()}
                                             disabled={busy}
                                         >
                                             Annulla
@@ -179,13 +179,13 @@ function TableParcheggi() {
                 {
 
                     /* Modale elimina parcheggio */
-                    showDeleteModal && (
+                    showDeleteModalPark && (
                         <div className="modal modal-open">
                             <div className="modal-box">
                                 <h3 className="font-bold text-lg">Conferma eliminazione</h3>
-                                <p className="py-4">Sei sicuro di voler eliminare <strong>{oggettoInModifica.nome}</strong>?</p>
+                                <p className="py-4">Sei sicuro di voler eliminare <strong>{oggettoInModificaPark?.nome}</strong>?</p>
                                 <div className="modal-action">
-                                    <button className="btn" onClick={() => nascondiModaleElimina()} disabled={busy}>Annulla</button>
+                                    <button className="btn" onClick={() => nascondiModaleEliminaPark()} disabled={busy}>Annulla</button>
                                     <button className="btn btn-error" onClick={handleConfirmDelete} disabled={busy}>{busy ? 'Eliminazione...' : 'Elimina'}</button>
                                 </div>
                             </div>

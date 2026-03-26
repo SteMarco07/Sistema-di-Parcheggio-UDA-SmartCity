@@ -8,9 +8,15 @@ export const useStore = create((set, get) => ({
     parcheggiFiltrati: [],
     ricerca: "",
     prenotazioni: [],
-    oggettoInModifica: null,
-    showEditModal: false,
-    showDeleteModal: false,
+
+    oggettoInModificaPark: null,
+    showEditModalPark: false,
+    showDeleteModalPark: false,
+
+    oggettoInModificaRes: null,
+    showEditModalRes: false,
+    showDeleteModalRes: false,
+
     isLoading: false,
     fieldsets: [],
     error: null,
@@ -163,6 +169,23 @@ export const useStore = create((set, get) => ({
 
                 set({ parcheggi: filtrati, parcheggiFiltrati: filtrati, isLoading: false });
                 console.log("Eliminato parcheggio con id:", data.id);
+                get().fetchPrenotazioni();
+            } else {
+                set({ isLoading: false });
+            }
+        } catch (err) {
+            set({ error: err.message, isLoading: false });
+        }
+    },
+
+    deletePrenotazione: async (id) => {
+        set({ isLoading: true, error: null });
+        try {
+            const data = await api.deletePrenotazione(id);
+            if (data && data.successo) {
+                const remaining = get().prenotazioni.filter((p) => p.id !== data.id);
+                set({ prenotazioni: remaining, isLoading: false });
+                console.log("Eliminata prenotazione con id:", data.id);
             } else {
                 set({ isLoading: false });
             }
@@ -189,20 +212,44 @@ export const useStore = create((set, get) => ({
 
 
 
-    mostraModaleModifica: (oggettoModifica) => {
-        set({ showEditModal: true, oggettoInModifica: oggettoModifica });
+    mostraModaleModificaPark: (oggettoModifica) => {
+        set({ showEditModalPark: true, oggettoInModificaPark: oggettoModifica });
     },
 
-    nascondiModaleModifica: () => {
-        set({ showEditModal: false, oggettoInModifica: null });
+    nascondiModaleModificaPark: () => {
+        set({ showEditModalPark: false, oggettoInModificaPark: null });
     },
 
-    mostraModaleElimina: (oggettoElimina) => {
-        set({ showDeleteModal: true, oggettoInModifica: oggettoElimina });
+    mostraModaleEliminaPark: (oggettoElimina) => {
+        set({ showDeleteModalPark: true, oggettoInModificaPark: oggettoElimina });
     },
 
-    nascondiModaleElimina: () => {
-        set({ showDeleteModal: false, oggettoInModifica: null });
+    nascondiModaleEliminaPark: () => {
+        set({ showDeleteModalPark: false, oggettoInModificaPark: null });
+    },
+
+    mostraModaleModificaRes: (oggettoModifica) => {
+        set({ showEditModalRes: true, oggettoInModificaRes: oggettoModifica });
+    },
+
+    nascondiModaleModificaRes: () => {
+        set({ showEditModalRes: false, oggettoInModificaRes: null });
+    },
+
+    mostraModaleEliminaRes: (oggettoElimina) => {
+        set({ showDeleteModalRes: true, oggettoInModificaRes: oggettoElimina });
+    },
+
+    nascondiModaleEliminaRes: () => {
+        set({ showDeleteModalRes: false, oggettoInModificaRes: null });
+    },
+
+    formatDate(iso) {
+        try {
+            return new Date(iso).toLocaleString();
+        } catch (e) {
+            return iso;
+        }
     }
 
 }));

@@ -36,8 +36,6 @@ function ChartParcheggi() {
 
     if (data.length === 0) {
         return <div className="text-sm text-gray-500">Nessuna prenotazione disponibile per il grafico</div>;
-    } else {
-        console.log('Dati per grafico:', data);
     }
 
     return (

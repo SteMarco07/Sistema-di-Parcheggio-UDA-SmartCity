@@ -79,6 +79,13 @@ export const api = {
         }
     },
 
+    deletePrenotazione: (id) => {
+        return {
+            id: id,
+            successo: true
+        }
+    },
+
     modificaParcheggio: (id, payload) => {
         return {
             id: id,

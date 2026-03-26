@@ -2,17 +2,30 @@ import { useState, useMemo } from 'react';
 import { useStore } from '../../store.jsx';
 
 import RecordPrenotazioni from './RecordPrenotazioni.jsx';
+import DeletePrenotazioneModal from '../modals/DeletePrenotazioneModal.jsx';
 
 function TablePrenotazioni() {
 
-    const { prenotazioni, parcheggi } = useStore();
+    const { prenotazioni, parcheggi, modificaParcheggio, deleteParcheggio, deletePrenotazione,
+        oggettoInModificaRes,
+        showEditModalRes, nascondiModaleModificaRes,
+        showDeleteModalRes, nascondiModaleEliminaRes } = useStore();
 
-    // Memoized map built once per Table render; O(1) lookup for each row
+    const [busy, setBusy] = useState(false);
+
+
     const parcheggiMap = useMemo(() => {
         const m = new Map();
         (parcheggi || []).forEach((p) => m.set(p.id, p.nome || `#${p.id}`));
         return m;
     }, [parcheggi]);
+
+    window.addEventListener('keydown', (e) => {
+        if (e.key === 'Escape') {
+            nascondiModaleEliminaRes();
+            nascondiModaleModificaRes();
+        }
+    });
 
     return (
         <>
@@ -37,6 +50,21 @@ function TablePrenotazioni() {
                     </tbody>
                 </table>
             </div>
+            <DeletePrenotazioneModal
+                open={showDeleteModalRes}
+                onClose={() => nascondiModaleEliminaRes()}
+                onConfirm={async (id) => {
+                    setBusy(true);
+                    try {
+                        await deletePrenotazione(id);
+                    } finally {
+                        setBusy(false);
+                        nascondiModaleEliminaRes();
+                    }
+                }}
+                prenotazione={oggettoInModificaRes}
+                parkingName={parcheggiMap.get(oggettoInModificaRes?.parkingId)}
+            />
         </>
     );
 }

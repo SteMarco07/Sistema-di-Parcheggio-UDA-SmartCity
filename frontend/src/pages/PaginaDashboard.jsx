@@ -12,13 +12,13 @@ function PaginaDashboard() {
         <div className="p-4">
             <h1 className="text-4xl font-bold mb-4 text-center md:text-left">Dashboard</h1>
 
-            <div className="flex flex-col md:flex-row md:items-stretch gap-6 min-h-[70vh]">
+            <div className="flex flex-col md:flex-row md:items-stretch gap-6 min-h-[80vh]">
                 <div className="w-full md:w-3/4 space-y-6 flex flex-col">
-                    <div className="bg-white rounded-lg shadow-md p-4 md:p-6 overflow-hidden flex-1">
+                    <div className="bg-white rounded-lg shadow-md p-4 md:p-6 overflow-auto flex-1">
                         <TableParcheggi />
                     </div>
 
-                    <div className="bg-white rounded-lg shadow-md p-4 md:p-6 overflow-hidden flex-1">
+                    <div className="bg-white rounded-lg shadow-md p-4 md:p-6 overflow-auto flex-1">
                         <TablePrenotazioni />
                     </div>
                 </div>

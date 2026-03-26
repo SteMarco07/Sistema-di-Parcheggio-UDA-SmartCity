@@ -43,11 +43,11 @@ function ChartParcheggi() {
     return (
         <div>
             <h2 className="text-xl font-bold mb-3">Prenotazioni per parcheggio</h2>
-            <div style={{ width: '100%', height: 240 }}>
-                <ResponsiveContainer width="100%" height="100%">
-                    <BarChart data={data} margin={{ top: 10, right: 0, left: 0, bottom: 30 }}>
+            <div className="w-full h-48 md:h-64 lg:h-80">
+                <ResponsiveContainer>
+                    <BarChart data={data} margin={{ top: 10, right: 12, left: 0, bottom: 72 }}>
                         <CartesianGrid strokeDasharray="3 3" />
-                        <XAxis dataKey="nome" interval={0} height={60} tick={{ angle: -45, textAnchor: 'end' }} />
+                        <XAxis dataKey="nome" interval={0} height={64} tick={{ angle: -45, textAnchor: 'end', fontSize: 12 }} />
                         <YAxis allowDecimals={false} />
                         <Tooltip />
                         <Bar dataKey="count" name="Prenotazioni" fill="#3b82f6" />

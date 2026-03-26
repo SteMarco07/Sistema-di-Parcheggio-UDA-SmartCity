@@ -8,30 +8,26 @@ function PaginaDashboard() {
     const { parcheggi } = useStore();
 
     return (
-        <div className="p-4 flex flex-col items-center">
-            <h1 className="text-4xl font-bold mb-4">Dashboard</h1>
+        <div className="p-4">
+            <h1 className="text-4xl font-bold mb-4 text-center md:text-left">Dashboard</h1>
 
-            <div className="join join-horizontal gap-6">
-                <div className="join join-vertical gap-6 w-[75%]">
-                    <div className="bg-white rounded-lg shadow-md p-6">
+            <div className="flex flex-col md:flex-row md:items-stretch gap-6 min-h-[70vh]">
+                <div className="w-full md:w-3/4 space-y-6 flex flex-col">
+                    <div className="bg-white rounded-lg shadow-md p-4 md:p-6 overflow-hidden flex-1">
                         <TableParcheggi />
                     </div>
 
-                    <div className="bg-white rounded-lg shadow-md p-6">
+                    <div className="bg-white rounded-lg shadow-md p-4 md:p-6 overflow-hidden flex-1">
                         <TableParcheggi />
                     </div>
-
-
                 </div>
 
-                <div className="w-[25%] bg-white rounded-lg shadow-md p-6">
-                    <ChartParcheggi />
-
+                <div className="w-full md:w-1/4 bg-white rounded-lg shadow-md p-4 md:p-6 flex flex-col">
+                    <div className="flex-1">
+                        <ChartParcheggi />
+                    </div>
                 </div>
             </div>
-
-
-
         </div>
     );
 }

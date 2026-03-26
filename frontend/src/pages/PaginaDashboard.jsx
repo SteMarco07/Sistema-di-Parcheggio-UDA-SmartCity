@@ -4,6 +4,7 @@ import { useStore } from '../store.jsx';
 import TableParcheggi from '../components/dashboard/TableParcheggi.jsx';
 import TablePrenotazioni from '../components/dashboard/TablePrenotazioni.jsx';
 import ChartParcheggi from '../components/dashboard/ChartParcheggi.jsx';
+import ChartPrenotazioniAttive from '../components/dashboard/ChartPrenotazioniAttive.jsx';
 
 function PaginaDashboard() {
     const { nascondiModaleEliminaPark, nascondiModaleModificaPark, nascondiModaleEliminaRes, nascondiModaleModificaRes } = useStore();
@@ -41,6 +42,7 @@ function PaginaDashboard() {
                 <div className="w-full md:w-1/4 bg-white rounded-lg shadow-md p-4 md:p-6 flex flex-col">
                     <div className="flex-1">
                         <ChartParcheggi />
+                        <ChartPrenotazioniAttive />
                     </div>
                 </div>
             </div>

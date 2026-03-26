@@ -7,7 +7,6 @@ import {
     XAxis,
     YAxis,
     Tooltip,
-    Legend,
     CartesianGrid,
 } from 'recharts';
 
@@ -37,6 +36,8 @@ function ChartParcheggi() {
     if (data.length === 0) {
         return <div className="text-sm text-gray-500">Nessuna prenotazione disponibile per il grafico</div>;
     }
+
+
 
     return (
         <div>

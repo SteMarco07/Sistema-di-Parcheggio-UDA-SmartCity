@@ -42,6 +42,7 @@ function TableParcheggi() {
                         <tr>
                             <th></th>
                             <th>Nome</th>
+                            <th>Id</th>
                             <th>Descrizione</th>
                             <th>Prezzo Orario</th>
                             <th>Latitudine</th>
@@ -80,10 +81,9 @@ function TableParcheggi() {
 
                                             modificaParcheggio(oggettoInModifica?.id, payload);
 
-                                            // chiudi la modale dopo il salvataggio; eventuale refresh dei dati
+
                                             nascondiModaleModifica();
-                                            // facoltativo: ricarica la pagina o emetti un evento per aggiornare la lista
-                                            // window.location.reload();
+
                                         } catch (err) {
                                             console.error('Impossibile salvare il parcheggio:', err);
                                             // qui puoi mostrare una notifica di errore se vuoi

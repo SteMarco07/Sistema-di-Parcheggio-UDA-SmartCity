@@ -2,6 +2,7 @@ import { use } from 'react';
 import { useStore } from '../store.jsx';
 
 import TableParcheggi from '../components/dashboard/TableParcheggi.jsx';
+import TablePrenotazioni from '../components/dashboard/TablePrenotazioni.jsx';
 import ChartParcheggi from '../components/dashboard/ChartParcheggi.jsx';
 
 function PaginaDashboard() {
@@ -18,7 +19,7 @@ function PaginaDashboard() {
                     </div>
 
                     <div className="bg-white rounded-lg shadow-md p-4 md:p-6 overflow-hidden flex-1">
-                        <TableParcheggi />
+                        <TablePrenotazioni />
                     </div>
                 </div>
 

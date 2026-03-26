@@ -2,8 +2,7 @@ import { use } from 'react';
 import { useStore } from '../store.jsx';
 
 import TableParcheggi from '../components/dashboard/TableParcheggi.jsx';
-
-import { BarChart } from '@mui/x-charts/BarChart';
+import ChartParcheggi from '../components/dashboard/ChartParcheggi.jsx';
 
 function PaginaDashboard() {
     const { parcheggi } = useStore();
@@ -25,23 +24,8 @@ function PaginaDashboard() {
 
                 </div>
 
-                <div className="w-[20%] bg-white rounded-lg shadow-md p-6">
-
-                    <BarChart
-                        xAxis={[
-                            {
-                                id: 'barCategories',
-                                data: ['bar A', 'bar B', 'bar C'],
-                                height: 28,
-                            },
-                        ]}
-                        series={[
-                            {
-                                data: [2, 5, 3],
-                            },
-                        ]}
-                        height={300}
-                    />
+                <div className="w-[25%] bg-white rounded-lg shadow-md p-6">
+                    <ChartParcheggi />
 
                 </div>
             </div>

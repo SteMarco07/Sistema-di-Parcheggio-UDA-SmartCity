@@ -8,7 +8,7 @@ import ChartPrenotazioniAttive from '../components/dashboard/ChartPrenotazioniAt
 import ChartStoricoPrenotazioni from '../components/dashboard/ChartStoricoPrenotazioni.jsx';
 
 function PaginaDashboard() {
-    const { nascondiModaleEliminaPark, nascondiModaleModificaPark, nascondiModaleEliminaRes, nascondiModaleModificaRes } = useStore();
+    const { nascondiModaleEliminaPark, nascondiModaleModificaPark, nascondiModaleEliminaRes, nascondiModaleModificaRes, nascondiModaleAggiungiParcheggio } = useStore();
 
 
     useEffect(() => {
@@ -18,12 +18,13 @@ function PaginaDashboard() {
                 nascondiModaleModificaPark();
                 nascondiModaleEliminaRes();
                 nascondiModaleModificaRes();
+                nascondiModaleAggiungiParcheggio();
             }
         };
 
         window.addEventListener('keydown', onKeyDown);
         return () => window.removeEventListener('keydown', onKeyDown);
-    }, [nascondiModaleEliminaPark, nascondiModaleModificaPark, nascondiModaleEliminaRes, nascondiModaleModificaRes]);
+    }, [nascondiModaleEliminaPark, nascondiModaleModificaPark, nascondiModaleEliminaRes, nascondiModaleModificaRes, nascondiModaleAggiungiParcheggio]);
 
     return (
         <div className="p-4">

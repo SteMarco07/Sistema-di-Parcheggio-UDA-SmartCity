@@ -297,10 +297,6 @@ export const useStore = create((set, get) => ({
         } catch (e) {
             return iso;
         }
-    addPrenotazione: ({prenotazione}) => {
-        prenotazione.id = get().prenotazioni.length+1;
-        //console.log(`Lo store aggiunge ${JSON.stringify(prenotazione)}`)
-        set({ prenotazioni: [...get().prenotazioni, prenotazione] });
     },
 
     modificaPrenotazione: ({prenotazioneModificata}) => {

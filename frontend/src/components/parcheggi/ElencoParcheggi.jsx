@@ -26,22 +26,18 @@ function ElencoParcheggi() {
         <div className="flex flex-col items-center justify-center h-full gap-2 text-base-content/30">
           <p className="text-sm">Nessun parcheggio trovato</p>
         </div>
-        <div className='overflow-y-auto flex-1'>
-          {parcheggiFiltrati.length !== 0 ? (parcheggiFiltrati.map((item) => (
-            <div key={item.id} className="card card-border w-full bg-base-90 shadow-xl mb-4">
-              <div className="card-body">
-                <ParcheggioCard parcheggio={item} />
-              </div>
+      ) : (
+        parcheggiFiltrati.map((item) => (
+          <div
+            key={item.id}
+            className="card bg-base-100 border border-base-200 hover:border-primary/40 hover:shadow-md transition-all duration-200 cursor-pointer"
+          >
+            <div className="card-body p-4">
+              <ParcheggioCard parcheggio={item} />
             </div>
-          ))) : (
-            <div className="flex flex-col items-center justify-center h-full text-gray-500 mx-5">
-              <p className="text-lg text-center">Nessun parcheggio disponibile per i criteri selezionati.</p>
-              <p className="text-sm mt-2">Prova a modificare la tua ricerca o controlla più tardi.</p>
-            </div>
-          )}
-        </div>
-
-      </div>
+          </div>
+        ))
+      )}
     </div>
 
   </div>

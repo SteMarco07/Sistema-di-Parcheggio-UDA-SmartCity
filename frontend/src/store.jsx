@@ -6,7 +6,9 @@ export const useStore = create((set, get) => ({
     // STATO INIZIALE
     parcheggi: [],
     parcheggiFiltrati: [],
-    ricerca: "",
+    ricerca : "",
+    dataOraInizio: "",
+    dataOraFine: "",
     prenotazioni: [],
 
     oggettoInModificaPark: null,
@@ -295,6 +297,54 @@ export const useStore = create((set, get) => ({
         } catch (e) {
             return iso;
         }
+    addPrenotazione: ({prenotazione}) => {
+        prenotazione.id = get().prenotazioni.length+1;
+        //console.log(`Lo store aggiunge ${JSON.stringify(prenotazione)}`)
+        set({ prenotazioni: [...get().prenotazioni, prenotazione] });
+    },
+
+    modificaPrenotazione: ({prenotazioneModificata}) => {
+        set({
+            prenotazioni: get().prenotazioni.map((p) =>
+                p.id === prenotazioneModificata.id ? prenotazioneModificata : p
+            )
+        });
+    },
+
+    eliminaPrenotazione: (id) => {
+        set({
+            prenotazioni: get().prenotazioni.filter((p) => p.id !== id)
+        });
+    },
+
+    setDataOraInizio: (dataInizio, oraInizio) => {
+        // console.log("Imposto dataOraInizio:", dataInizio, oraInizio);
+        set({ dataOraInizio: dataInizio, oraInizio });
+    },
+
+    setDataOraFine: (dataOraFine, oraFine) => {
+        // console.log("Imposto dataOraFine:", dataOraFine, oraFine);
+        set({ dataOraFine, oraFine });
+    },
+
+    getTimeStampInizio: () => {
+        const { dataOraInizio, oraInizio } = get();
+        if (!dataOraInizio || !oraInizio) return null;
+
+        const timestamp = new Date(dataOraInizio);
+        const [hours, minutes] = oraInizio.split(':').map(Number);
+        timestamp.setHours(hours, minutes, 0, 0);
+        return timestamp.getTime();
+    },
+
+    getTimeStampFine: () => {
+        const { dataOraFine, oraFine } = get();
+        if (!dataOraFine || !oraFine) return null;
+
+        const timestamp = new Date(dataOraFine);
+        const [hours, minutes] = oraFine.split(':').map(Number);
+        timestamp.setHours(hours, minutes, 0, 0);
+        return timestamp.getTime();
     }
 
 }));

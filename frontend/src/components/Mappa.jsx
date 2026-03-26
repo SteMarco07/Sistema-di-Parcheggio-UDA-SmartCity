@@ -1,59 +1,80 @@
-import { useEffect } from 'react'
-import { MapContainer, TileLayer, useMap, useMapEvents, Marker, Popup } from 'react-leaflet'
+import { useState, useEffect } from 'react'
+import Map, { Popup, NavigationControl } from 'react-map-gl'
+import 'mapbox-gl/dist/mapbox-gl.css'
 import { useStore } from '../store.jsx'
-import ParcheggioCardPopup from './parcheggi/ParcheggioPopup.jsx';
-import ParcheggioPopup from './parcheggi/ParcheggioPopup.jsx';
+import ParcheggioPopup from './parcheggi/ParcheggioPopup.jsx'
+import ClusteredMarkers from './Markers.jsx'
 
+const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || ''
 
-function MapSync() {
-  const map = useMap()
-  const { position, zoom } = useStore()
-
-  useEffect(() => {
-    if (map && position) {
-      map.setView(position, zoom)
-    }
-  }, [map, position, zoom])
-
-  return null
-}
-
-function CenterLogger() {
-  const { modifyPosition, modifyZoom } = useStore()
-
-  useMapEvents({
-    // quando l'utente termina il pan/zoom della mappa, prendo il centro e salvo
-    moveend(e) {
-      const center = e.target.getCenter()
-      const z = e.target.getZoom()
-      modifyPosition([center.lat, center.lng])
-      modifyZoom(z)
-    }
+function add3DBuildings(map) {
+  map.addLayer({
+    id: '3d-buildings',
+    source: 'composite',
+    'source-layer': 'building',
+    filter: ['==', 'extrude', 'true'],
+    type: 'fill-extrusion',
+    minzoom: 14,
+    paint: {
+      'fill-extrusion-color': '#aaa',
+      'fill-extrusion-height': ['get', 'height'],
+      'fill-extrusion-base': ['get', 'min_height'],
+      'fill-extrusion-opacity': 0.8,
+    },
   })
-
-  return null
 }
 
 function Mappa() {
-  const { parcheggiFiltrati, position, zoom } = useStore()
+  const { parcheggiFiltrati = [], position, zoom, modifyPosition, modifyZoom } = useStore()
+  const [selectedParcheggio, setSelectedParcheggio] = useState(null)
 
+  const [viewState, setViewState] = useState({
+    longitude: position[1],
+    latitude: position[0],
+    zoom,
+    pitch: 45,
+    bearing: 0,
+  })
+
+  useEffect(() => {
+    setViewState(v => ({ ...v, longitude: position[1], latitude: position[0], zoom }))
+  }, [position, zoom])
+
+  function handleMove(evt) {
+    const { longitude, latitude, zoom } = evt.viewState
+    setViewState(evt.viewState)
+    modifyPosition([latitude, longitude])
+    modifyZoom(zoom)
+  }
 
   return (
-    <MapContainer center={position} zoom={zoom} style={{ height: '100%', width: '100%', zIndex: 0 }}>
-      <TileLayer url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png" attribution='&copy; OpenStreetMap' />
-      {
-        parcheggiFiltrati.map((parcheggio) => (
-          <Marker key={parcheggio.id} position={[parcheggio.lat, parcheggio.lng]}>
-            <Popup>
-             <ParcheggioPopup parcheggio={parcheggio} />
-            </Popup>
-          </Marker>
-        ))
-      }
-      <MapSync />
-      <CenterLogger />
-    </MapContainer>
+    <Map
+      {...viewState}
+      onMove={handleMove}
+      style={{ height: '100%', width: '100%' }}
+      mapStyle="mapbox://styles/mapbox/streets-v12"
+      mapboxAccessToken={MAPBOX_TOKEN}
+      onLoad={(e) => add3DBuildings(e.target)}
+    >
+      <NavigationControl position="top-right" />
+
+      <ClusteredMarkers
+        parcheggi={parcheggiFiltrati}
+        onMarkerClick={setSelectedParcheggio}
+      />
+
+      {selectedParcheggio && (
+        <Popup
+          longitude={selectedParcheggio.lng}
+          latitude={selectedParcheggio.lat}
+          onClose={() => setSelectedParcheggio(null)}
+          closeOnClick={false}
+        >
+          <ParcheggioPopup parcheggio={selectedParcheggio} />
+        </Popup>
+      )}
+    </Map>
   )
 }
 
-export default Mappa;
+export default Mappa

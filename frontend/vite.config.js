@@ -9,4 +9,12 @@ export default defineConfig({
     tailwindcss()
     
   ],
+  optimizeDeps: {
+    include: ['mapbox-gl'],
+  },
+  resolve: {
+    alias: {
+      'mapbox-gl': 'mapbox-gl',
+    }
+  }
 })

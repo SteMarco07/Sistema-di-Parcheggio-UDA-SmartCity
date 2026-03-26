@@ -18,7 +18,7 @@ function OrarioParcheggi({
 }) {
     const { setRicerca } = useStore();
     const now = new Date();
-    now.setMinutes(0, 0, 0); // arrotonda all'ora
+    now.setMinutes(0, 0, 0);
 
     const startInitial = new Date(now);
     const endInitial = new Date(startInitial);
@@ -41,7 +41,9 @@ function OrarioParcheggi({
         return `${date.getHours().toString().padStart(2, '0')}:00`;
     };
 
-    const timeSlots = Array.from({ length: 24 }, (_, i) => `${i.toString().padStart(2, '0')}:00`);
+    const timeSlots = Array.from({ length: 24 }, (_, i) =>
+        `${i.toString().padStart(2, '0')}:00`
+    );
 
     const emitChange = (s, e) => {
         if (onChange) onChange({ startDateTime: s, endDateTime: e });
@@ -62,11 +64,13 @@ function OrarioParcheggi({
         emitChange(newStart, newEnd);
     };
 
+    // 🔹 CAMBIO ORA INGRESSO
     const handleStartTimeChange = (time) => {
         const [hours] = time.split(':').map(Number);
         const newStart = new Date(startDateTime);
         newStart.setHours(hours, 0, 0, 0);
 
+        // aggiorna uscita automaticamente +1h
         const newEnd = new Date(newStart);
         newEnd.setHours(newEnd.getHours() + 1);
 
@@ -77,6 +81,7 @@ function OrarioParcheggi({
         emitChange(newStart, newEnd);
     };
 
+    // 🔹 CAMBIO ORA USCITA
     const handleEndTimeChange = (time) => {
         const [hours] = time.split(':').map(Number);
         const newEnd = new Date(endDateTime);
@@ -184,7 +189,7 @@ function OrarioParcheggi({
                             <select
                                 className="select select-bordered w-24"
                                 value={formatHour(endDateTime)}
-                                onChange={handleEndTimeChange}
+                                onChange={(e) => handleEndTimeChange(e.target.value)}
                             >
                                 {timeSlots.map(time => (
                                     <option key={time}>{time}</option>

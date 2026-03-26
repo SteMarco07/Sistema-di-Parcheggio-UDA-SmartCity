@@ -7,11 +7,24 @@ function ElencoParcheggi() {
   const { parcheggiFiltrati } = useStore();
 
   return (
-    <div className="join border border-black rounded-box join-vertical gap-4 h-full ">
-      <div className="join-item h-full flex flex-col">
+  <div className="flex flex-col h-full border border-base-200">
+    
+    {/* Header */}
+    <div className="flex items-center gap-3 px-5 py-4 border-b border-base-200">
+      <div>
         <div className="flex items-center gap-4 px-4 py-3">
           <img src={pIcon} alt="P" className="h-10 w-10" />
           <h2 className="text-3xl font-semibold">Parcheggi disponibili</h2>
+          </div>
+        <p className="text-xs text-base-content/50">{parcheggiFiltrati.length} risultati</p>
+      </div>
+    </div>
+
+    {/* Lista */}
+    <div className="overflow-y-auto flex-1 px-3 py-3 flex flex-col gap-2">
+      {parcheggiFiltrati.length === 0 ? (
+        <div className="flex flex-col items-center justify-center h-full gap-2 text-base-content/30">
+          <p className="text-sm">Nessun parcheggio trovato</p>
         </div>
         <div className='overflow-y-auto flex-1'>
           {parcheggiFiltrati.length !== 0 ? (parcheggiFiltrati.map((item) => (
@@ -30,7 +43,9 @@ function ElencoParcheggi() {
 
       </div>
     </div>
-  );
+
+  </div>
+);
 }
 
 export default ElencoParcheggi;

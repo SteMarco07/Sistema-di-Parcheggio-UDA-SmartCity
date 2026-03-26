@@ -299,7 +299,7 @@ export const useStore = create((set, get) => ({
         }
     },
 
-    modificaPrenotazione: ({prenotazioneModificata}) => {
+    applicaModificaPrenotazione: ({ prenotazioneModificata }) => {
         set({
             prenotazioni: get().prenotazioni.map((p) =>
                 p.id === prenotazioneModificata.id ? prenotazioneModificata : p

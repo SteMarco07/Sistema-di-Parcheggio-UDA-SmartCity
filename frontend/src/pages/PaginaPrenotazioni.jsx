@@ -10,7 +10,7 @@ import { useStore } from "../store.jsx";
 registerLocale("it", it);
 
 function PaginaPrenotazioni() {
-  const { prenotazioni, eliminaPrenotazione, modificaPrenotazione } = useStore();
+  const { prenotazioni, eliminaPrenotazione, applicaModificaPrenotazione } = useStore();
   const [prenotazioneDaModificare, setPrenotazioneDaModificare] = useState(null);
 
 
@@ -19,7 +19,7 @@ function PaginaPrenotazioni() {
   const chiudiModifica = () => setPrenotazioneDaModificare(null);
 
   const salvaModifiche = (prenotazioneModificata) => {
-    modificaPrenotazione({ prenotazioneModificata });
+    applicaModificaPrenotazione({ prenotazioneModificata });
     chiudiModifica();
   };
 

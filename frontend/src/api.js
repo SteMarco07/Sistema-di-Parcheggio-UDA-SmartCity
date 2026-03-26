@@ -51,8 +51,8 @@ export const api = {
                 nome: 'Prenotazione 1',
                 parkingId: 1,
                 userId: 1,
-                startTime: '2026-03-26T10:00:00Z',
-                endTime: '2026-03-27T12:00:00Z'
+                startTime: '2026-03-24T10:00:00Z',
+                endTime: '2026-03-25T12:00:00Z'
             },
             {
                 id: 2,

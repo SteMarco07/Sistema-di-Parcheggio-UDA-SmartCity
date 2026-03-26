@@ -14,6 +14,8 @@ function isoToDate(iso) {
 function ModifyPrenotazioneModal({ open, onClose, prenotazione }) {
     const { modificaPrenotazione } = useStore();
 
+    console.log('Prenotazione da modificare:', prenotazione);
+    const [parkingId, setParkingId] = useState( prenotazione ? prenotazione.parkingId : '');
     const [startDate, setStartDate] = useState(prenotazione ? isoToDate(prenotazione.startTime) : null);
     const [endDate, setEndDate] = useState(prenotazione ? isoToDate(prenotazione.endTime) : null);
     const [busy, setBusy] = useState(false);
@@ -53,7 +55,7 @@ function ModifyPrenotazioneModal({ open, onClose, prenotazione }) {
         }
     };
 
-    return (
+     return (
         <div className={"modal " + (open ? 'modal-open' : '')}>
             <div className="modal-box">
                 <h3 className="font-bold text-lg">Modifica prenotazione</h3>

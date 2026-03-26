@@ -24,7 +24,7 @@ CREATE TABLE reservation(
     end_time DATETIME NOT NULL,
     status ENUM('ACTIVE', 'CANCELLED', 'EXPIRED'),
     id_parking_lot INTEGER NOT NULL,
-    id_user INTEGER NOT NULL,
+    id_user UUID NOT NULL,
     CONSTRAINT fk_id_parking_lot
         FOREIGN KEY (id_parking_lot)
         REFERENCES parking_lot(id),

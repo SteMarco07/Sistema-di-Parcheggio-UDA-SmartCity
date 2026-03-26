@@ -7,9 +7,16 @@ import { useStore } from '../store.jsx';
 
 registerLocale('it', it);
 
-function OrarioParcheggi() {
-    const { setRicerca, setDataOraInizio, setDataOraFine } = useStore();
-
+function OrarioParcheggi({
+    value,
+    onChange,
+    showSearch = true,
+    showSubmit = true,
+    onSearch,
+    onSubmit,
+    submitLabel = 'Cerca',
+}) {
+    const { setRicerca } = useStore();
     const now = new Date();
     now.setMinutes(0, 0, 0);
 
@@ -17,42 +24,44 @@ function OrarioParcheggi() {
     const endInitial = new Date(startInitial);
     endInitial.setHours(startInitial.getHours() + 1);
 
-    const [startDateTime, setStartDateTime] = useState(startInitial);
-    const [endDateTime, setEndDateTime] = useState(endInitial);
+    const controlled = value;
 
-    const formatHour = (date) =>
-        `${date.getHours().toString().padStart(2, '0')}:00`;
+    const [startDateTime, setStartDateTime] = useState(value?.startDateTime ?? startInitial);
+    const [endDateTime, setEndDateTime] = useState(value?.endDateTime ?? endInitial);
+
+    useEffect(() => {
+        if (controlled && value) {
+            setStartDateTime(value.startDateTime);
+            setEndDateTime(value.endDateTime);
+        }
+    }, [value, controlled]);
+
+    const formatHour = (date) => {
+        if (!date || !(date instanceof Date) || isNaN(date.getTime())) return '00:00';
+        return `${date.getHours().toString().padStart(2, '0')}:00`;
+    };
 
     const timeSlots = Array.from({ length: 24 }, (_, i) =>
         `${i.toString().padStart(2, '0')}:00`
     );
 
-    // Inizializza i valori nello store al mount
-    useEffect(() => {
-        try {
-            setDataOraInizio(startInitial.toISOString(), formatHour(startInitial));
-            setDataOraFine(endInitial.toISOString(), formatHour(endInitial));
-        } catch (e) {
-            // ignore
-        }
-        // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, []);
+    const emitChange = (s, e) => {
+        if (onChange) onChange({ startDateTime: s, endDateTime: e });
+    };
 
-    // 🔹 CAMBIO DATA INGRESSO
+    // Gestisce sia cambio data che ora di ingresso
     const handleStartChange = (newDate) => {
         const newStart = new Date(newDate);
         newStart.setMinutes(0, 0, 0);
 
-        setStartDateTime(newStart);
-
-        // aggiorna uscita automaticamente +1h
         const newEnd = new Date(newStart);
         newEnd.setHours(newEnd.getHours() + 1);
-        setEndDateTime(newEnd);
 
-        // salva nello store come stringa ISO + ora formattata
-        setDataOraInizio(newStart.toISOString(), formatHour(newStart));
-        setDataOraFine(newEnd.toISOString(), formatHour(newEnd));
+        if (!controlled) {
+            setStartDateTime(newStart);
+            setEndDateTime(newEnd);
+        }
+        emitChange(newStart, newEnd);
     };
 
     // 🔹 CAMBIO ORA INGRESSO
@@ -61,39 +70,15 @@ function OrarioParcheggi() {
         const newStart = new Date(startDateTime);
         newStart.setHours(hours, 0, 0, 0);
 
-        setStartDateTime(newStart);
-
         // aggiorna uscita automaticamente +1h
         const newEnd = new Date(newStart);
         newEnd.setHours(newEnd.getHours() + 1);
-        setEndDateTime(newEnd);
 
-        // salva nello store
-        setDataOraInizio(newStart.toISOString(), formatHour(newStart));
-        setDataOraFine(newEnd.toISOString(), formatHour(newEnd));
-    };
-
-    // 🔹 CAMBIO DATA USCITA (FIX BUG)
-    const handleEndDateChange = (date) => {
-        const newDate = new Date(date);
-
-        // mantiene l'ora selezionata
-        newDate.setHours(endDateTime.getHours(), 0, 0, 0);
-
-        // evita uscita < ingresso
-        if (newDate <= startDateTime) {
-            const corrected = new Date(startDateTime);
-            corrected.setHours(corrected.getHours() + 1);
-            setEndDateTime(corrected);
-
-            // salva nello store
-            setDataOraFine(corrected.toISOString(), formatHour(corrected));
-        } else {
-            setEndDateTime(newDate);
-
-            // salva nello store
-            setDataOraFine(newDate.toISOString(), formatHour(newDate));
+        if (!controlled) {
+            setStartDateTime(newStart);
+            setEndDateTime(newEnd);
         }
+        emitChange(newStart, newEnd);
     };
 
     // 🔹 CAMBIO ORA USCITA
@@ -101,21 +86,8 @@ function OrarioParcheggi() {
         const [hours] = time.split(':').map(Number);
         const newEnd = new Date(endDateTime);
         newEnd.setHours(hours, 0, 0, 0);
-
-        // evita uscita < ingresso
-        if (newEnd <= startDateTime) {
-            const corrected = new Date(startDateTime);
-            corrected.setHours(corrected.getHours() + 1);
-            setEndDateTime(corrected);
-
-            // salva nello store
-            setDataOraFine(corrected.toISOString(), formatHour(corrected));
-        } else {
-            setEndDateTime(newEnd);
-
-            // salva nello store
-            setDataOraFine(newEnd.toISOString(), formatHour(newEnd));
-        }
+        if (!controlled) setEndDateTime(newEnd);
+        emitChange(startDateTime, newEnd);
     };
 
     const CustomInput = ({ value, onClick, placeholder }) => (
@@ -130,27 +102,38 @@ function OrarioParcheggi() {
         </div>
     );
 
+    const handleSearchChange = (e) => {
+        const v = e.target.value;
+        if (onSearch) onSearch(v);
+        else setRicerca(v);
+    };
+
+    const handleSubmit = () => {
+        if (onSubmit) onSubmit({ startDateTime, endDateTime });
+    };
+
     return (
         <div className="card bg-base-100 shadow-sm mb-4">
             <div className="card-body p-3 sm:p-4">
 
                 <div className="flex flex-col lg:flex-row items-start lg:items-center gap-3">
 
-                    {/* RICERCA */}
-                    <div className="w-full relative">
-                        <div className="absolute -top-2 left-3 px-1 bg-base-100 text-xs text-neutral font-medium">
-                            Ricerca
+                    {showSearch && (
+                        <div className="w-full relative">
+                            <div className="absolute -top-2 left-3 px-1 bg-base-100 text-xs text-neutral font-medium">
+                                Ricerca
+                            </div>
+                            <div className="flex flex-row items-center gap-2 w-full border border-base-300 rounded-lg p-2 pt-3">
+                                <input
+                                    type="text"
+                                    placeholder="Cerca..."
+                                    onChange={handleSearchChange}
+                                    className="input input-bordered flex flex-row items-center gap-2 w-full"
+                                />
+                            </div>
                         </div>
-                        <div className="flex flex-row items-center gap-2 w-full border border-base-300 rounded-lg p-2 pt-3">
-                            <input 
-                                type="text" 
-                                placeholder="Cerca..." 
-                                onChange={(e) => setRicerca(e.target.value)} 
-                                className="input input-bordered w-full" 
-                            />
-                        </div>
-                    </div>
-                    
+                    )}
+
                     {/* INGRESSO */}
                     <div className="w-full relative">
                         <div className="absolute -top-2 left-3 px-1 bg-base-100 text-xs text-neutral font-medium">
@@ -192,7 +175,10 @@ function OrarioParcheggi() {
                             <div className="flex-1">
                                 <DatePicker
                                     selected={endDateTime}
-                                    onChange={handleEndDateChange}
+                                    onChange={(date) => {
+                                        if (!controlled) setEndDateTime(date);
+                                        emitChange(startDateTime, date);
+                                    }}
                                     dateFormat="dd/MM/yyyy"
                                     locale="it"
                                     minDate={startDateTime}
@@ -214,11 +200,13 @@ function OrarioParcheggi() {
                     </div>
 
                     {/* BOTTONE */}
-                    <div className="w-full lg:w-auto flex justify-end">
-                        <button className="btn btn-neutral w-full lg:w-auto">
-                            Cerca   
-                        </button>
-                    </div>
+                    {showSubmit && (
+                        <div className="w-full lg:w-auto flex justify-end">
+                            <button type="button" onClick={handleSubmit} className="btn btn-neutral w-full lg:w-auto">
+                                {submitLabel}
+                            </button>
+                        </div>
+                    )}
                 </div>
             </div>
         </div>

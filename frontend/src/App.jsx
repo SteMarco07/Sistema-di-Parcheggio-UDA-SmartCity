@@ -10,6 +10,7 @@ import PaginaParcheggi from './pages/PaginaParcheggi.jsx';
 import PaginaPrenotazioni from './pages/PaginaPrenotazioni.jsx';
 import PaginaAutenticazione from './pages/PaginaAutenticazione.jsx';
 import PaginaProfilo from './pages/PaginaProfilo.jsx';
+import PaginaDashboard from './pages/PaginaDashboard.jsx';
 
 function App() {
   const { loadFromLocalStorage, fetchParcheggi, fetchPrenotazioni, utente } = useStore();
@@ -60,6 +61,13 @@ function App() {
             <>
               <Navbar />
               <PaginaProfilo />
+            </>
+          }
+          />
+          <Route path="/dashboard" element={
+            <>
+              <Navbar />
+              <PaginaDashboard />
             </>
           }
           />

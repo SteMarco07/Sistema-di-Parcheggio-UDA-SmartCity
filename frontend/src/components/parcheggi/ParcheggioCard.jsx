@@ -6,13 +6,13 @@ function ParcheggioCard({ parcheggio }) {
 
   const [p, setP] = useState(parcheggio);
 
-  const {modifyPosition, modifyZoom} = useStore();
+  const { modifyPosition, modifyZoom } = useStore();
 
   function handleClick() {
     modifyPosition([p.lat, p.lng]);
     modifyZoom(18);
   }
-    
+
 
   return (
     <div onClick={handleClick} className='margin-4'>

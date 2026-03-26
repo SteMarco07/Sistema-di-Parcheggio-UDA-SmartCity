@@ -71,6 +71,34 @@ export const api = {
                 endTime: '2026-06-01T12:00:00Z'
             }
         ]
+    },
+    deleteParcheggio: (id) => {
+        return {
+            id: id,
+            successo: true
+        }
+    },
+
+    deletePrenotazione: (id) => {
+        return {
+            id: id,
+            successo: true
+        }
+    },
+
+    modificaParcheggio: (id, payload) => {
+        return {
+            id: id,
+            successo: true
+        }
+    }
+
+    ,
+    modificaPrenotazione: (id, payload) => {
+        return {
+            prenotazione: payload,
+            successo: true
+        }
     }
 
 }

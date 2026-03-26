@@ -17,6 +17,9 @@ export const useStore = create((set, get) => ({
     showEditModalRes: false,
     showDeleteModalRes: false,
 
+    showAddParkModal: false,
+    
+
     isLoading: false,
     fieldsets: [],
     error: null,
@@ -258,6 +261,32 @@ export const useStore = create((set, get) => ({
 
     nascondiModaleEliminaRes: () => {
         set({ showDeleteModalRes: false, oggettoInModificaRes: null });
+    },
+
+    mostraModaleAggiungiParcheggio: () => {
+        set({ showAddParkModal: true });
+    },
+
+    nascondiModaleAggiungiParcheggio: () => {
+        set({ showAddParkModal: false });
+    },
+
+    aggiungiParcheggio: async (payload) => {
+        set({ isLoading: true, error: null });
+        try {
+            console.log(`Aggiungo parcheggio: ${JSON.stringify(payload)}`);
+            const data = await api.aggiungiParcheggio(payload);
+            if (data && data.successo) {
+                const nuovoParcheggio = { id: data.id, ...payload };
+                const parcheggi = [...get().parcheggi, nuovoParcheggio];
+                set({ parcheggi, parcheggiFiltrati: parcheggi, isLoading: false });
+                console.log("Aggiunto nuovo parcheggio con id:", data.id);
+            } else {
+                set({ isLoading: false });
+            }
+        } catch (err) {
+            set({ error: err.message, isLoading: false });
+        }
     },
 
     formatDate(iso) {

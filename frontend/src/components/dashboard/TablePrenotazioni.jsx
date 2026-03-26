@@ -3,6 +3,7 @@ import { useStore } from '../../store.jsx';
 
 import RecordPrenotazioni from './RecordPrenotazioni.jsx';
 import DeletePrenotazioneModal from '../modals/DeletePrenotazioneModal.jsx';
+import ModifyPrenotazioneModal from '../modals/ModifyPrenotazioneModal.jsx';
 
 function TablePrenotazioni() {
 
@@ -20,12 +21,6 @@ function TablePrenotazioni() {
         return m;
     }, [parcheggi]);
 
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            nascondiModaleEliminaRes();
-            nascondiModaleModificaRes();
-        }
-    });
 
     return (
         <>
@@ -65,6 +60,12 @@ function TablePrenotazioni() {
                 prenotazione={oggettoInModificaRes}
                 parkingName={parcheggiMap.get(oggettoInModificaRes?.parkingId)}
             />
+            <ModifyPrenotazioneModal
+                open={showEditModalRes}
+                onClose={() => nascondiModaleModificaRes()}
+                prenotazione={oggettoInModificaRes}
+            />
+            
         </>
     );
 }

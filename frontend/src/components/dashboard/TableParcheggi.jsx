@@ -21,18 +21,7 @@ function TableParcheggi() {
             nascondiModaleEliminaPark();
         }
     }
-
-
-
-    window.addEventListener('keydown', (e) => {
-        if (e.key === 'Escape') {
-            nascondiModaleEliminaPark();
-            nascondiModaleModificaPark();
-        }
-    });
-
   
-
     return (
         <>
             <h1 className="text-2xl font-bold mb-4">Elenco dei Parcheggi</h1>

@@ -1,4 +1,4 @@
-import { use } from 'react';
+import { useEffect } from 'react';
 import { useStore } from '../store.jsx';
 
 import TableParcheggi from '../components/dashboard/TableParcheggi.jsx';
@@ -6,7 +6,22 @@ import TablePrenotazioni from '../components/dashboard/TablePrenotazioni.jsx';
 import ChartParcheggi from '../components/dashboard/ChartParcheggi.jsx';
 
 function PaginaDashboard() {
-    const { parcheggi } = useStore();
+    const { nascondiModaleEliminaPark, nascondiModaleModificaPark, nascondiModaleEliminaRes, nascondiModaleModificaRes } = useStore();
+
+
+    useEffect(() => {
+        const onKeyDown = (e) => {
+            if (e.key === 'Escape') {
+                nascondiModaleEliminaPark();
+                nascondiModaleModificaPark();
+                nascondiModaleEliminaRes();
+                nascondiModaleModificaRes();
+            }
+        };
+
+        window.addEventListener('keydown', onKeyDown);
+        return () => window.removeEventListener('keydown', onKeyDown);
+    }, [nascondiModaleEliminaPark, nascondiModaleModificaPark, nascondiModaleEliminaRes, nascondiModaleModificaRes]);
 
     return (
         <div className="p-4">

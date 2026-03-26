@@ -14,7 +14,7 @@ function RecordPrenotazioni({ numero, prenotazione, parcheggiMap }) {
                 <td>{parkingName}</td>
                 <td>{formatDate(prenotazione.startTime)}</td>
                 <td>{formatDate(prenotazione.endTime)}</td>
-                <td><button className="btn btn-ghost"><img src="src/assets/icona_modifica.svg" alt="Modifica" className='h-8 ' /></button></td>
+                <td><button className="btn btn-ghost" onClick={() => mostraModaleModificaRes(prenotazione)}><img src="src/assets/icona_modifica.svg" alt="Modifica" className='h-8 ' /></button></td>
                 <td><button className="btn btn-ghost" onClick={() => mostraModaleEliminaRes(prenotazione)}><img src="src/assets/icona_cestino.svg" alt="Elimina" className='h-8 ' /></button></td>
             </tr>
         </>

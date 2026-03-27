@@ -78,6 +78,12 @@ $app->get('/park', ParcheggiController::class . ':getAllParcheggi');
 // Restituisce un parcheggio specifico
 $app->get('/park/{park_id}',  ParcheggiController::class . ':getParcheggioById' );
 
+// Restituisce una prenotazione specifica (per id)
+$app->get('/reservation/search-id/{uuid}',  ParcheggiController::class . ':getReservationByUuid' );
+
+// Restituisce una prenotazione specifica (per id utente)
+$app->get('/reservation/search-user/{uuid}',  ParcheggiController::class . ':getReservationByUserId' );
+
 // Crea una nuova prenotazione, l'ID del parcheggio e le date di inizio e fine sono nel body
 $app->put('/reservation', ParcheggiController::class . ':userCreateReservation' );
 

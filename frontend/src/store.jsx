@@ -97,6 +97,13 @@ export const useStore = create((set, get) => ({
 
     },
 
+
+    addPrenotazione: ({prenotazione}) => {
+        prenotazione.id = get().prenotazioni.length+1;
+        //console.log(`Lo store aggiunge ${JSON.stringify(prenotazione)}`)
+        set({ prenotazioni: [...get().prenotazioni, prenotazione] });
+    },
+
     // Modifica modalità di autenticazione (login/signup)
     setAuthMode: (mode) => {
         if (mode == 'login' || mode == 'signup') {

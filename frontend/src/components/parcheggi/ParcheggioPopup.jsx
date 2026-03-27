@@ -13,6 +13,7 @@ function ParcheggioPopup({ parcheggio }) {
 
     const handlePrenota = () => {
         // prepara dati di anteprima e apre il modal di conferma
+        // console.log(`ParcheggioPopup: getTimeStampInizio=${getTimeStampInizio()}, getTimeStampFine=${getTimeStampFine()}`);
         setPreview({ start: getTimeStampInizio(), end: getTimeStampFine() });
         setModalOpen(true);
     };

@@ -180,7 +180,7 @@ export const useStore = create((set, get) => ({
                 const filtrati = get().parcheggi.filter((p) => p.id !== data.id);
 
                 set({ parcheggi: filtrati, parcheggiFiltrati: filtrati, isLoading: false });
-                console.log("Eliminato parcheggio con id:", data.id);
+                // console.log("Eliminato parcheggio con id:", data.id);
                 get().fetchPrenotazioni();
             } else {
                 set({ isLoading: false });
@@ -197,7 +197,7 @@ export const useStore = create((set, get) => ({
             if (data && data.successo) {
                 const remaining = get().prenotazioni.filter((p) => p.id !== data.id);
                 set({ prenotazioni: remaining, isLoading: false });
-                console.log("Eliminata prenotazione con id:", data.id);
+                // console.log("Eliminata prenotazione con id:", data.id);
             } else {
                 set({ isLoading: false });
             }
@@ -213,7 +213,7 @@ export const useStore = create((set, get) => ({
             if (data && data.successo) {
                 const parcheggi = get().parcheggi.map((p) => p.id === id ? { ...p, ...payload } : p);
                 set({ parcheggi, parcheggiFiltrati: parcheggi, isLoading: false });
-                console.log("Modificato parcheggio con id:", id);
+                // console.log("Modificato parcheggio con id:", id);
             } else {
                 set({ isLoading: false });
             }
@@ -229,7 +229,7 @@ export const useStore = create((set, get) => ({
             if (data && data.successo) {
                 const prenotazioni = get().prenotazioni.map((p) => p.id === id ? { ...p, ...data.prenotazione } : p);
                 set({ prenotazioni, isLoading: false });
-                console.log("Modificata prenotazione con id:", id);
+                // console.log("Modificata prenotazione con id:", id);
             } else {
                 set({ isLoading: false });
             }
@@ -283,13 +283,13 @@ export const useStore = create((set, get) => ({
     aggiungiParcheggio: async (payload) => {
         set({ isLoading: true, error: null });
         try {
-            console.log(`Aggiungo parcheggio: ${JSON.stringify(payload)}`);
+            // console.log(`Aggiungo parcheggio: ${JSON.stringify(payload)}`);
             const data = await api.aggiungiParcheggio(payload);
             if (data && data.successo) {
                 const nuovoParcheggio = { id: data.id, ...payload };
                 const parcheggi = [...get().parcheggi, nuovoParcheggio];
                 set({ parcheggi, parcheggiFiltrati: parcheggi, isLoading: false });
-                console.log("Aggiunto nuovo parcheggio con id:", data.id);
+                // console.log("Aggiunto nuovo parcheggio con id:", data.id);
             } else {
                 set({ isLoading: false });
             }
@@ -342,6 +342,7 @@ export const useStore = create((set, get) => ({
 
     getTimeStampFine: () => {
         const { dataOraFine, oraFine } = get();
+        // console.log(`getTimeStampFine: dataOraFine=${dataOraFine}, oraFine=${oraFine}`);
         if (!dataOraFine || !oraFine) return null;
 
         const timestamp = new Date(dataOraFine);

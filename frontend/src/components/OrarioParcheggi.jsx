@@ -16,7 +16,7 @@ function OrarioParcheggi({
     onSubmit,
     submitLabel = 'Cerca',
 }) {
-    const { setRicerca } = useStore();
+    const { setRicerca, setDataOraInizio, setDataOraFine, dataOraInizio, oraInizio, dataOraFine, oraFine } = useStore();
     const now = new Date();
     now.setMinutes(0, 0, 0);
 
@@ -35,6 +35,39 @@ function OrarioParcheggi({
             setEndDateTime(value.endDateTime);
         }
     }, [value, controlled]);
+
+    // Sync initial local state to store on mount (when uncontrolled)
+    useEffect(() => {
+        if (controlled) return;
+        try {
+            setDataOraInizio(startDateTime.toISOString(), formatHour(startDateTime));
+            setDataOraFine(endDateTime.toISOString(), formatHour(endDateTime));
+        } catch (e) {
+            // ignore
+        }
+        // eslint-disable-next-line react-hooks/exhaustive-deps
+    }, []);
+
+    // If store values change elsewhere, reflect them into the local state (when uncontrolled)
+    useEffect(() => {
+        if (controlled) return;
+        try {
+            if (dataOraInizio && oraInizio) {
+                const d = new Date(dataOraInizio);
+                const [h, m] = (oraInizio || '00:00').split(':').map(Number);
+                d.setHours(h ?? 0, m ?? 0, 0, 0);
+                setStartDateTime(d);
+            }
+            if (dataOraFine && oraFine) {
+                const d2 = new Date(dataOraFine);
+                const [h2, m2] = (oraFine || '00:00').split(':').map(Number);
+                d2.setHours(h2 ?? 0, m2 ?? 0, 0, 0);
+                setEndDateTime(d2);
+            }
+        } catch (e) {
+            // ignore parse errors
+        }
+    }, [dataOraInizio, oraInizio, dataOraFine, oraFine, controlled]);
 
     const formatHour = (date) => {
         if (!date || !(date instanceof Date) || isNaN(date.getTime())) return '00:00';
@@ -61,6 +94,13 @@ function OrarioParcheggi({
             setStartDateTime(newStart);
             setEndDateTime(newEnd);
         }
+        // update store
+        try {
+            setDataOraInizio(newStart.toISOString(), formatHour(newStart));
+            setDataOraFine(newEnd.toISOString(), formatHour(newEnd));
+        } catch (e) {
+            // ignore
+        }
         emitChange(newStart, newEnd);
     };
 
@@ -78,6 +118,13 @@ function OrarioParcheggi({
             setStartDateTime(newStart);
             setEndDateTime(newEnd);
         }
+        // update store
+        try {
+            setDataOraInizio(newStart.toISOString(), formatHour(newStart));
+            setDataOraFine(newEnd.toISOString(), formatHour(newEnd));
+        } catch (e) {
+            // ignore
+        }
         emitChange(newStart, newEnd);
     };
 
@@ -87,6 +134,12 @@ function OrarioParcheggi({
         const newEnd = new Date(endDateTime);
         newEnd.setHours(hours, 0, 0, 0);
         if (!controlled) setEndDateTime(newEnd);
+        // update store
+        try {
+            setDataOraFine(newEnd.toISOString(), formatHour(newEnd));
+        } catch (e) {
+            // ignore
+        }
         emitChange(startDateTime, newEnd);
     };
 
@@ -177,6 +230,11 @@ function OrarioParcheggi({
                                     selected={endDateTime}
                                     onChange={(date) => {
                                         if (!controlled) setEndDateTime(date);
+                                        try {
+                                            setDataOraFine(date.toISOString(), formatHour(date));
+                                        } catch (e) {
+                                            // ignore
+                                        }
                                         emitChange(startDateTime, date);
                                     }}
                                     dateFormat="dd/MM/yyyy"

@@ -1,36 +1,37 @@
+DROP DATABASE IF EXISTS smartcity;
 CREATE DATABASE smartcity;
 USE smartcity;
 
 CREATE TABLE parking_lot(
-    id INTEGER AUTO_INCREMENT PRIMARY KEY,
-    name char(50) UNIQUE NOT NULL,
-    total_spots INT NOT NULL,
-    latitude FLOAT(23,20) NOT NULL,
-    longitude FLOAT(23,20) NOT NULL
+                            id INTEGER AUTO_INCREMENT PRIMARY KEY,
+                            name char(50) UNIQUE NOT NULL,
+                            total_spots INT NOT NULL,
+                            latitude FLOAT(23,20) NOT NULL,
+                            longitude FLOAT(23,20) NOT NULL
 );
 
 CREATE TABLE user(
-    uuid UUID PRIMARY KEY,
-    first_name char(100) NOT NULL,
-    last_name char(100) NOT NULL,
-    license_plate char(10) NOT NULL,
-    username char(20) UNIQUE NOT NULL,
-    password char(100) UNIQUE NOT NULL
+                     uuid UUID PRIMARY KEY,
+                     first_name char(100) NOT NULL,
+                     last_name char(100) NOT NULL,
+                     license_plate char(10) NOT NULL,
+                     username char(20) UNIQUE NOT NULL,
+                     password char(100) UNIQUE NOT NULL
 );
 
 CREATE TABLE reservation(
-    uuid UUID PRIMARY KEY,
-    start_time DATETIME NOT NULL,
-    end_time DATETIME NOT NULL,
-    status ENUM('ACTIVE', 'CANCELLED', 'EXPIRED'),
-    id_parking_lot INTEGER NOT NULL,
-    id_user UUID NOT NULL,
-    CONSTRAINT fk_id_parking_lot
-        FOREIGN KEY (id_parking_lot)
-        REFERENCES parking_lot(id),
-    CONSTRAINT fk_id_user
-        FOREIGN KEY (id_user)
-        REFERENCES user(uuid)
+                            uuid UUID PRIMARY KEY,
+                            start_time DATETIME NOT NULL,
+                            end_time DATETIME NOT NULL,
+                            status ENUM('ACTIVE', 'CANCELLED', 'EXPIRED'),
+                            id_parking_lot INTEGER NOT NULL,
+                            id_user UUID NOT NULL,
+                            CONSTRAINT fk_id_parking_lot
+                                FOREIGN KEY (id_parking_lot)
+                                    REFERENCES parking_lot(id),
+                            CONSTRAINT fk_id_user
+                                FOREIGN KEY (id_user)
+                                    REFERENCES user(uuid)
 );
 
 CREATE INDEX indx_license_plate
@@ -40,3 +41,4 @@ INSERT INTO parking_lot(name, total_spots, latitude, longitude) VALUES('prova1',
 INSERT INTO parking_lot(name, total_spots, latitude, longitude) VALUES('prova2', 20, 36.1941561, 86.164656);
 INSERT INTO parking_lot(name, total_spots, latitude, longitude) VALUES('prova3', 30, 54.1565165, 26.256551);
 INSERT INTO parking_lot(name, total_spots, latitude, longitude) VALUES('prova4', 40, 78.1651325, 41.15655656);
+

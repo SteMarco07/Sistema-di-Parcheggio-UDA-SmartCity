@@ -1,32 +1,31 @@
 <?php
 
-//Il namespace deve essere uguale alla cartella che contiene il file
-namespace Util;
+namespace App\Util;
+
 use PDO;
 
-
 /**
- * Classe per gestire la connessione al database
+ * Singleton per la connessione al database.
+ * Le costanti DB_* sono definite in conf/config.php e caricate da index.php.
  */
+class Connection
+{
+    private static ?PDO $pdo = null;
 
-class Connection {
-    //Statico perchè è un attributo di classe istanziato una sola volta
-    private static PDO $pdo;
+    private function __construct()
+    {
+    }
 
-    /**
-     * Costruttore privato per evitare la creazione di oggetti
-     */
-    private function __construct() {}
-
-    public static function getInstance($config): PDO {
-        if (!isset($pdo)) {
-            $DSN = 'mysql:host=' . $config['DB_HOST'] . ';dbname=' . $config['DB_NAME'];
-            $pdo = new PDO($DSN, $config['DB_USER'], $config['DB_PASS']);
-            //Impostiamo la "forma" dei dati che verranno restituiti da una
-            //query come delle mappe associative
-            $pdo->setAttribute(PDO::ATTR_DEFAULT_FETCH_MODE, PDO::FETCH_ASSOC);
-
+    public static function getInstance(): PDO
+    {
+        if (self::$pdo === null) {
+            $dsn = 'mysql:host=' . DB_HOST . ';dbname=' . DB_NAME . ';charset=' . DB_CHAR;
+            self::$pdo = new PDO($dsn, DB_USER, DB_PASSWORD, [
+                PDO::ATTR_ERRMODE            => PDO::ERRMODE_EXCEPTION,
+                PDO::ATTR_DEFAULT_FETCH_MODE => PDO::FETCH_ASSOC,
+                PDO::ATTR_EMULATE_PREPARES   => false,
+            ]);
         }
-        return $pdo;
+        return self::$pdo;
     }
 }

@@ -11,8 +11,8 @@ require './Controller/ParcheggiController.php';
 
 use League\Plates\Engine;
 use Controller\ParcheggiController;
-use App\Middleware\JwtMiddleware;
-use App\Controller\AuthController;
+use Middleware\JwtMiddleware;
+use Controller\AuthController;
 use DI\Container as Container;
 
 //Istruzione super importante per il deployment
@@ -78,7 +78,7 @@ $app->get('/', function (Request $request, Response $response, $args): Response 
 $app->post('/login', [AuthController::class, 'login']);
 
 // Rotta per la registrazione
-$app->post('/sign-in', [AuthController::class, 'login']);
+$app->post('/register', AuthController::class. ':register');
 
 // Restituisce tutti i parcheggi presenti
 $app->get('/park', ParcheggiController::class . ':getAllParcheggi');

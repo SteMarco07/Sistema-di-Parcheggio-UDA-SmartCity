@@ -1,11 +1,20 @@
 <?php
 
-define('JWT_SECRET', 'una_stringa_segreta_lunga_e_difficile');
-define('JWT_ALGO', 'HS256');
-define('JWT_EXPIRE_MINUTES', 60);
+const DB_HOST = 'database'; //può essere un indirizzo IP o un nome DNS
 
-define('DB_HOST', $_ENV['MYSQL_HOST']     ?? 'database');
-define('DB_NAME', $_ENV['MYSQL_DATABASE'] ?? '');
-define('DB_USER', $_ENV['MYSQL_USER']     ?? '');
-define('DB_PASSWORD', $_ENV['MYSQL_PASSWORD'] ?? '');
-define('DB_CHAR', 'utf8mb4');
+const DB_NAME = 'smartcity'; 
+
+const DB_USER = 'root';
+
+const DB_PASS = 'rootpassword';
+
+const BASEPATH = '/parcheggi';
+
+return [
+    'DB_HOST' => DB_HOST,
+    'DB_NAME' => DB_NAME,
+    'DB_USER' => DB_USER,
+    'DB_PASS' => DB_PASS,
+    'BASEPATH' => BASEPATH,
+    'PRODUCTION' => false
+];

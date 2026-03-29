@@ -16,7 +16,7 @@ class ParcheggiController {
     private $container;
     private $parcheggiRepository;
 
-    // constructor receives container instance
+    // constructor receives a container instance
     public function __construct(ContainerInterface $container) {
         $this->container = $container;
         $this->parcheggiRepository = new ParcheggiRepository($this->container->get('config'));

@@ -1,0 +1,12 @@
+###
+POST http://localhost:9080/parcheggi/register
+    ?generated-in=PhpStorm
+Content-Type: application/json
+
+    { "nome" : "Mario",
+      "cognome" : "Rossi",
+      "targa" : "AB123CD",
+      "email" : "prova@gmail.com",
+      "password" : "papopepo" }
+
+###

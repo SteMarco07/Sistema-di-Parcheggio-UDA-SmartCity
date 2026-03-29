@@ -8,6 +8,7 @@ use Slim\Factory\AppFactory;
 
 require './vendor/autoload.php';
 require './Controller/ParcheggiController.php';
+require './Controller/AuthController.php';
 
 use League\Plates\Engine;
 use Controller\ParcheggiController;

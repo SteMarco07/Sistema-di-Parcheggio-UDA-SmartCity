@@ -1,0 +1,9 @@
+###
+POST http://localhost:9080/parcheggi/login
+    ?generated-in=PhpStorm
+Content-Type: application/json
+
+{ "username" : "prova@gmail.com",
+  "password" : "papopepo" }
+
+###

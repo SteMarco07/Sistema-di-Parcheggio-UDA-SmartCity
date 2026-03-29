@@ -27,30 +27,30 @@ class UserRepository
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password'])) {
-            return self::generateToken($user['id'], $username);
+            return self::generateToken($user['uuid'], $username);
         }
         return null;
     }
 
-    private function generateToken(int $id, string $username): string {
-        $emissione = new \DateTimeImmutable();
-        $scadenza = $emissione->modify('+' . JWT_EXPIRE_MINUTES . ' minutes');
+    private function generateToken(string $id, string $username): string {
+        $emission = new \DateTimeImmutable();
+        $expiration = $emission->modify('+' . $this->config['JWT_EXPIRE_MINUTES'] . ' minutes');
 
         $payload = [
-            'iat'  => $emissione->getTimestamp(),   // Issued at: quando è stato emesso
-            'exp'  => $scadenza->getTimestamp(),    // Expiration: quando scade
+            'iat'  => $emission->getTimestamp(),   // Issued at: quando è stato emesso
+            'exp'  => $expiration->getTimestamp(),    // Expiration: quando scade
             'data' => [                             // Dati applicativi
                 'id'       => $id,
                 'username' => $username,
             ]
         ];
 
-        return JWT::encode($payload, JWT_SECRET, JWT_ALGO);
+        return JWT::encode($payload, $this->config['JWT_SECRET'], $this->config['JWT_ALGO']);
     }
 
     public function createUser(string $nome, string $cognome, string $targa, string $email, string $password){
-        $stmt = $this->pdo->prepare('INSERT INTO user (first_name, last_name, license_plate, username, password) 
-                                    VALUES (:first_name, :last_name, :license_plate, :username, :password)');
+        $stmt = $this->pdo->prepare('INSERT INTO user (uuid, first_name, last_name, license_plate, username, password) 
+                                    VALUES (UUID(), :first_name, :last_name, :license_plate, :username, :password)');
         $stmt->execute([
             'first_name' => $nome,
             'last_name' => $cognome,

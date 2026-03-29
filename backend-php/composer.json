@@ -3,13 +3,17 @@
         "slim/slim": "4.*",
         "slim/psr7": "^1.8",
         "league/plates": "^3.6",
-        "php-di/slim-bridge": "*"
+        "firebase/php-jwt": "^7.0",
+        "php-di/slim-bridge": "*",
+        "php-di/php-di" : "^7.0",
+        "ext-json": "*"
     },
 
     "autoload": {
         "psr-4": {
             "Util\\": "Util/",
-            "Model\\": "Model/"
+            "Model\\": "Model/",
+            "Controller\\": "Controller/"
         }
     }
 }

@@ -3,9 +3,9 @@
 namespace Controller;
 
 use Model\UserRepository;
-use Psr\Http\Message\ResponseInterface as Response;
-use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Container\ContainerInterface;
+use Slim\Psr7\Request;
+use Slim\Psr7\Response;
 
 class AuthController
 {
@@ -37,7 +37,7 @@ class AuthController
             ], 400);
         }
 
-        $repository = new UserRepository();
+        $repository = new UserRepository($this->container->get('config'));
         $token = $repository->verifyCredentials($data['username'], $data['password']);
 
         if ($token === null) {

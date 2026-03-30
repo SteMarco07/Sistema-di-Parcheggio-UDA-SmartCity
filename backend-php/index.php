@@ -82,10 +82,10 @@ $app->post('/login', [AuthController::class, 'login']);
 $app->post('/register', [AuthController::class, 'register']);
 
 // Restituisce tutti i parcheggi presenti
-$app->get('/park', ParcheggiController::class . ':getAllParcheggi');
+$app->get('/park', [ParcheggiController::class, ':getAllParcheggi']);
 
 // Restituisce un parcheggio specifico
-$app->get('/park/{park_id}',  ParcheggiController::class . ':getParcheggioById');
+$app->get('/park/{park_id}',  [ParcheggiController::class, ':getParcheggioById']);
 
 // Restituisce i posti disponibili prima che l'utente ne faccia una
 $app->get('/reservation/available/{start}/{end}', function (Request $request, Response $response, $args): Response {
@@ -104,19 +104,19 @@ $app->get('/reservation/available/{start}/{end}', function (Request $request, Re
 // Funzione per le rotte protette da autenticazione
 $app->group('', function ($group) {
     // Restituisce una prenotazione specifica (per id)
-    $group->get('/reservation/search-id/{uuid}',  ParcheggiController::class . ':getReservationByUuid');
+    $group->get('/reservation/search-id/{uuid}',  [ParcheggiController::class, ':getReservationByUuid']);
 
     // Restituisce una prenotazione specifica (per id utente)
-    $group->get('/reservation/search-user/{uuid}',  ParcheggiController::class . ':getReservationByUserId');
+    $group->get('/reservation/search-user/{uuid}',  [ParcheggiController::class, ':getReservationByUserId']);
 
     // Crea una nuova prenotazione, l'ID del parcheggio e le date di inizio e fine sono nel body
-    $group->put('/reservation', ParcheggiController::class . ':userCreateReservation');
+    $group->put('/reservation', [ParcheggiController::class, ':userCreateReservation']);
 
     // Modifica una prenotazione esistente, l'ID e le date di inizio e fine sono nel body
-    $group->post('/reservation', ParcheggiController::class . ':userEditReservation');
+    $group->post('/reservation', [ParcheggiController::class, ':userEditReservation']);
 
     // Elimina una prenotazione, dal lato utente (id nel body)
-    $group->delete('/reservation', ParcheggiController::class . ':deleteReservation');
+    $group->delete('/reservation', [ParcheggiController::class, ':deleteReservation']);
 
     // L'amministratore deve poter creare un parcheggio
     $group->put('/park', function (Request $request, Response $response, $args): Response {

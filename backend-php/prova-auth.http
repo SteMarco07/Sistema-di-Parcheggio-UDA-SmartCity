@@ -10,5 +10,5 @@ Content-Type: application/json
 %}
 
 ### Accesso ad una rotta protetta
-GET http://localhost:9080/api/park
+PUT http://localhost:9080/api/reservation
 Authorization: Bearer {{token}}

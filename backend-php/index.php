@@ -9,8 +9,8 @@ use Slim\Factory\AppFactory;
 require './vendor/autoload.php';
 require './Controller/ParcheggiController.php';
 require './Controller/AuthController.php';
+require './Middleware/JwtMiddleware.php';
 
-use League\Plates\Engine;
 use Controller\ParcheggiController;
 use Middleware\JwtMiddleware;
 use Controller\AuthController;
@@ -79,61 +79,13 @@ $app->get('/', function (Request $request, Response $response, $args): Response 
 $app->post('/login', [AuthController::class, 'login']);
 
 // Rotta per la registrazione
-$app->post('/register', AuthController::class. ':register');
+$app->post('/register', [AuthController::class, 'register']);
 
 // Restituisce tutti i parcheggi presenti
 $app->get('/park', ParcheggiController::class . ':getAllParcheggi');
 
 // Restituisce un parcheggio specifico
-$app->get('/park/{park_id}',  ParcheggiController::class . ':getParcheggioById' );
-
-// Restituisce una prenotazione specifica (per id)
-$app->get('/reservation/search-id/{uuid}',  ParcheggiController::class . ':getReservationByUuid' );
-
-// Restituisce una prenotazione specifica (per id utente)
-$app->get('/reservation/search-user/{uuid}',  ParcheggiController::class . ':getReservationByUserId' );
-
-// Crea una nuova prenotazione, l'ID del parcheggio e le date di inizio e fine sono nel body
-$app->put('/reservation', ParcheggiController::class . ':userCreateReservation' );
-
-// Modifica una prenotazione esistente, l'ID e le date di inizio e fine sono nel body
-$app->post('/reservation', ParcheggiController::class . ':userEditReservation' );
-
-// Elimina una prenotazione, dal lato utente (id nel body)
-$app->delete('/reservation', ParcheggiController::class . ':deleteReservation');
-
-// L'amministratore deve poter creare un parcheggio
-$app->put('/park', function (Request $request, Response $response, $args): Response {
-    global $pdo;
-
-    $park_id = $request->getParsedBody()['park_id'];
-
-    //Logica di creazione
-
-    return $response->withStatus(201);
-});
-
-// L'amministratore deve poter modificare un parcheggio
-$app->post('/park', function (Request $request, Response $response, $args): Response {
-
-    $park_id = $request->getParsedBody()['park_id'];
-
-    //Logica di modifica
-
-    return $response->withStatus(204);
-});
-
-// L'amministratore deve poter eliminare un parcheggio
-$app->delete('/park/{park_id}', function (Request $request, Response $response, $args): Response {
-    global $pdo;
-
-    $park_id = $args['park_id'];
-
-    // Logica di eliminazione
-
-    $response = $response->withStatus(204);
-    return $response;
-});
+$app->get('/park/{park_id}',  ParcheggiController::class . ':getParcheggioById');
 
 // Restituisce i posti disponibili prima che l'utente ne faccia una
 $app->get('/reservation/available/{start}/{end}', function (Request $request, Response $response, $args): Response {
@@ -148,5 +100,56 @@ $app->get('/reservation/available/{start}/{end}', function (Request $request, Re
     $response->getBody()->write(json_encode($disponibili));
     return $response->withHeader('Content-Type', 'application/json');
 });
+
+// Funzione per le rotte protette da autenticazione
+$app->group('', function ($group) {
+    // Restituisce una prenotazione specifica (per id)
+    $group->get('/reservation/search-id/{uuid}',  ParcheggiController::class . ':getReservationByUuid');
+
+    // Restituisce una prenotazione specifica (per id utente)
+    $group->get('/reservation/search-user/{uuid}',  ParcheggiController::class . ':getReservationByUserId');
+
+    // Crea una nuova prenotazione, l'ID del parcheggio e le date di inizio e fine sono nel body
+    $group->put('/reservation', ParcheggiController::class . ':userCreateReservation');
+
+    // Modifica una prenotazione esistente, l'ID e le date di inizio e fine sono nel body
+    $group->post('/reservation', ParcheggiController::class . ':userEditReservation');
+
+    // Elimina una prenotazione, dal lato utente (id nel body)
+    $group->delete('/reservation', ParcheggiController::class . ':deleteReservation');
+
+    // L'amministratore deve poter creare un parcheggio
+    $group->put('/park', function (Request $request, Response $response, $args): Response {
+        global $pdo;
+
+        $park_id = $request->getParsedBody()['park_id'];
+
+        //Logica di creazione
+
+        return $response->withStatus(201);
+    });
+
+    // L'amministratore deve poter modificare un parcheggio
+    $group->post('/park', function (Request $request, Response $response, $args): Response {
+
+        $park_id = $request->getParsedBody()['park_id'];
+
+        //Logica di modifica
+
+        return $response->withStatus(204);
+    });
+
+    // L'amministratore deve poter eliminare un parcheggio
+    $group->delete('/park/{park_id}', function (Request $request, Response $response, $args): Response {
+        global $pdo;
+
+        $park_id = $args['park_id'];
+
+        // Logica di eliminazione
+
+        $response = $response->withStatus(204);
+        return $response;
+    });
+})->add(new JwtMiddleware());
 
 $app->run();

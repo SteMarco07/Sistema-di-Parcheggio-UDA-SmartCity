@@ -8,9 +8,9 @@ const DB_USER = 'root';
 
 const DB_PASS = 'rootpassword';
 
-const BASEPATH = '/parcheggi';
+const BASEPATH = '/api';
 
-const JWT_SECRET = 'una_stringa_segreta_lunga_e_difficile';
+const JWT_SECRET = 'aa1ec7a2a8ff7768ea28cfa05709fb70806136622d33c0e123acc1fffbbabda0';
 
 const JWT_EXPIRE_MINUTES = 60;
 

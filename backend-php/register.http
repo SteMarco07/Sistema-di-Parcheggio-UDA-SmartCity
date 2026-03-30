@@ -1,5 +1,5 @@
 ###
-POST http://localhost:9080/parcheggi/register
+POST http://localhost:9080/api/register
     ?generated-in=PhpStorm
 Content-Type: application/json
 

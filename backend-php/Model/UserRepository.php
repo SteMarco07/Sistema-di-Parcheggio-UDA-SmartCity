@@ -20,8 +20,7 @@ class UserRepository
      * La password è confrontata con password_verify(), quindi nel db va memorizzato
      * l'hash prodotto da password_hash().
      */
-    public function verifyCredentials(string $username, string $password): ?string
-    {
+    public function verifyCredentials(string $username, string $password): ?string {
         $stmt = $this->pdo->prepare('SELECT * FROM user WHERE username = :username');
         $stmt->execute(['username' => $username]);
         $user = $stmt->fetch();
@@ -48,7 +47,7 @@ class UserRepository
         return JWT::encode($payload, $this->config['JWT_SECRET'], $this->config['JWT_ALGO']);
     }
 
-    public function createUser(string $nome, string $cognome, string $targa, string $email, string $password){
+    public function createUser(string $nome, string $cognome, string $targa, string $email, string $password) {
         $stmt = $this->pdo->prepare('INSERT INTO user (uuid, first_name, last_name, license_plate, username, password) 
                                     VALUES (UUID(), :first_name, :last_name, :license_plate, :username, :password)');
         $stmt->execute([

@@ -93,6 +93,17 @@ export const useStore = create((set, get) => ({
         }
     },
 
+    register: async (nome, cognome, email, targa, password) => {
+        try {
+            const userData = await api.register(nome, cognome, email, targa, password);
+            get().setUser(userData);
+            return { success: true };
+        } catch (err) {
+            return { success: false, message: err.message };
+        }
+    },
+
+
     // Modifica modalità di autenticazione (login/signup)
     setAuthMode: (mode) => {
         if (mode == 'login' || mode == 'signup') {

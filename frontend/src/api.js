@@ -85,6 +85,23 @@ export const api = {
                 'password': password
             }),
         })
+    },
+
+    register: (nome, cognome, email, targa, password) => {
+        console.log(`Registrazione con ${JSON.stringify({ nome, cognome, email, targa, password })}`)
+        return request("register", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'nome': nome,
+                'cognome': cognome,
+                'email': email,
+                'targa': targa,
+                'password': password
+            }),
+        })
     }
 
 }

@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 function SignupForm() {
 
-    const { setAuthMode } = useStore();
+    const { setAuthMode, register } = useStore();
     const { utente, setUser } = useStore();
 
     const [name, setName] = useState("");
@@ -17,7 +17,7 @@ function SignupForm() {
 
     const navigate = useNavigate();
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
         if (password !== confirm) {
             alert("Le password non corrispondono");
@@ -35,7 +35,13 @@ function SignupForm() {
             iniziali: initials
         });
 
-        navigate('/parcheggi');
+        const result = await register(name, surname, email, targa, password);
+
+        if (result.success) {
+            navigate('/parcheggi');
+        } else {
+            alert(result.message);
+        }
     }
 
     return (

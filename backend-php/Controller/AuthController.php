@@ -26,11 +26,13 @@ class AuthController{
 
     public function login(Request $request, Response $response): Response {
         $data = $request->getParsedBody();
+                
 
         // Validazione minima: i campi devono esserci
         if (empty($data['username']) || empty($data['password'])) {
             return $this->JSONResponse($response, [
-                'errore' => 'Username e password sono obbligatori'
+                'errore' => 'Username e password sono obbligatori',
+                'contesto' => $data
             ], 400);
         }
 
@@ -54,7 +56,7 @@ class AuthController{
             $request->getParsedBody()['cognome'],
             $request->getParsedBody()['targa'],
             $request->getParsedBody()['email'],
-            $request->getParsedBody()['username'],
+            $request->getParsedBody()['email'],
             $request->getParsedBody()['password']
         );
 

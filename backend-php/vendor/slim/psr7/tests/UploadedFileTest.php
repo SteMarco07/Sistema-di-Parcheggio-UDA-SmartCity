@@ -12,11 +12,9 @@ namespace Slim\Tests\Psr7;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\DataProvider;
-use PHPUnit\Framework\Attributes\Depends;
+use Prophecy\PhpUnit\ProphecyTrait;
 use Psr\Http\Message\StreamInterface;
 use Psr\Http\Message\UploadedFileInterface;
-use ReflectionMethod;
 use ReflectionProperty;
 use RuntimeException;
 use Slim\Psr7\Environment;
@@ -46,6 +44,8 @@ use const UPLOAD_ERR_OK;
 
 class UploadedFileTest extends TestCase
 {
+    use ProphecyTrait;
+
     private static string $filename = './phpUxcOty';
 
     private static array $tmpFiles = ['./phpUxcOty'];
@@ -79,15 +79,6 @@ class UploadedFileTest extends TestCase
         }
     }
 
-    protected function setAccessible(ReflectionProperty|ReflectionMethod $property, bool $accessible = true): void
-    {
-        // only if PHP version < 8.1
-        if (PHP_VERSION_ID > 80100) {
-            return;
-        }
-        $property->setAccessible($accessible);
-    }
-
     protected function generateNewTmpFile(): UploadedFile
     {
         $filename = './php' . microtime();
@@ -107,7 +98,6 @@ class UploadedFileTest extends TestCase
      *
      * @dataProvider providerCreateFromGlobals
      */
-    #[DataProvider('providerCreateFromGlobals')]
     public function testCreateFromGlobalsFromFilesSuperglobal(array $input, array $expected)
     {
         $_FILES = $input;
@@ -121,8 +111,7 @@ class UploadedFileTest extends TestCase
      *
      * @dataProvider providerCreateFromGlobals
      */
-    #[DataProvider('providerCreateFromGlobals')]
-    public function testCreateFromGlobalsFromUserData(array $input, array $unused)
+    public function testCreateFromGlobalsFromUserData(array $input)
     {
         //If slim.files provided - it will return what was provided
         $userData['slim.files'] = $input;
@@ -202,7 +191,6 @@ class UploadedFileTest extends TestCase
      *
      * @return UploadedFile
      */
-    #[Depends('testConstructor')]
     public function testGetStream(UploadedFile $uploadedFile): UploadedFile
     {
         $stream = $uploadedFile->getStream();
@@ -218,7 +206,6 @@ class UploadedFileTest extends TestCase
      * @param UploadedFile $uploadedFile
      *
      */
-    #[Depends('testConstructor')]
     public function testMoveToNotWritable(UploadedFile $uploadedFile)
     {
         $this->expectException(InvalidArgumentException::class);
@@ -235,7 +222,6 @@ class UploadedFileTest extends TestCase
      *
      * @return UploadedFile
      */
-    #[Depends('testConstructor')]
     public function testMoveTo(UploadedFile $uploadedFile): UploadedFile
     {
         $tempName = uniqid('file-');
@@ -269,7 +255,6 @@ class UploadedFileTest extends TestCase
      * @param UploadedFile $uploadedFile
      *
      */
-    #[Depends('testConstructorSapi')]
     public function testMoveToSapiNonUploadedFile(UploadedFile $uploadedFile)
     {
         $this->expectException(RuntimeException::class);
@@ -285,7 +270,6 @@ class UploadedFileTest extends TestCase
      * @param UploadedFile $uploadedFile
      *
      */
-    #[Depends('testConstructorSapi')]
     public function testMoveToSapiMoveUploadedFileFails(UploadedFile $uploadedFile)
     {
         $this->expectException(RuntimeException::class);
@@ -304,7 +288,6 @@ class UploadedFileTest extends TestCase
      * @param UploadedFile $uploadedFile
      *
      */
-    #[Depends('testMoveTo')]
     public function testMoveToCannotBeDoneTwice(UploadedFile $uploadedFile)
     {
         $this->expectException(RuntimeException::class);
@@ -326,7 +309,6 @@ class UploadedFileTest extends TestCase
      * @param UploadedFile $uploadedFile
      *
      */
-    #[Depends('testConstructor')]
     public function testMoveToAgain(UploadedFile $uploadedFile)
     {
         $this->expectException(RuntimeException::class);
@@ -344,7 +326,6 @@ class UploadedFileTest extends TestCase
      * @param UploadedFile $uploadedFile
      *
      */
-    #[Depends('testConstructor')]
     public function testMovedStream(UploadedFile $uploadedFile)
     {
         $this->expectException(RuntimeException::class);
@@ -357,7 +338,7 @@ class UploadedFileTest extends TestCase
         $uploadedFile = $this->generateNewTmpFile();
 
         $fileProperty = new ReflectionProperty($uploadedFile, 'file');
-        $this->setAccessible($fileProperty);
+        $fileProperty->setAccessible(true);
         $fileName = $fileProperty->getValue($uploadedFile);
 
         $contents = file_get_contents($fileName);
@@ -435,11 +416,14 @@ class UploadedFileTest extends TestCase
     {
         $this->expectException(InvalidArgumentException::class);
 
-        $stream = $this->createMock(StreamInterface::class);
-        $stream->expects($this->once())
-            ->method('getMetadata')
-            ->with('uri')
-            ->willReturn(null);
+        $streamProphecy = $this->prophesize(StreamInterface::class);
+
+        /** @noinspection PhpUndefinedMethodInspection */
+        $streamProphecy
+            ->getMetadata('uri')
+            ->willReturn(null)
+            ->shouldBeCalled();
+        $stream = $streamProphecy->reveal();
 
         // Test with a StreamInterface that returns `null`
         // when `$stream->getMetadata('uri')` is called (which is an invalid case).

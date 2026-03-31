@@ -48,14 +48,15 @@ class UserRepository
         return JWT::encode($payload, $this->config['JWT_SECRET'], $this->config['JWT_ALGO']);
     }
 
-    public function createUser(string $nome, string $cognome, string $targa, string $email, string $password) {
-        $stmt = $this->pdo->prepare('INSERT INTO user (uuid, first_name, last_name, license_plate, username, password) 
-                                    VALUES (UUID(), :first_name, :last_name, :license_plate, :username, :password)');
+    public function createUser(string $nome, string $cognome, string $targa, string $email, string $username, string $password) {
+        $stmt = $this->pdo->prepare('INSERT INTO user (uuid, first_name, last_name, license_plate, email, username, password, role) 
+                                    VALUES (UUID(), :first_name, :last_name, :license_plate, :email, :username, :password, "USER")');
         $stmt->execute([
             'first_name' => $nome,
             'last_name' => $cognome,
             'license_plate' => $targa,
-            'username' => $email,
+            'email' => $email,
+            'username' => $username,
             'password' => password_hash($password, PASSWORD_DEFAULT)
         ]);
 

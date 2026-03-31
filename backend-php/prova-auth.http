@@ -2,7 +2,7 @@
 POST http://localhost:9080/api/login
 Content-Type: application/json
 
-{ "username" : "prova@gmail.com",
+{ "username" : "tiziocaio95",
   "password" : "papopepo" }
 
 > {%
@@ -11,4 +11,8 @@ Content-Type: application/json
 
 ### Accesso ad una rotta protetta
 PUT http://localhost:9080/api/reservation
+Authorization: Bearer {{token}}
+
+### Accesso ad una rotta protetta + con autorizzazione
+PUT http://localhost:9080/api/park
 Authorization: Bearer {{token}}

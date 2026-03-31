@@ -14,8 +14,6 @@ use Interop\Http\Factory\ServerRequestFactoryTestCase;
 use InvalidArgumentException;
 use Psr\Http\Message\UriInterface;
 use ReflectionClass;
-use ReflectionMethod;
-use ReflectionProperty;
 use Slim\Psr7\Environment;
 use Slim\Psr7\Factory\ServerRequestFactory;
 use Slim\Psr7\Factory\UriFactory;
@@ -27,15 +25,6 @@ use function time;
 
 class ServerRequestFactoryTest extends ServerRequestFactoryTestCase
 {
-    protected function setAccessible(ReflectionProperty|ReflectionMethod $property, bool $accessible = true): void
-    {
-        // only if PHP version < 8.1
-        if (PHP_VERSION_ID > 80100) {
-            return;
-        }
-        $property->setAccessible($accessible);
-    }
-
     protected function createServerRequestFactory(): ServerRequestFactory
     {
         return new ServerRequestFactory();
@@ -134,7 +123,7 @@ class ServerRequestFactoryTest extends ServerRequestFactoryTestCase
         $stream = $request->getBody();
         $class = new ReflectionClass($stream);
         $property = $class->getProperty('cache');
-        $this->setAccessible($property);
+        $property->setAccessible(true);
         $cacheStreamValue = $property->getValue($stream);
         $this->assertNotNull($cacheStreamValue);
     }

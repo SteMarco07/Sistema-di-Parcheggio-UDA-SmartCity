@@ -31,8 +31,7 @@ class JWTAdminMiddleware implements MiddlewareInterface {
             $decoded = JWT::decode($token, new Key(JWT_SECRET, JWT_ALGO));
 
             // 4. Controllo che l'utente sia un admin
-            $role = $decoded->data['role'];
-            if ($role !== 'ADMIN') { return $this->errorResponse(401, 'Non autorizzato'); }
+            if ($decoded->data->role !== 'ADMIN') { return $this->errorResponse(401, 'Non autorizzato'); }
 
             // 5. Passo i dati dell'utente alla request,
             //    così i controller li trovano nell'attributo 'utente'

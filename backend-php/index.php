@@ -9,13 +9,15 @@ use Slim\Factory\AppFactory;
 require './vendor/autoload.php';
 require './Controller/ParcheggiController.php';
 require './Controller/AuthController.php';
+require './Controller/AdminController.php';
 require './Middleware/JWTMiddleware.php';
 require './Middleware/JWTAdminMiddleware.php';
 
+use Controller\AuthController;
 use Controller\ParcheggiController;
+use Controller\AdminController;
 use Middleware\JWTMiddleware;
 use Middleware\JWTAdminMiddleware;
-use Controller\AuthController;
 use DI\Container as Container;
 
 //Istruzione super importante per il deployment
@@ -84,10 +86,10 @@ $app->post('/login', [AuthController::class, 'login']);
 $app->post('/register', [AuthController::class, 'register']);
 
 // Restituisce tutti i parcheggi presenti
-$app->get('/park', [ParcheggiController::class, ':getAllParcheggi']);
+$app->get('/park', [ParcheggiController::class, 'getAllParcheggi']);
 
 // Restituisce un parcheggio specifico
-$app->get('/park/{park_id}',  [ParcheggiController::class, ':getParcheggioById']);
+$app->get('/park/{park_id}',  [ParcheggiController::class, 'getParcheggioById']);
 
 // Restituisce i posti disponibili prima che l'utente ne faccia una
 $app->get('/reservation/available/{start}/{end}', function (Request $request, Response $response, $args): Response {
@@ -106,55 +108,31 @@ $app->get('/reservation/available/{start}/{end}', function (Request $request, Re
 // Funzione per le rotte protette da autenticazione
 $app->group('', function ($group) {
     // Restituisce una prenotazione specifica (per id)
-    $group->get('/reservation/search-id/{uuid}',  [ParcheggiController::class, ':getReservationByUuid']);
+    $group->get('/reservation/search-id/{uuid}',  [ParcheggiController::class, 'getReservationByUuid']);
 
     // Restituisce una prenotazione specifica (per id utente)
-    $group->get('/reservation/search-user/{uuid}',  [ParcheggiController::class, ':getReservationByUserId']);
+    $group->get('/reservation/search-user/{uuid}',  [ParcheggiController::class, 'getReservationByUserId']);
 
     // Crea una nuova prenotazione, l'ID del parcheggio e le date di inizio e fine sono nel body
-    $group->put('/reservation', [ParcheggiController::class, ':userCreateReservation']);
+    $group->put('/reservation', [ParcheggiController::class, 'userCreateReservation']);
 
     // Modifica una prenotazione esistente, l'ID e le date di inizio e fine sono nel body
-    $group->post('/reservation', [ParcheggiController::class, ':userEditReservation']);
+    $group->post('/reservation', [ParcheggiController::class, 'userEditReservation']);
 
     // Elimina una prenotazione, dal lato utente (id nel body)
-    $group->delete('/reservation', [ParcheggiController::class, ':deleteReservation']);
+    $group->delete('/reservation', [ParcheggiController::class, 'deleteReservation']);
 })->add(new JWTMiddleware());
 
 // Funzione per le rotte protette da autenticazione e da privilegi amministrativi
 $app->group('', function ($group) {
     // L'amministratore deve poter creare un parcheggio
-    $group->put('/park', function (Request $request, Response $response, $args): Response {
-        global $pdo;
-
-        $park_id = $request->getParsedBody()['park_id'];
-
-        //Logica di creazione
-
-        return $response->withStatus(201);
-    });
+    $group->put('/park', [AdminController::class, 'addPark']);
 
     // L'amministratore deve poter modificare un parcheggio
-    $group->post('/park', function (Request $request, Response $response, $args): Response {
-
-        $park_id = $request->getParsedBody()['park_id'];
-
-        //Logica di modifica
-
-        return $response->withStatus(204);
-    });
+    $group->post('/park', [AdminController::class, 'modifyPark']);
 
     // L'amministratore deve poter eliminare un parcheggio
-    $group->delete('/park/{park_id}', function (Request $request, Response $response, $args): Response {
-        global $pdo;
-
-        $park_id = $args['park_id'];
-
-        // Logica di eliminazione
-
-        $response = $response->withStatus(204);
-        return $response;
-    });
+    $group->delete('/park', [AdminController::class, 'deletePark']);
 })->add(new JWTAdminMiddleware());
 
 $app->run();

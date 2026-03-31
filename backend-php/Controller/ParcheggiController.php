@@ -2,13 +2,9 @@
 
 namespace Controller;
 
-use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
-use Psr\Container\NotFoundExceptionInterface;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
-
-require_once 'Model/ParcheggiRepository.php';
 use Model\ParcheggiRepository;
 
 class ParcheggiController {

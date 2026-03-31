@@ -7,8 +7,7 @@ use Psr\Container\ContainerInterface;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 
-class AuthController
-{
+class AuthController{
 
     private $container;
     private $userRepository;
@@ -18,16 +17,14 @@ class AuthController
         $this->userRepository = new UserRepository($this->container->get('config'));
     }
 
-    private function JSONResponse(Response $response, array $dati, int $status = 200): Response
-    {
+    private function JSONResponse(Response $response, array $dati, int $status = 200): Response {
         $response->getBody()->write(json_encode($dati));
         return $response
             ->withHeader('Content-Type', 'application/json')
             ->withStatus($status);
     }
 
-    public function login(Request $request, Response $response): Response
-    {
+    public function login(Request $request, Response $response): Response {
         $data = $request->getParsedBody();
 
         // Validazione minima: i campi devono esserci
@@ -57,6 +54,7 @@ class AuthController
             $request->getParsedBody()['cognome'],
             $request->getParsedBody()['targa'],
             $request->getParsedBody()['email'],
+            $request->getParsedBody()['username'],
             $request->getParsedBody()['password']
         );
 

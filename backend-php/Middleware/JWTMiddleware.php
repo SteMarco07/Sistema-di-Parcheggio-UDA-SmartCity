@@ -41,7 +41,7 @@ class JWTMiddleware implements MiddlewareInterface {
         } catch (SignatureInvalidException $e) {
             return $this->errorResponse(401, 'Firma del token non valida');
         } catch (\Exception $e) {
-            return $this->errorResponse(401, 'Token non valido');
+            return $this->errorResponse(401, $e);
         }
     }
 

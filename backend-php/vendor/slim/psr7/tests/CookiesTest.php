@@ -13,7 +13,6 @@ namespace Slim\Tests\Psr7;
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
 use ReflectionClass;
-use ReflectionMethod;
 use ReflectionProperty;
 use Slim\Psr7\Cookies;
 use stdClass;
@@ -31,18 +30,9 @@ class CookiesTest extends TestCase
             'test' => 'Works',
         ]);
         $prop = new ReflectionProperty($cookies, 'requestCookies');
-        $this->setAccessible($prop);
+        $prop->setAccessible(true);
         $this->assertNotEmpty($prop->getValue($cookies)['test']);
         $this->assertEquals('Works', $prop->getValue($cookies)['test']);
-    }
-
-    protected function setAccessible(ReflectionProperty|ReflectionMethod $property, bool $accessible = true): void
-    {
-        // only if PHP version < 8.1
-        if (PHP_VERSION_ID > 80100) {
-            return;
-        }
-        $property->setAccessible($accessible);
     }
 
     public function testSetDefaults()
@@ -61,7 +51,7 @@ class CookiesTest extends TestCase
         $cookies = new Cookies();
 
         $prop = new ReflectionProperty($cookies, 'defaults');
-        $this->setAccessible($prop);
+        $prop->setAccessible(true);
 
         $origDefaults = $prop->getValue($cookies);
 
@@ -77,7 +67,7 @@ class CookiesTest extends TestCase
         $cookies->set('foo', 'bar');
 
         $prop = new ReflectionProperty($cookies, 'responseCookies');
-        $this->setAccessible($prop);
+        $prop->setAccessible(true);
 
         $expectedValue = [
             'foo' => [
@@ -113,7 +103,7 @@ class CookiesTest extends TestCase
         $cookies->set('foo', 'bar');
 
         $prop = new ReflectionProperty($cookies, 'responseCookies');
-        $this->setAccessible($prop);
+        $prop->setAccessible(true);
 
         $expectedValue = [
             'foo' => [
@@ -149,7 +139,7 @@ class CookiesTest extends TestCase
         $cookies->set('foo', ['value' => 'bar', 'secure' => false, 'samesite' => 'strict']);
 
         $prop = new ReflectionProperty($cookies, 'responseCookies');
-        $this->setAccessible($prop);
+        $prop->setAccessible(true);
 
         $expectedValue = [
             'foo' => [
@@ -179,7 +169,7 @@ class CookiesTest extends TestCase
         $cookies->set('breakfast', ['samesite' => 'StricT']);
 
         $prop = new ReflectionProperty($cookies, 'responseCookies');
-        $this->setAccessible($prop);
+        $prop->setAccessible(true);
 
         $expectedValue = [
             'breakfast' => [
@@ -234,7 +224,7 @@ class CookiesTest extends TestCase
         $cookies = new Cookies();
         $class = new ReflectionClass($cookies);
         $method = $class->getMethod('toHeader');
-        $this->setAccessible($method);
+        $method->setAccessible(true);
         $properties = [
             'name' => 'test',
             'properties' => [
@@ -242,7 +232,7 @@ class CookiesTest extends TestCase
             ]
         ];
         $time = time();
-        $formattedDate = gmdate('D, d M Y H:i:s \G\M\T', $time);
+        $formattedDate = gmdate('D, d-M-Y H:i:s e', $time);
         $propertiesComplex = [
             'name' => 'test_complex',
             'properties' => [
@@ -257,7 +247,7 @@ class CookiesTest extends TestCase
             ]
         ];
         $stringDate = '2016-01-01 12:00:00';
-        $formattedStringDate = gmdate('D, d M Y H:i:s \G\M\T', strtotime($stringDate));
+        $formattedStringDate = gmdate('D, d-M-Y H:i:s e', strtotime($stringDate));
         $propertiesStringDate = [
             'name' => 'test_date',
             'properties' => [

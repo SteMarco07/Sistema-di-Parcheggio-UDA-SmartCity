@@ -33,6 +33,33 @@ class AdminController {
         $response->getBody()->write(json_encode($parcheggio));
 
         return $response
-            ->withHeader('Content-type', 'application/json');
+            ->withHeader('Content-type', 'application/json')
+            ->withStatus(201);
+    }
+
+    public function modifyPark(Request $request, Response $response, array $args): Response {
+        $parcheggio = $this->adminRepository->modifyPark(
+            $request->getParsedBody()['id'],
+            $request->getParsedBody()['name'],
+            $request->getParsedBody()['total_spots'],
+            $request->getParsedBody()['latitude'],
+            $request->getParsedBody()['longitude']
+        );
+
+        $response->getBody()->write(json_encode($parcheggio));
+
+        return $response
+            ->withHeader('Content-type', 'application/json')
+            ->withStatus(201);
+    }
+
+    public function deletePark(Request $request, Response $response, array $args): Response {
+        $parcheggio = $this->adminRepository->deletePark( $request->getParsedBody()['id'] );
+
+        $response->getBody()->write(json_encode($parcheggio));
+
+        return $response
+            ->withHeader('Content-type', 'application/json')
+            ->withStatus(201);
     }
 }

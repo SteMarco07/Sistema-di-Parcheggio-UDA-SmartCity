@@ -47,15 +47,6 @@ class BodyTest extends TestCase
         }
     }
 
-    protected function setAccessible(ReflectionProperty $property, bool $accessible = true): void
-    {
-        // only if PHP version < 8.1
-        if (PHP_VERSION_ID > 80100) {
-            return;
-        }
-        $property->setAccessible($accessible);
-    }
-
     /**
      * @param string $mode
      *
@@ -75,7 +66,7 @@ class BodyTest extends TestCase
         $this->stream = $this->resourceFactory();
         $body = new Stream($this->stream);
         $bodyStream = new ReflectionProperty($body, 'stream');
-        $this->setAccessible($bodyStream);
+        $bodyStream->setAccessible(true);
 
         $this->assertSame($this->stream, $bodyStream->getValue($body));
     }
@@ -118,19 +109,19 @@ class BodyTest extends TestCase
         $body = new Stream($this->stream);
 
         $bodyStream = new ReflectionProperty($body, 'stream');
-        $this->setAccessible($bodyStream);
+        $bodyStream->setAccessible(true);
 
         $bodyMetadata = new ReflectionProperty($body, 'meta');
-        $this->setAccessible($bodyMetadata);
+        $bodyMetadata->setAccessible(true);
 
         $bodyReadable = new ReflectionProperty($body, 'readable');
-        $this->setAccessible($bodyReadable);
+        $bodyReadable->setAccessible(true);
 
         $bodyWritable = new ReflectionProperty($body, 'writable');
-        $this->setAccessible($bodyWritable);
+        $bodyWritable->setAccessible(true);
 
         $bodySeekable = new ReflectionProperty($body, 'seekable');
-        $this->setAccessible($bodySeekable);
+        $bodySeekable->setAccessible(true);
 
         $result = $body->detach();
 
@@ -165,7 +156,7 @@ class BodyTest extends TestCase
         $this->stream = $this->resourceFactory();
         $body = new Stream($this->stream);
         $bodyStream = new ReflectionProperty($body, 'stream');
-        $this->setAccessible($bodyStream);
+        $bodyStream->setAccessible(true);
         $bodyStream->setValue($body, null);
 
         $this->assertEquals('', (string) $body);
@@ -178,7 +169,7 @@ class BodyTest extends TestCase
         $body->close();
 
         $bodyStream = new ReflectionProperty($body, 'stream');
-        $this->setAccessible($bodyStream);
+        $bodyStream->setAccessible(true);
 
         $this->assertNull($bodyStream->getValue($body));
     }
@@ -196,7 +187,7 @@ class BodyTest extends TestCase
         $this->stream = $this->resourceFactory();
         $body = new Stream($this->stream);
         $bodyStream = new ReflectionProperty($body, 'stream');
-        $this->setAccessible($bodyStream);
+        $bodyStream->setAccessible(true);
         $bodyStream->setValue($body, null);
 
         $this->assertNull($body->getSize());
@@ -218,7 +209,7 @@ class BodyTest extends TestCase
         $this->stream = $this->resourceFactory();
         $body = new Stream($this->stream);
         $bodyStream = new ReflectionProperty($body, 'stream');
-        $this->setAccessible($bodyStream);
+        $bodyStream->setAccessible(true);
         $bodyStream->setValue($body, null);
 
         $body->tell();
@@ -249,7 +240,7 @@ class BodyTest extends TestCase
         $this->stream = $this->resourceFactory();
         $body = new Stream($this->stream);
         $bodyStream = new ReflectionProperty($body, 'stream');
-        $this->setAccessible($bodyStream);
+        $bodyStream->setAccessible(true);
         $bodyStream->setValue($body, null);
 
         $this->assertTrue($body->eof());

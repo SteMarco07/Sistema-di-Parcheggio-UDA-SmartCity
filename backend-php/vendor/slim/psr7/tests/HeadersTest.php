@@ -12,8 +12,6 @@ namespace Slim\Tests\Psr7;
 
 use InvalidArgumentException;
 use PHPUnit\Framework\TestCase;
-use PHPUnit\Framework\Attributes\DoesNotPerformAssertions;
-use PHPUnit\Framework\Attributes\DataProvider;
 use Slim\Psr7\Headers;
 use stdClass;
 
@@ -82,7 +80,6 @@ class HeadersTest extends TestCase
     /**
      * @doesNotPerformAssertions
      */
-    #[DoesNotPerformAssertions]
     public function testRemoveHeaderByIncompatibleStringWithRFC()
     {
         $headers = new Headers();
@@ -216,7 +213,6 @@ class HeadersTest extends TestCase
     /**
      * @dataProvider provideInvalidHeaderNames
      */
-    #[DataProvider('provideInvalidHeaderNames')]
     public function testWithInvalidHeaderName($headerName): void
     {
         $headers = new Headers();
@@ -246,7 +242,6 @@ class HeadersTest extends TestCase
     /**
      * @dataProvider provideInvalidHeaderValues
      */
-    #[DataProvider('provideInvalidHeaderValues')]
     public function testSetInvalidHeaderValue($headerValue)
     {
         $headers = new Headers();

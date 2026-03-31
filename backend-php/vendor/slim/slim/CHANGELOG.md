@@ -10,18 +10,6 @@
 
 ### Removed
 
-## 4.15.1 - 2025-11-21
-
-## Fixed
-
-- Allow PHPUnit 10, 11 and 12 when testing Slim itself (#3411)
-
-### Added
-
-- Add support for PHP 8.5 (#3415)
-
-**Full Changelog**: https://github.com/slimphp/Slim/compare/4.15.0...4.15.1
-
 ## 4.15.0 - 2025-08-24
 
 ### Fixed

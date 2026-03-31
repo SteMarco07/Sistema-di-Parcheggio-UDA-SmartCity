@@ -1,6 +1,6 @@
 import { use } from "react"
 
-const BASE = 'http://127.0.0.1:9080/parcheggi'
+const BASE = 'http://127.0.0.1:9080/api/'
 
 async function request(path, options = {}) {
     const res = await fetch(BASE + path, options)
@@ -71,6 +71,20 @@ export const api = {
                 endTime: '2026-06-01T12:00:00Z'
             }
         ]
+    },
+
+    login: (username, password) => {
+        console.log(`Login con ${JSON.stringify({ username, password })}`)
+        return request("login", {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json'
+            },
+            body: JSON.stringify({
+                'username': username,
+                'password': password
+            }),
+        })
     }
 
 }

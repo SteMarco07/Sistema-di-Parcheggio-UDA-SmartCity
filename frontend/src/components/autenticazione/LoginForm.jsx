@@ -5,18 +5,24 @@ import { useNavigate } from 'react-router-dom';
 
 function LoginForm() {
 
-    const { setAuthMode } = useStore();
+    const { setAuthMode, login } = useStore();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
     const [remember, setRemember] = useState(false);
 
     const navigate = useNavigate();
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
         console.log("Login submit:", { email, password, remember });
         // qui andrebbe la chiamata all'API per autenticare; al momento navighiamo direttamente
-        navigate('/parcheggi');
+        const result = await login(email, password);
+        if (result.success) {
+            console.log(`Ho fatto il login: ${JSON.stringify(result)}`);
+            navigate('/parcheggi');
+        } else {
+            console.error(`Errore durante il login: ${result.message}`);
+        }
     }
 
     return (

@@ -34,12 +34,13 @@ $app = AppFactory::create();
 $app->setBasePath($config['BASEPATH']);
 $app->addBodyParsingMiddleware();
 
+$app->options('/{routes:.+}', function (Request $request, Response $response, $args) { return $response; });
 // CORS middleware
 $corsMiddleware = function (Request $request, RequestHandler $handler) use ($app) {
     $response = $handler->handle($request);
 
     return $response
-        ->withHeader('Access-Control-Allow-Origin', '*')
+        ->withHeader('Access-Control-Allow-Origin', 'http://localhost:5173/*')
         ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
         ->withHeader('Access-Control-Allow-Credentials', 'true');
@@ -48,7 +49,7 @@ $corsMiddleware = function (Request $request, RequestHandler $handler) use ($app
 $app->add($corsMiddleware);
 
 // Global preflight route (matches any route) like Slim v3 cookbook
-$app->options('/{routes:.+}', function (Request $request, Response $response, $args) { return $response; });
+
 
 $customErrorHandler = function (
     Request $request,

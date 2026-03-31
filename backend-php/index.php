@@ -9,10 +9,12 @@ use Slim\Factory\AppFactory;
 require './vendor/autoload.php';
 require './Controller/ParcheggiController.php';
 require './Controller/AuthController.php';
-require './Middleware/JwtMiddleware.php';
+require './Middleware/JWTMiddleware.php';
+require './Middleware/JWTAdminMiddleware.php';
 
 use Controller\ParcheggiController;
-use Middleware\JwtMiddleware;
+use Middleware\JWTMiddleware;
+use Middleware\JWTAdminMiddleware;
 use Controller\AuthController;
 use DI\Container as Container;
 
@@ -117,7 +119,10 @@ $app->group('', function ($group) {
 
     // Elimina una prenotazione, dal lato utente (id nel body)
     $group->delete('/reservation', [ParcheggiController::class, ':deleteReservation']);
+})->add(new JWTMiddleware());
 
+// Funzione per le rotte protette da autenticazione e da privilegi amministrativi
+$app->group('', function ($group) {
     // L'amministratore deve poter creare un parcheggio
     $group->put('/park', function (Request $request, Response $response, $args): Response {
         global $pdo;
@@ -150,6 +155,6 @@ $app->group('', function ($group) {
         $response = $response->withStatus(204);
         return $response;
     });
-})->add(new JwtMiddleware());
+})->add(new JWTAdminMiddleware());
 
 $app->run();

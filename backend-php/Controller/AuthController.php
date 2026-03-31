@@ -69,7 +69,7 @@ class AuthController
 
     public function profilo(Request $request, Response $response): Response
     {
-        // I dati dell'utente sono stati iniettati dal JwtMiddleware
+        // I dati dell'utente sono stati iniettati dal JWTMiddleware
         $utente = $request->getAttribute('utente');
 
         return $this->JSONResponse($response, [

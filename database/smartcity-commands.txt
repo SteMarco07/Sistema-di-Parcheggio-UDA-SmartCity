@@ -14,8 +14,10 @@ CREATE TABLE user(
     first_name char(100) NOT NULL,
     last_name char(100) NOT NULL,
     license_plate char(10) NOT NULL,
+    email char(100) UNIQUE NOT NULL,
     username char(20) UNIQUE NOT NULL,
-    password char(100) UNIQUE NOT NULL
+    password char(100) NOT NULL,
+    role enum('USER', 'ADMIN') NOT NULL
 );
 
 CREATE TABLE reservation(

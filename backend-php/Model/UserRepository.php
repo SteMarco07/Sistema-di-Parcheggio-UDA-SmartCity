@@ -22,16 +22,16 @@ class UserRepository
      */
     public function verifyCredentials(string $username, string $password): ?string {
         $stmt = $this->pdo->prepare('SELECT * FROM user WHERE username = :username');
-        $stmt->execute(['username' => $username]);
+        $stmt->execute([ 'username' => $username ]);
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password'])) {
-            return self::generateToken($user['uuid'], $username);
+            return self::generateToken($user['uuid'], $username, $user['role']);
         }
         return null;
     }
 
-    private function generateToken(string $id, string $username): string {
+    private function generateToken(string $id, string $username, string $role): string {
         $emission = new \DateTimeImmutable();
         $expiration = $emission->modify('+' . $this->config['JWT_EXPIRE_MINUTES'] . ' minutes');
 
@@ -41,6 +41,7 @@ class UserRepository
             'data' => [                             // Dati applicativi
                 'id'       => $id,
                 'username' => $username,
+                'role' => $role
             ]
         ];
 

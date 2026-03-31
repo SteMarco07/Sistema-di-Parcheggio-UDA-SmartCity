@@ -44,9 +44,9 @@ INSERT INTO parking_lot(name, total_spots, latitude, longitude) VALUES('prova3',
 INSERT INTO parking_lot(name, total_spots, latitude, longitude) VALUES('prova4', 40, 78.1651325, 41.15655656);
 
 INSERT INTO user (uuid, first_name, last_name, license_plate, email, username, password, role)
-    VALUES (UUID(), Mario, Rossi, AB123CD, pippo@gmail.com, user, $2y$10$gQeJHilWS5CWRVW.aKk4eucoAw6qTlNkpIUoQyZA2KSuweAMI1Zsi, "USER")
+    VALUES (UUID(), 'Mario', 'Rossi', 'AB123CD', 'pippo@gmail.com', 'user', $2y$10$gQeJHilWS5CWRVW.aKk4eucoAw6qTlNkpIUoQyZA2KSuweAMI1Zsi', 'USER')
 # password: user
 
 INSERT INTO user (uuid, first_name, last_name, license_plate, email, username, password, role)
-    VALUES (UUID(), Tizio, Caio, AB987CD, pippa@gmail.com, admin, $2y$10$SO0.iA.qBMV4AZV2.L0oweo4j/NP5Ohkny/2Q1aOCMDg0Wu1KYJe., "USER")
+    VALUES (UUID(), 'Tizio', 'Caio', 'AB987CD',  'pippa@gmail.com', 'admin', '$2y$10$SO0.iA.qBMV4AZV2.L0oweo4j/NP5Ohkny/2Q1aOCMDg0Wu1KYJe.', 'ADMIN')
 # password: admin

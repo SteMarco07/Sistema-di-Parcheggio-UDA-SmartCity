@@ -49,16 +49,28 @@ class UserRepository
     }
 
     public function createUser(string $nome, string $cognome, string $targa, string $email, string $username, string $password) {
+        // Normalizza input
+        $username = trim((string)$username);
+        $email = trim((string)$email);
+        $targa = trim((string)$targa);
+
         $stmt = $this->pdo->prepare('INSERT INTO user (uuid, first_name, last_name, license_plate, email, username, password, role) 
                                     VALUES (UUID(), :first_name, :last_name, :license_plate, :email, :username, :password, "USER")');
-        $stmt->execute([
-            'first_name' => $nome,
-            'last_name' => $cognome,
-            'license_plate' => $targa,
-            'email' => $email,
-            'username' => $username,
-            'password' => password_hash($password, PASSWORD_DEFAULT)
-        ]);
+
+        try {
+            $stmt->execute([
+                'first_name' => $nome,
+                'last_name' => $cognome,
+                'license_plate' => $targa,
+                'email' => $email,
+                'username' => $username,
+                'password' => password_hash($password, PASSWORD_DEFAULT)
+            ]);
+        } catch (\PDOException $e) {
+
+            return [ 'error' => 'duplicate', 'messaggio' => 'Email o username già presente' ];
+            
+        }
 
         return [ 'messaggio' => 'Account creato con successo' ];
     }

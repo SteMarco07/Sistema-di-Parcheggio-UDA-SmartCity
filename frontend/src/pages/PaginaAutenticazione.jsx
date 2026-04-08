@@ -17,7 +17,6 @@ function PaginaAutenticazione() {
                 <div className="w-[90%] lg:w-[30%] lg:min-w-120 md:w-[50%] h-auto bg-white rounded-xl shadow-lg border border-gray-200 p-6 flex flex-col items-center gap-4" >
                     {/* Mosta il form del Login o Signup */}
                     {authMode === "login" ? <LoginForm /> : <SignupForm />}
-                    <button className="btn btn-primary" onClick={() => navigate('/parcheggi')}>Salta autenticazione</button>
                 </div>
             </div>
 

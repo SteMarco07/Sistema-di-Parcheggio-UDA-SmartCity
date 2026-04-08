@@ -33,8 +33,7 @@ function SignupForm() {
             email: email,
             targa: targa,
             password: password,
-            iniziali: initials,
-            admin: admin
+            iniziali: initials
         });
 
         navigate('/parcheggi');
@@ -79,12 +78,6 @@ function SignupForm() {
                     <div>
                         <label className="label"><span className="label-text">Conferma password</span></label>
                         <input type="password" value={confirm} placeholder="Conferma la tua password" onChange={(e) => setConfirm(e.target.value)} required className="input input-bordered w-full" />
-                    </div>
-
-                    {/* Checkbox admin */}
-                    <div>   
-                        <input type="checkbox" checked={admin} onChange={(e) => setAdmin(e.target.checked)} className="checkbox" />
-                        <label className="label"><span className="label-text">Admin</span></label>
                     </div>
 
                     <div className="flex flex-col items-center mt-6">

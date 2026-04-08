@@ -16,7 +16,7 @@ async function request(path, options = {}) {
 }
 
 export const api = {
-    fetchParcheggi: () => {
+    fetchParcheggi: (token) => {
         return [
             {
                 id: 1,
@@ -44,7 +44,7 @@ export const api = {
             }
         ];
     },
-    fetchPrenotazioni: () => {
+    fetchPrenotazioni: (token) => {
         return [
             {
                 id: 1,

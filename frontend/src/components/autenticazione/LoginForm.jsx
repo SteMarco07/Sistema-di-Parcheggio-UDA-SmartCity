@@ -5,10 +5,9 @@ import { useNavigate } from 'react-router-dom';
 
 function LoginForm() {
 
-    const { setAuthMode, login } = useStore();
+    const { setAuthMode, login, remember, setRemember } = useStore();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [remember, setRemember] = useState(false);
 
     const navigate = useNavigate();
 
@@ -46,10 +45,10 @@ function LoginForm() {
                         id="remember"
                         type="checkbox"
                         checked={remember}
-                        onChange={(e) => setRemember(e.target.checked)}
+                        onChange={() => setRemember()}
                         className="checkbox"
                     />
-                    <label htmlFor="remember">Ricordami</label>
+                    <label htmlFor="remember" value={remember}>Ricordami</label>
                 </div>
 
                 <div className="flex flex-col items-center mt-20">

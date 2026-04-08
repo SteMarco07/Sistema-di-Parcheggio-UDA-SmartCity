@@ -6,43 +6,49 @@ export const useStore = create((set, get) => ({
     // STATO INIZIALE
     parcheggi: [],
     parcheggiFiltrati: [],
-    ricerca : "",
+    ricerca: "",
     dataOraInizio: "",
     dataOraFine: "",
     prenotazioni: [],
-    isLoading: false,    
+    isLoading: false,
     fieldsets: [],
     error: null,
     position: [45.55584514965588, 10.216172766008182],
     zoom: 18,
     authMode: "login",
+    remember: localStorage.getItem('remember') === 'true' || false,
+    token: "",
     utente: (() => {
-        try {
-            const raw = localStorage.getItem('user');
-            return raw ? JSON.parse(raw) : {
-                nome: "",
-                cognome: "",
-                email: "",
-                targa: "",
-                password: "",
-                iniziali: ""
-            };
-        } catch (e) {
-            return {
-                nome: "",
-                cognome: "",
-                email: "",
-                targa: "",
-                password: "",
-                iniziali: ""
-            };
+        if (get().remember) {
+            try {
+                setToken(localStorage.getItem('token'));
+                const raw = localStorage.getItem('user');
+                return raw ? JSON.parse(raw) : {
+                    nome: "",
+                    cognome: "",
+                    email: "",
+                    targa: "",
+                    password: "",
+                    iniziali: ""
+                };
+            } catch (e) {
+                return {
+                    nome: "",
+                    cognome: "",
+                    email: "",
+                    targa: "",
+                    password: "",
+                    iniziali: ""
+                };
+            }
         }
-    })(),
+    }
+    )(),
 
     addFieldset: () =>
-    set((state) => ({
-        fieldsets: [...state.fieldsets, { id: Date.now() }],
-    })),
+        set((state) => ({
+            fieldsets: [...state.fieldsets, { id: Date.now() }],
+        })),
 
 
     // Modifica posizione e salva su localStorage
@@ -86,7 +92,22 @@ export const useStore = create((set, get) => ({
     login: async (username, password) => {
         try {
             const userData = await api.login(username, password);
-            get().setUser(userData);
+            const token = userData['token'];
+            const userInfo = {
+                "username": userData['username'],
+                "nome": userData['first_name'],
+                "cognome": userData['last_name'],
+                "email": userData['email'],
+                "targa": userData['license_plate'],
+                "iniziali": userData['first_name'][0] + userData['last_name'][0]
+
+            }
+            get().setUser(userInfo);
+            get().setToken(userData['token']);
+            if (get().remember) {
+                localStorage.setItem('token', token);
+                localStorage.setItem('user', JSON.stringify(userInfo));
+            }
             return { success: true };
         } catch (err) {
             return { success: false, message: err.message };
@@ -96,7 +117,14 @@ export const useStore = create((set, get) => ({
     register: async (nome, cognome, email, targa, password) => {
         try {
             const userData = await api.register(nome, cognome, email, targa, password);
-            get().setUser(userData);
+            get().setUser({
+                "username": userData['username'],
+                "nome": userData['first_name'],
+                "cognome": userData['last_name'],
+                "email": userData['email'],
+                "targa": userData['license_plate'],
+                "iniziali": userData['first_name'][0] + userData['last_name'][0]
+            });
             return { success: true };
         } catch (err) {
             return { success: false, message: err.message };
@@ -117,29 +145,40 @@ export const useStore = create((set, get) => ({
         }
     },
 
+    setToken: (token) => {
+        try {
+            localStorage.setItem('token', token);
+        } catch (e) {
+            // ignore storage errors
+        }
+        set({ token });
+    },
+
     setUser: (userData) => {
         try {
             localStorage.setItem('user', JSON.stringify(userData));
         } catch (e) {
             // ignore storage errors
         }
-        set({ utente: userData});
+        set({ utente: userData });
     },
 
     clearUser: () => {
         try {
+            localStorage.removeItem('token');
             localStorage.removeItem('user');
         } catch (e) {
             // ignore storage errors
         }
+        set({ token: "" });
         set({ utente: { nome: "", cognome: "", email: "", targa: "", password: "", iniziali: "" } });
     },
 
     // 1. Fetch dei dati (Asincrona)
-    fetchParcheggi: async () => {
+    fetchParcheggi: async (token) => {
         set({ isLoading: true, error: null });
         try {
-            const data = await api.fetchParcheggi();
+            const data = await api.fetchParcheggi(token);
             set({ parcheggi: data, isLoading: false });
             set({ parcheggiFiltrati: data, isLoading: false });
         } catch (err) {
@@ -147,10 +186,10 @@ export const useStore = create((set, get) => ({
         }
     },
 
-    fetchPrenotazioni: async () => {
+    fetchPrenotazioni: async (token) => {
         set({ isLoading: true, error: null });
         try {
-            const data = await api.fetchPrenotazioni();
+            const data = await api.fetchPrenotazioni(token);
             set({ prenotazioni: data, isLoading: false });
         } catch (err) {
             set({ error: err.message, isLoading: false });
@@ -172,13 +211,13 @@ export const useStore = create((set, get) => ({
         set({ parcheggiFiltrati: filtrati });
     },
 
-    addPrenotazione: ({prenotazione}) => {
-        prenotazione.id = get().prenotazioni.length+1;
+    addPrenotazione: ({ prenotazione }) => {
+        prenotazione.id = get().prenotazioni.length + 1;
         //console.log(`Lo store aggiunge ${JSON.stringify(prenotazione)}`)
         set({ prenotazioni: [...get().prenotazioni, prenotazione] });
     },
 
-    modificaPrenotazione: ({prenotazioneModificata}) => {
+    modificaPrenotazione: ({ prenotazioneModificata }) => {
         set({
             prenotazioni: get().prenotazioni.map((p) =>
                 p.id === prenotazioneModificata.id ? prenotazioneModificata : p
@@ -220,6 +259,15 @@ export const useStore = create((set, get) => ({
         const [hours, minutes] = oraFine.split(':').map(Number);
         timestamp.setHours(hours, minutes, 0, 0);
         return timestamp.getTime();
+    },
+
+    getRemember: () => {
+        return get().remember;
+    },
+
+    alternaRemember: () => {
+        localStorage.setItem('remember', !get().remember);
+        set({ remember: !get().remember });
     }
 
 }));

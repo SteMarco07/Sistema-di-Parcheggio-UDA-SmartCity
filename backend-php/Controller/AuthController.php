@@ -37,17 +37,15 @@ class AuthController{
         }
 
         $repository = new UserRepository($this->container->get('config'));
-        $token = $repository->verifyCredentials($data['username'], $data['password']);
+        $userData = $repository->verifyCredentials($data['username'], $data['password']);
 
-        if ($token === null) {
+        if ($userData['token'] === null) {
             return $this->JSONResponse($response, [
                 'errore' => 'Credenziali non valide'
             ], 401);
         }
 
-        return $this->JSONResponse($response, [
-            'token' => $token
-        ]);
+        return $this->JSONResponse($response, $userData);
     }
 
     public function register(Request $request, Response $response): Response {
@@ -60,22 +58,13 @@ class AuthController{
             $request->getParsedBody()['password']
         );
 
-        $response->getBody()->write(json_encode($utente));
-
-        return $response
-            ->withHeader('Content-Type', 'application/json')
-            ->withStatus(201);
+        return $this->JSONResponse($response, $utente, 201);
     }
 
-    public function profilo(Request $request, Response $response): Response
-    {
-        // I dati dell'utente sono stati iniettati dal JWTMiddleware
-        $utente = $request->getAttribute('utente');
+    public function profilo(Request $request, Response $response): Response {
+        $utente = $this->userRepository->getUser($request->getParsedBody()['username']);
 
-        return $this->JSONResponse($response, [
-            'id'       => $utente->id,
-            'username' => $utente->username,
-        ]);
+        return $this->JSONResponse($response, $utente);
     }
 
     public function logout(Request $request, Response $response): Response

@@ -72,6 +72,9 @@ export const api = {
             }
         ]
     },
+    getCredenziali: (token) => {
+
+    },
     deleteParcheggio: (id) => {
         return {
             id: id,

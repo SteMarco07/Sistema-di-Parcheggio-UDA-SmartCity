@@ -20,13 +20,22 @@ class UserRepository
      * La password è confrontata con password_verify(), quindi nel db va memorizzato
      * l'hash prodotto da password_hash().
      */
-    public function verifyCredentials(string $username, string $password): ?string {
+    public function verifyCredentials(string $username, string $password): ?array {
         $stmt = $this->pdo->prepare('SELECT * FROM user WHERE username = :username');
         $stmt->execute([ 'username' => $username ]);
         $user = $stmt->fetch();
 
         if ($user && password_verify($password, $user['password'])) {
-            return self::generateToken($user['uuid'], $username, $user['role']);
+            $token = self::generateToken($user['uuid'], $username, $user['role']);
+            return [
+                'token' => $token,
+                'first_name' => $user['first_name'],
+                'last_name' => $user['last_name'],
+                'license_plate' => $user['license_plate'],
+                'email' => $user['email'],
+                'username' => $username,
+                'role' => $user['role']
+            ];
         }
         return null;
     }
@@ -46,6 +55,21 @@ class UserRepository
         ];
 
         return JWT::encode($payload, $this->config['JWT_SECRET'], $this->config['JWT_ALGO']);
+    }
+
+    public function getUser(string $username) {
+        $stmt = $this->pdo->prepare('SELECT * FROM user WHERE username = :username');
+        $stmt->execute([ 'username' => $username ]);
+        $user = $stmt->fetch();
+
+        return [
+            'username' => $user['username'],
+            'first_name' => $user['first_name'],
+            'last_name' => $user['last_name'],
+            'license_plate' => $user['license_plate'],
+            'email' => $user['email'],
+            'role' => $user['role']
+        ];
     }
 
     public function createUser(string $nome, string $cognome, string $targa, string $email, string $username, string $password) {

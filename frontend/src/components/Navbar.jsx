@@ -18,8 +18,13 @@ function Navbar() {
                     <div tabIndex={0} role="button" className="btn btn-ghost btn-circle avatar">
                         <div className="w-10 rounded-full">
                             <div className="w-10 h-10 rounded-full bg-linear-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text font-bold shadow-md">
-                        {utente.iniziali || '--'}
-                    </div>
+                                { () => {
+                                    console.log(utente);
+                                    return utente.iniziali || '--'
+                                }
+                                    
+                                }
+                            </div>
                         </div>
                     </div>
 

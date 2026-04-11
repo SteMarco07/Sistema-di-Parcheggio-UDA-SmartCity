@@ -98,6 +98,7 @@ export const api = {
                 'nome': nome,
                 'cognome': cognome,
                 'email': email,
+                'username' : email,
                 'targa': targa,
                 'password': password
             }),

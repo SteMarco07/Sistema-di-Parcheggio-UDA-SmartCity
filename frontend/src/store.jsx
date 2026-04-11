@@ -19,7 +19,7 @@ export const useStore = create((set, get) => ({
     remember: localStorage.getItem('remember') === 'true' || false,
     token: "",
     utente: (() => {
-        if (get().remember) {
+        if (localStorage.getItem('remember') === 'true' || false) {
             try {
                 setToken(localStorage.getItem('token'));
                 const raw = localStorage.getItem('user');
@@ -118,13 +118,14 @@ export const useStore = create((set, get) => ({
         try {
             const userData = await api.register(nome, cognome, email, targa, password);
             get().setUser({
-                "username": userData['username'],
-                "nome": userData['first_name'],
-                "cognome": userData['last_name'],
-                "email": userData['email'],
-                "targa": userData['license_plate'],
-                "iniziali": userData['first_name'][0] + userData['last_name'][0]
+                "username": email,
+                "nome": nome,
+                "cognome": cognome,
+                "email": email,
+                "targa": targa,
+                
             });
+            alert("Registrazione avvenuta con successo! Ora puoi effettuare il login.");
             return { success: true };
         } catch (err) {
             return { success: false, message: err.message };

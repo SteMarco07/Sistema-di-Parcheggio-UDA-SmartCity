@@ -48,7 +48,7 @@ class UserRepository
             'iat'  => $emission->getTimestamp(),   // Issued at: quando è stato emesso
             'exp'  => $expiration->getTimestamp(),    // Expiration: quando scade
             'data' => [                             // Dati applicativi
-                'id'       => $id,
+                'id' => $id,
                 'username' => $username,
                 'role' => $role
             ]
@@ -90,11 +90,7 @@ class UserRepository
                 'username' => $username,
                 'password' => password_hash($password, PASSWORD_DEFAULT)
             ]);
-        } catch (\PDOException $e) {
-
-            return [ 'error' => 'duplicate', 'messaggio' => 'Email o username già presente' ];
-            
-        }
+        } catch (\PDOException $e) { return [ 'error' => 'duplicate', 'messaggio' => 'Email o username già presente' ]; }
 
         return [ 'messaggio' => 'Account creato con successo' ];
     }

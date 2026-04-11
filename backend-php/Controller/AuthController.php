@@ -26,7 +26,6 @@ class AuthController{
 
     public function login(Request $request, Response $response): Response {
         $data = $request->getParsedBody();
-                
 
         // Validazione minima: i campi devono esserci
         if (empty($data['username']) || empty($data['password'])) {
@@ -36,8 +35,7 @@ class AuthController{
             ], 400);
         }
 
-        $repository = new UserRepository($this->container->get('config'));
-        $userData = $repository->verifyCredentials($data['username'], $data['password']);
+        $userData = $this->userRepository->verifyCredentials($data['username'], $data['password']);
 
         if ($userData['token'] === null) {
             return $this->JSONResponse($response, [
@@ -54,25 +52,20 @@ class AuthController{
             $request->getParsedBody()['cognome'],
             $request->getParsedBody()['targa'],
             $request->getParsedBody()['email'],
-            $request->getParsedBody()['email'],
+            $request->getParsedBody()['username'],
             $request->getParsedBody()['password']
         );
 
         return $this->JSONResponse($response, $utente, 201);
     }
 
-    public function profilo(Request $request, Response $response): Response {
+    public function profile(Request $request, Response $response): Response {
         $utente = $this->userRepository->getUser($request->getParsedBody()['username']);
 
         return $this->JSONResponse($response, $utente);
     }
 
-    public function logout(Request $request, Response $response): Response
-    {
-        // JWT è stateless: il backend non ha nulla da invalidare.
-        // Il client dovrà semplicemente eliminare il token in suo possesso.
-        return $this->JSONResponse($response, [
-            'messaggio' => 'Logout effettuato. Elimina il token lato client.'
-        ]);
+    public function logout(Request $request, Response $response): Response {
+        return $this->JSONResponse($response, [ 'messaggio' => 'Logout effettuato. Elimina il token lato client.' ]);
     }
 }

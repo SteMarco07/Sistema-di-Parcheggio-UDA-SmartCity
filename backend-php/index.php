@@ -26,48 +26,61 @@ $config = require 'conf/config.php';
 
 $container = new Container();
 $container->set('config', $config);
-
 AppFactory::setContainer($container);
 
 $app = AppFactory::create();
-
 $app->setBasePath($config['BASEPATH']);
-$app->addBodyParsingMiddleware();
 
 // CORS middleware
-
-
-$corsMiddleware = function (Request $request, RequestHandler $handler) use ($app) {
+$corsMiddleware = function (Request $request, RequestHandler $handler) {
+    // Always add CORS headers to the response
     $response = $handler->handle($request);
 
+    $origin = $request->getHeaderLine('Origin');
+    $allowedOrigin = $origin ?: '*'; // In production, validate against a whitelist
+
     return $response
-        ->withHeader('Access-Control-Allow-Origin', '*')
+        ->withHeader('Access-Control-Allow-Origin', $allowedOrigin)
         ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
-        ->withHeader('Access-Control-Allow-Credentials', 'true');
+        ->withHeader('Access-Control-Allow-Credentials', 'true')
+        ->withHeader('Access-Control-Max-Age', '3600'); // Cache preflight
 };
 
+// Preflight handler (short-circuit OPTIONS)
+$app->options('/{routes:.+}', function (Request $request, Response $response) {
+    return $response;
+})->add($corsMiddleware);
 
+// Then add CORS middleware globally (must be added **first**)
+$app->add($corsMiddleware);
 
+$app->addBodyParsingMiddleware();
+
+// Da disattivare in PROD
 $customErrorHandler = function (
     Request $request,
     Throwable $exception,
     bool $displayErrorDetails,
     bool $logErrors,
     bool $logErrorDetails
-) use ($app) {
+) use ($app, $corsMiddleware) {
+    // Build the error payload
     $payload = ['error' => $exception->getMessage()];
     $response = $app->getResponseFactory()->createResponse();
-    $engine = $app->getContainer()->get('template');
 
-    if ($exception instanceof \Slim\Exception\HttpNotFoundException) { $response ->getBody()->write($engine->render('404', $payload)); }
-    else if ($exception instanceof HttpUnauthorizedException) { $response ->getBody()->write($engine->render('401', $payload)); }
+    // Apply CORS headers to the error response
+    $origin = $request->getHeaderLine('Origin');
+    $allowedOrigin = $origin ?: '*';
+
+    $response = $response
+        ->withHeader('Access-Control-Allow-Origin', $allowedOrigin)
+        ->withHeader('Access-Control-Allow-Credentials', 'true')
+        ->withHeader('Content-Type', 'application/json')
+        ->withStatus($exception instanceof HttpUnauthorizedException ? 401 : 500);
 
     $response->getBody()->write(json_encode($payload, JSON_UNESCAPED_UNICODE));
-
-    return $response
-        ->withHeader('Content-Type', 'application/json')
-        ->withStatus(500);
+    return $response;
 };
 
 $errorMiddleware = $app->addErrorMiddleware(true, true, true);
@@ -106,6 +119,12 @@ $app->get('/reservation/available/{start}/{end}', function (Request $request, Re
 
 // Funzione per le rotte protette da autenticazione
 $app->group('', function ($group) {
+    // Restituisce i dati dell'utente
+    $group->get('/profile', [AuthController::class, 'profile']);
+
+    // Effettua il logout (elimina token JWT da lato client)
+    $group->post('/logout', [AuthController::class, 'logout']);
+
     // Restituisce una prenotazione specifica (per id)
     $group->get('/reservation/search-id/{uuid}',  [ParcheggiController::class, 'getReservationByUuid']);
 
@@ -133,10 +152,5 @@ $app->group('', function ($group) {
     // L'amministratore deve poter eliminare un parcheggio
     $group->delete('/park', [AdminController::class, 'deletePark']);
 })->add(new JWTAdminMiddleware());
-
-
-$app->add($corsMiddleware);
-// Global preflight route (matches any route) like Slim v3 cookbook
-$app->options('/{routes:.+}', function (Request $request, Response $response, $args) { return $response; });
 
 $app->run();

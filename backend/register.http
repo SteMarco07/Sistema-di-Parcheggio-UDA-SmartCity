@@ -7,7 +7,6 @@ Content-Type: application/json
       "cognome" : "Rossi",
       "targa" : "AB123CD",
       "email" : "prova@gmail.com",
-      "username": "tiziocaio95",
       "password" : "papopepo" }
 
 ###

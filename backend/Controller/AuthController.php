@@ -28,14 +28,14 @@ class AuthController{
         $data = $request->getParsedBody();
 
         // Validazione minima: i campi devono esserci
-        if (empty($data['username']) || empty($data['password'])) {
+        if (empty($data['email']) || empty($data['password'])) {
             return $this->JSONResponse($response, [
-                'errore' => 'Username e password sono obbligatori',
+                'errore' => 'Email e password sono obbligatori',
                 'contesto' => $data
             ], 400);
         }
 
-        $userData = $this->userRepository->verifyCredentials($data['username'], $data['password']);
+        $userData = $this->userRepository->verifyCredentials($data['email'], $data['password']);
 
         if ($userData['token'] === null) {
             return $this->JSONResponse($response, [
@@ -52,7 +52,6 @@ class AuthController{
             $request->getParsedBody()['cognome'],
             $request->getParsedBody()['targa'],
             $request->getParsedBody()['email'],
-            $request->getParsedBody()['username'],
             $request->getParsedBody()['password']
         );
 

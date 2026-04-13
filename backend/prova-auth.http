@@ -2,7 +2,7 @@
 POST http://localhost:9080/api/login
 Content-Type: application/json
 
-{ "username" : "tiziocaio95",
+{ "email" : "prova@gmail.com",
   "password" : "papopepo" }
 
 > {%

@@ -77,7 +77,7 @@ export const useStore = create((set, get) => ({
     login: async (email, password) => {
         try {
             const data = await api.login(email, password);
-            if (data && data.success) {
+            if (data && data.token) {
                 const token = data['token'];
                 const userInfo = {
                     "nome": data['first_name'],
@@ -96,8 +96,9 @@ export const useStore = create((set, get) => ({
                 get().setUser(userInfo);
                 return { success: true };
             } else {
-                return { success: false, message: data.message || "Login fallito" };
+                return { success: false, message: "Login fallito" };
             }
+
         } catch (err) {
             return { success: false, message: err.message };
         }

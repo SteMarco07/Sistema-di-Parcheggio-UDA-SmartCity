@@ -3,7 +3,23 @@ import { use } from "react"
 const BASE = 'http://127.0.0.1:9080/api/'
 
 async function request(path, options = {}) {
-    const res = await fetch(BASE + path, options)
+    const opts = { ...options }
+    opts.headers = opts.headers ? { ...opts.headers } : {}
+
+    // Normalize headers to lowercase keys for simpler checks
+    const normalized = {}
+    for (const k of Object.keys(opts.headers)) normalized[k.toLowerCase()] = opts.headers[k]
+
+    // If body is a plain object (not FormData/URLSearchParams), assume JSON unless an explicit non-JSON content-type is set
+    if (opts.body && typeof opts.body === 'object' && !(opts.body instanceof FormData) && !(opts.body instanceof URLSearchParams)) {
+        normalized['content-type'] = normalized['content-type'] || 'application/json'
+        if (normalized['content-type'].includes('application/json')) {
+            opts.body = JSON.stringify(opts.body)
+        }
+    }
+
+    opts.headers = normalized
+    const res = await fetch(BASE + path, opts)
     if (!res.ok) {
         const text = await res.text().catch(() => '')
         throw new Error(text || `${res.status} ${res.statusText}`)
@@ -81,7 +97,7 @@ export const api = {
                 'Content-Type': 'application/json'
             },
             body: JSON.stringify({
-                'username': username,
+                'email': username,
                 'password': password
             }),
         })

@@ -3,7 +3,7 @@
   <component name="WebServers">
     <option name="servers">
       <webServer id="fd59e4ab-a830-4adb-8ca2-6980e69b4622" name="docker_lamp" url="http://localhost">
-        <fileTransfer mountedRoot="$PROJECT_DIR$/../../../informatica_quinta/docker_lamp/www" accessType="MOUNT" port="0" />
+        <fileTransfer mountedRoot="C:\Users\Marco\Desktop\Coding\docker_lamp\www\api" accessType="MOUNT" port="0" />
       </webServer>
     </option>
   </component>

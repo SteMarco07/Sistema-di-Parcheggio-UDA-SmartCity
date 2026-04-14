@@ -2,10 +2,16 @@
 <project version="4">
   <component name="PublishConfigData" autoUpload="Always" serverName="docker_lamp" remoteFilesAllowedToDisappearOnAutoupload="false">
     <serverData>
+      <paths name="Docker lamp">
+        <serverdata>
+          <mappings>
+            <mapping local="$PROJECT_DIR$" web="/" />
+          </mappings>
+        </serverdata>
+      </paths>
       <paths name="docker_lamp">
         <serverdata>
           <mappings>
-            <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
             <mapping deploy="/" local="$PROJECT_DIR$" web="/" />
           </mappings>
         </serverdata>

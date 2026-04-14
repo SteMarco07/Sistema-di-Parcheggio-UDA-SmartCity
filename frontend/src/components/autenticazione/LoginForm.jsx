@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 
 function LoginForm() {
 
-    const { setAuthMode, login, remember, setRemember } = useStore();
+    const { setAuthMode, login, remember, alternaRemember } = useStore();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
 
@@ -45,7 +45,7 @@ function LoginForm() {
                         id="remember"
                         type="checkbox"
                         checked={remember}
-                        onChange={() => setRemember()}
+                        onChange={() => alternaRemember()}
                         className="checkbox"
                     />
                     <label htmlFor="remember" value={remember}>Ricordami</label>

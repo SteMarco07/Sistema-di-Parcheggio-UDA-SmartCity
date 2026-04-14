@@ -17,34 +17,19 @@ export const useStore = create((set, get) => ({
     zoom: 18,
     authMode: "login",
     remember: localStorage.getItem('remember') === 'true' || false,
-    token: "",
+    token: localStorage.getItem('token') || "",
     utente: (() => {
-        if (localStorage.getItem('remember') === 'true' || false) {
+        const rememberFlag = localStorage.getItem('remember') === 'true'
+        if (rememberFlag) {
             try {
-                setToken(localStorage.getItem('token'));
-                const raw = localStorage.getItem('user');
-                return raw ? JSON.parse(raw) : {
-                    nome: "",
-                    cognome: "",
-                    email: "",
-                    targa: "",
-                    password: "",
-                    iniziali: ""
-                };
+                const raw = localStorage.getItem('user')
+                return raw ? JSON.parse(raw) : { nome: "", cognome: "", email: "", targa: "", password: "", iniziali: "" }
             } catch (e) {
-                return {
-                    nome: "",
-                    cognome: "",
-                    email: "",
-                    targa: "",
-                    password: "",
-                    iniziali: ""
-                };
+                return { nome: "", cognome: "", email: "", targa: "", password: "", iniziali: "" }
             }
         }
-    }
-    )(),
-
+        return { nome: "", cognome: "", email: "", targa: "", password: "", iniziali: "" }
+    })(),
     addFieldset: () =>
         set((state) => ({
             fieldsets: [...state.fieldsets, { id: Date.now() }],
@@ -89,12 +74,11 @@ export const useStore = create((set, get) => ({
 
     },
 
-    login: async (username, password) => {
+    login: async (email, password) => {
         try {
-            const userData = await api.login(username, password);
+            const userData = await api.login(email, password);
             const token = userData['token'];
             const userInfo = {
-                "username": userData['username'],
                 "nome": userData['first_name'],
                 "cognome": userData['last_name'],
                 "email": userData['email'],
@@ -108,6 +92,7 @@ export const useStore = create((set, get) => ({
                 localStorage.setItem('token', token);
                 localStorage.setItem('user', JSON.stringify(userInfo));
             }
+            get().setUser(userInfo);
             return { success: true };
         } catch (err) {
             return { success: false, message: err.message };
@@ -118,11 +103,11 @@ export const useStore = create((set, get) => ({
         try {
             const userData = await api.register(nome, cognome, email, targa, password);
             get().setUser({
-                "username": email,
                 "nome": nome,
                 "cognome": cognome,
                 "email": email,
                 "targa": targa,
+                "iniziali": nome[0] + cognome[0]
                 
             });
             alert("Registrazione avvenuta con successo! Ora puoi effettuare il login.");

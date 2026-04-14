@@ -76,24 +76,28 @@ export const useStore = create((set, get) => ({
 
     login: async (email, password) => {
         try {
-            const userData = await api.login(email, password);
-            const token = userData['token'];
-            const userInfo = {
-                "nome": userData['first_name'],
-                "cognome": userData['last_name'],
-                "email": userData['email'],
-                "targa": userData['license_plate'],
-                "iniziali": userData['first_name'][0] + userData['last_name'][0]
+            const data = await api.login(email, password);
+            if (data && data.success) {
+                const token = data['token'];
+                const userInfo = {
+                    "nome": data['first_name'],
+                    "cognome": data['last_name'],
+                    "email": data['email'],
+                    "targa": data['license_plate'],
+                    "iniziali": data['first_name'][0] + data['last_name'][0]
 
+                }
+                get().setUser(userInfo);
+                get().setToken(data['token']);
+                if (get().remember) {
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('user', JSON.stringify(userInfo));
+                }
+                get().setUser(userInfo);
+                return { success: true };
+            } else {
+                return { success: false, message: data.message || "Login fallito" };
             }
-            get().setUser(userInfo);
-            get().setToken(userData['token']);
-            if (get().remember) {
-                localStorage.setItem('token', token);
-                localStorage.setItem('user', JSON.stringify(userInfo));
-            }
-            get().setUser(userInfo);
-            return { success: true };
         } catch (err) {
             return { success: false, message: err.message };
         }
@@ -103,14 +107,14 @@ export const useStore = create((set, get) => ({
         try {
             const data = await api.register(nome, cognome, email, targa, password);
             console.log("Dati registrazione:", data);
-            if (data.successo) {
+            if (data.success) {
                 // Dopo la registrazione, effettua il login automatico per ottenere il token
                 const loginResult = await get().login(email, password);
                 if (loginResult && loginResult.success) {
                     return { success: true };
                 }
             } else {
-                return { success: false, message: data.messaggio || "Registrazione fallita" };
+                return { success: false, message: data.message || "Registrazione fallita" };
             }
         } catch (err) {
             return { success: false, message: err.message };

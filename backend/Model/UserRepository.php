@@ -86,8 +86,8 @@ class UserRepository
                 'email' => $email,
                 'password' => password_hash($password, PASSWORD_DEFAULT)
             ]);
-        } catch (\PDOException $e) { return [ 'error' => 'duplicate', 'messaggio' => 'Email già presente' ]; }
+        } catch (\PDOException $e) { return [ 'error' => 'duplicate', 'message' => 'Email già presente', 'success' => false ]; }
 
-        return [ 'messaggio' => 'Account creato con successo', 'successo' => true];
+        return [ 'message' => 'Account creato con successo', 'succes' => true];
     }
 }

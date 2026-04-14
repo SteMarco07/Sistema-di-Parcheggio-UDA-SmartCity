@@ -101,17 +101,17 @@ export const useStore = create((set, get) => ({
 
     register: async (nome, cognome, email, targa, password) => {
         try {
-            const userData = await api.register(nome, cognome, email, targa, password);
-            get().setUser({
-                "nome": nome,
-                "cognome": cognome,
-                "email": email,
-                "targa": targa,
-                "iniziali": nome[0] + cognome[0]
-                
-            });
-            alert("Registrazione avvenuta con successo! Ora puoi effettuare il login.");
-            return { success: true };
+            const data = await api.register(nome, cognome, email, targa, password);
+            console.log("Dati registrazione:", data);
+            if (data.successo) {
+                // Dopo la registrazione, effettua il login automatico per ottenere il token
+                const loginResult = await get().login(email, password);
+                if (loginResult && loginResult.success) {
+                    return { success: true };
+                }
+            } else {
+                return { success: false, message: data.messaggio || "Registrazione fallita" };
+            }
         } catch (err) {
             return { success: false, message: err.message };
         }

@@ -88,6 +88,6 @@ class UserRepository
             ]);
         } catch (\PDOException $e) { return [ 'error' => 'duplicate', 'messaggio' => 'Email già presente' ]; }
 
-        return [ 'messaggio' => 'Account creato con successo' ];
+        return [ 'messaggio' => 'Account creato con successo', 'successo' => true];
     }
 }

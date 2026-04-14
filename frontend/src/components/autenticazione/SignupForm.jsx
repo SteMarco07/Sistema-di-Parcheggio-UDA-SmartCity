@@ -36,7 +36,7 @@ function SignupForm() {
         });
 
         const result = await register(name, surname, email, targa, password);
-
+        console.log("Risultato registrazione:", result);
         if (result.success) {
             navigate('/parcheggi');
         } else {

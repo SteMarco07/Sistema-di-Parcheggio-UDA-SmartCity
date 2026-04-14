@@ -16,8 +16,8 @@ function LoginForm() {
         console.log("Login submit:", { email, password, remember });
         // qui andrebbe la chiamata all'API per autenticare; al momento navighiamo direttamente
         const result = await login(email, password);
+        
         if (result.success) {
-            console.log(`Ho fatto il login: ${JSON.stringify(result)}`);
             navigate('/parcheggi');
         } else {
             console.error(`Errore durante il login: ${result.message}`);

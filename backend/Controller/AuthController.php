@@ -30,7 +30,7 @@ class AuthController{
         // Validazione minima: i campi devono esserci
         if (empty($data['email']) || empty($data['password'])) {
             return $this->JSONResponse($response, [
-                'errore' => 'Email e password sono obbligatori',
+                'messaggio' => 'Email e password sono obbligatori',
                 'contesto' => $data
             ], 400);
         }
@@ -39,7 +39,7 @@ class AuthController{
 
         if ($userData['token'] === null) {
             return $this->JSONResponse($response, [
-                'errore' => 'Credenziali non valide'
+                'messaggio' => 'Credenziali non valide'
             ], 401);
         }
 

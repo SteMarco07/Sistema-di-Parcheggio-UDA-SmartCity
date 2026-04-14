@@ -2,7 +2,7 @@ import Menu from "./Menu.jsx";
 import { useStore } from "../store.jsx";
 
 function Navbar() {
-    const { utente } = useStore();
+    const { utente, clearUser } = useStore();
 
     return (
         <div className=" fixed top-0 left-0 right-0 z-50 navbar bg-base-100 shadow-sm">
@@ -29,7 +29,9 @@ function Navbar() {
                                 Profilo
                             </a>
                         </li>
-                        <li><a href="/auth">Logout</a></li>
+                        <li><a href="/auth" onClick={clearUser}>
+                            Logout
+                        </a></li>
                     </ul>
                 </div>
             </div>

@@ -106,14 +106,8 @@ export const useStore = create((set, get) => ({
 
     // Modifica modalità di autenticazione (login/signup)
     setAuthMode: (mode) => {
-        if (mode == 'login' || mode == 'signup') {
+        if (mode === "login" || mode === "signup") {
             set({ authMode: mode });
-        }
-
-        if (mode == 0) {
-            set({ authMode: 'login' });
-        } else {
-            set({ authMode: 'signup' });
         }
     },
 

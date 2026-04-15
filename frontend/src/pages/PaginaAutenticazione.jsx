@@ -10,7 +10,7 @@ function PaginaAutenticazione() {
             <div className="w-full sm:w-[80%] md:w-[50%] lg:w-[30%] lg:min-w-[480px] bg-white rounded-xl shadow-lg border border-gray-200 p-6 flex flex-col items-center gap-4">
 
                 {/* Tab switcher */}
-                <div className="flex w-full rounded-lg bg-gray-100 p-1">
+                <div className="flex w-full rounded-lg bg-gray-100 p-1 ">
                     <button
                         onClick={() => setAuthMode("login")}
                         className={`flex-1 py-2 rounded-md text-sm font-medium transition-all duration-200 ${

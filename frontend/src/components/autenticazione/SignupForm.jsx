@@ -40,7 +40,7 @@ function SignupForm() {
 
     return (
         <>
-            <h1 className="text-3xl font-bold">Registrazione</h1>
+            <h1 className="text-3xl font-bold px-5">Registrazione</h1>
             <form onSubmit={handleSubmit} className="flex flex-col justify-between px-5 w-full h-full mt-10">
                 <div className="flex-1 space-y-4">
                     {/* Campo nome */}

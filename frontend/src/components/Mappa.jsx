@@ -96,10 +96,10 @@ function SearchBar({ onSelect }) {
       style={{
         position: 'absolute',
         top: 20,
-        left: '18%',
-        transform: 'translateX(-50%)',
+        left: 20,
+        transform: 'none',
         zIndex: 10,
-        width: 'min(420px, 90vw)',
+        width: 'min(350px, 90vw)',
         fontFamily: 'system-ui, sans-serif',
       }}
     >

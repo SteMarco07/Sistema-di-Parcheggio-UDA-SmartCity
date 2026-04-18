@@ -84,7 +84,7 @@ export const useStore = create((set, get) => ({
                     "cognome": data['last_name'],
                     "email": data['email'],
                     "targa": data['license_plate'],
-                    "iniziali": data['first_name'][0] + data['last_name'][0]
+                    "iniziali": data['first_name'][0].toUpperCase() + data['last_name'][0].toUpperCase()
 
                 }
                 get().setUser(userInfo);

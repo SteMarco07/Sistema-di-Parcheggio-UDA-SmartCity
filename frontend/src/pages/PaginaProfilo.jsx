@@ -33,7 +33,7 @@ const PaginaProfilo = () => {
                         <div className="flex flex-col sm:flex-row sm:items-center sm:gap-6">
                             <div className="flex items-center gap-4">
                                 <div className="w-20 h-20 rounded-full bg-linear-to-br from-indigo-400 to-purple-500 flex items-center justify-center text-white text-2xl font-bold shadow-md">
-                                    {user.iniziali || '--'}
+                                    {user.iniziali.toUpperCase() || '--'}
                                 </div>
                                 <div>
                                     <div className="text-lg font-semibold text-gray-800">{user.nome} {user.cognome}</div>

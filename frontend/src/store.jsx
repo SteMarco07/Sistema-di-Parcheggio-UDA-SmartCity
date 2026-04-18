@@ -64,7 +64,7 @@ export const useStore = create((set, get) => ({
     // Modifica posizione e salva su localStorage
     modifyPosition: (newPosition) => {
         if (Array.isArray(newPosition) && newPosition.length == 2) {
-            localStorage.setItem('lastPosition', JSON.stringify({ lat: newPosition[0], lng: newPosition[1] }));
+            localStorage.setItem('lastPosition', JSON.stringify({ latitude: newPosition[0], longitude: newPosition[1] }));
         }
 
         set({ position: newPosition });
@@ -89,7 +89,10 @@ export const useStore = create((set, get) => ({
         const storedClick = storedClickRaw ? JSON.parse(storedClickRaw) : null;
         const storedZoom = storedZoomRaw ? JSON.parse(storedZoomRaw) : null;
 
-        if (storedClick && storedClick.lat != null && storedClick.lng != null) {
+        // supporto sia vecchio (`lat`/`lng`) che nuovo (`latitude`/`longitude`) formati
+        if (storedClick && (storedClick.latitude != null && storedClick.longitude != null)) {
+            set({ position: [storedClick.latitude, storedClick.longitude] });
+        } else if (storedClick && (storedClick.lat != null && storedClick.lng != null)) {
             set({ position: [storedClick.lat, storedClick.lng] });
         }
 
@@ -223,8 +226,8 @@ export const useStore = create((set, get) => ({
     filtraParcheggi: () => {
         const { parcheggi, ricerca } = get();
         const filtrati = parcheggi.filter((p) =>
-            (p.nome ?? "").toLowerCase().includes(ricerca.toLowerCase()) ||
-            (p.descrizione ?? "").toLowerCase().includes(ricerca.toLowerCase())
+            ((p.name ??  "")).toLowerCase().includes(ricerca.toLowerCase()) ||
+            ((p.description ??  "")).toLowerCase().includes(ricerca.toLowerCase())
         );
         set({ parcheggiFiltrati: filtrati });
     },

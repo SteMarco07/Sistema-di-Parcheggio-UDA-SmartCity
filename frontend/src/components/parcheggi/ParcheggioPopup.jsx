@@ -29,7 +29,7 @@ function ParcheggioPopup({ parcheggio }) {
 
     const calcEstimatedPrice = () => {
         const hours = calcDurationHours();
-        const price = parseFloat(parcheggio.prezzo_orario) || 0;
+        const price = parseFloat(parcheggio.hour_tax) || 0;
         return (hours * price).toFixed(2);
     };
 
@@ -60,7 +60,7 @@ function ParcheggioPopup({ parcheggio }) {
                     </svg>
                 </div>
                 <div className="flex flex-col leading-tight">
-                    <span className="font-bold text-xl text-base-content">{parcheggio.nome}</span>
+                    <span className="font-bold text-xl text-base-content">{parcheggio.name}</span>
                 </div>
             </div>
 
@@ -70,7 +70,7 @@ function ParcheggioPopup({ parcheggio }) {
             <div className="flex items-center justify-between gap-4">
                 <span className="text-xs text-base-content/60">Prezzo orario</span>
                 <div className="flex items-baseline gap-0.5">
-                    <span className="text-lg font-bold text-primary">€{parcheggio.prezzo_orario}</span>
+                    <span className="text-lg font-bold text-primary">€{parcheggio.hour_tax}</span>
                     <span className="text-xs text-base-content/40">/ora</span>
                 </div>
             </div>
@@ -102,11 +102,11 @@ function ParcheggioPopup({ parcheggio }) {
                         <dl className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-3">
                             <div>
                                 <dt className="text-xs text-gray-400 uppercase tracking-wider">Parcheggio</dt>
-                                <dd className="text-gray-800 font-medium">{parcheggio.nome}</dd>
+                                <dd className="text-gray-800 font-medium">{parcheggio.name}</dd>
                             </div>
                             <div>
                                 <dt className="text-xs text-gray-400 uppercase tracking-wider">Prezzo orario</dt>
-                                <dd className="text-gray-800">€{parcheggio.prezzo_orario} / ora</dd>
+                                <dd className="text-gray-800">€{parcheggio.hour_tax} / ora</dd>
                             </div>
                             <div>
                                 <dt className="text-xs text-gray-400 uppercase tracking-wider">Inizio</dt>

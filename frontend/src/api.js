@@ -20,34 +20,18 @@ function post(path, body, options = {}) {
     return request(path, { method: 'POST', headers: {'Content-Type': 'application/json'} ,body: JSON.stringify(body) })
 }
 
+function get(path, options = {}) {
+    return request(path, { method: 'GET', ...options })
+}
+
 export const api = {
+
+    fetchPargeggiDisponibili: (token) => {
+        return []
+    },
+
     fetchParcheggi: (token) => {
-        return [
-            {
-                id: 1,
-                nome: 'Parcheggio 1',
-                descrizione: 'Parcheggio situato in centro città, vicino a negozi e ristoranti. Offre 50 posti auto e tariffe convenienti.',
-                prezzo_orario: 2.5,
-                lat: 45.555643027580615,
-                lng: 10.21607865816928
-            },
-            {
-                id: 2,
-                nome: 'Parcheggio 2',
-                descrizione: 'Parcheggio coperto con 100 posti auto, situato vicino a un centro commerciale. Offre tariffe orarie e abbonamenti mensili.',
-                prezzo_orario: 3.0,
-                lat: 45.556458128508915,
-                lng: 10.214501303702997
-            },
-            {
-                id: 3,
-                nome: 'Parcheggio 3',
-                descrizione: "Parcheggio all'aperto con 30 posti auto, situato vicino a un parco pubblico. Offre tariffe giornaliere e settimanali.",
-                prezzo_orario: 2.0,
-                lat: 45.5549368476325,
-                lng: 10.21519329610318
-            }
-        ];
+        return get("park")
     },
     fetchPrenotazioni: (token) => {
         return [

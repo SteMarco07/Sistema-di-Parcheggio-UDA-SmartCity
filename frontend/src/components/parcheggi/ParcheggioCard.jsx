@@ -9,16 +9,16 @@ function ParcheggioCard({ parcheggio }) {
   const { modifyPosition, modifyZoom } = useStore();
 
   function handleClick() {
-    modifyPosition([p.lat, p.lng]);
+    modifyPosition([p.latitude ?? p.lat, p.longitude ?? p.lng]);
     modifyZoom(18);
   }
 
 
   return (
     <div onClick={handleClick} className='margin-4'>
-      <h1 className="text-xl font-bold">{p.nome}</h1>
-      <p>Posti disponibili: {p.postiDisponibili || 0}</p>
-      <p>Descrizione: {p.descrizione || "nessuna descrizione presente"}</p>
+      <h1 className="text-xl font-bold">{p.name}</h1>
+      <p>Posti totali: {p.total_spots ?? '—'}</p>
+      <p>Descrizione: {p.description || "nessuna descrizione presente"}</p>
     </div>
   );
 }

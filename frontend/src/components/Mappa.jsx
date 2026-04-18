@@ -81,7 +81,7 @@ function SearchBar({ onSelect }) {
     setQuery(feature.place_name)
     setResults([])
     setOpen(false)
-    onSelect({ lng, lat, name: feature.place_name })
+    onSelect({ longitude: lng, latitude: lat, name: feature.place_name })
   }
 
   function handleClear() {
@@ -228,16 +228,16 @@ function Mappa() {
   }
 
   // Vola alla location selezionata dalla searchbar
-  function handleSearchSelect({ lng, lat }) {
+  function handleSearchSelect({ longitude, latitude }) {
     const newView = {
       ...viewState,
-      longitude: lng,
-      latitude: lat,
+      longitude: longitude,
+      latitude: latitude,
       zoom: 16,
       transitionDuration: 800,
     }
     setViewState(newView)
-    modifyPosition([lat, lng])
+    modifyPosition([latitude, longitude])
     modifyZoom(16)
   }
 
@@ -262,8 +262,8 @@ function Mappa() {
 
         {selectedParcheggio && (
           <Popup
-            longitude={selectedParcheggio.lng}
-            latitude={selectedParcheggio.lat}
+            longitude={selectedParcheggio.longitude}
+            latitude={selectedParcheggio.latitude}
             onClose={() => setSelectedParcheggio(null)}
             closeOnClick={false}
           >

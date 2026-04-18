@@ -20,11 +20,15 @@ function ClusteredMarkers({ parcheggi, onMarkerClick }) {
   // Carica i punti quando cambiano i parcheggi
   useEffect(() => {
     if (!parcheggi.length) return
-    const points = parcheggi.map((p) => ({
-      type: 'Feature',
-      properties: { cluster: false, parcheggio: p },
-      geometry: { type: 'Point', coordinates: [p.lng, p.lat] },
-    }))
+    const points = parcheggi.map((p) => {
+      const lng = p.longitude
+      const lat = p.latitude
+      return {
+        type: 'Feature',
+        properties: { cluster: false, parcheggio: p },
+        geometry: { type: 'Point', coordinates: [lng, lat] },
+      }
+    })
     supercluster.load(points)
     updateClusters()
   }, [parcheggi, updateClusters])
@@ -71,11 +75,13 @@ function ClusteredMarkers({ parcheggi, onMarkerClick }) {
 
 // Calcola il colore in base ai posti liberi
 function getMarkerColor(parcheggio) {
-  const { posti_totali, posti_liberi } = parcheggio
 
-  if (!posti_totali || posti_liberi == null) return '#EF4444' // dati assenti
+  const total = parcheggio.total_spots
+  const free = parcheggio.posti_liberi ?? parcheggio.available_spots ?? parcheggio.free_spots ?? null
 
-  const ratio = posti_liberi / posti_totali
+  if (!total || free == null) return '#EF4444' // dati assenti
+
+  const ratio = free / total
 
   if (ratio > 0.5) return '#22C55E' // verde 
   if (ratio > 0.2) return '#F59E0B' // giallo
@@ -88,7 +94,7 @@ function SingleMarker({ parcheggio, onClick }) {
   const color = getMarkerColor(parcheggio)
 
   return (
-    <Marker longitude={parcheggio.lng} latitude={parcheggio.lat} onClick={onClick}>
+    <Marker longitude={parcheggio.longitude ?? parcheggio.lng} latitude={parcheggio.latitude ?? parcheggio.lat} onClick={onClick}>
       <div
         style={{ display: 'flex', flexDirection: 'column', alignItems: 'center', cursor: 'pointer', transition: 'transform .15s' }}
         onMouseEnter={e => e.currentTarget.style.transform = 'translateY(-3px)'}

@@ -69,11 +69,12 @@ function TableParcheggi() {
                                         try {
                                             const form = new FormData(e.target);
                                             const payload = {
-                                                nome: form.get('nome') || '',
-                                                descrizione: form.get('descrizione') || '',
-                                                prezzo_orario: parseFloat(form.get('prezzo_orario')) || 0,
-                                                lat: parseFloat(form.get('lat')) || 0,
-                                                lng: parseFloat(form.get('lng')) || 0,
+                                                name: form.get('name') || form.get('nome') || '',
+                                                description: form.get('description') || form.get('descrizione') || '',
+                                                hour_tax: parseFloat(form.get('hour_tax') || form.get('prezzo_orario')) || 0,
+                                                latitude: parseFloat(form.get('latitude') || form.get('lat')) || 0,
+                                                longitude: parseFloat(form.get('longitude') || form.get('lng')) || 0,
+                                                total_spots: parseInt(form.get('total_spots') || form.get('posti_totali')) || null,
                                             };
 
                                             aggiungiParcheggio(payload);
@@ -94,7 +95,7 @@ function TableParcheggi() {
                                             <span className="label-text">Nome</span>
                                         </label>
                                         <input
-                                            name="nome"
+                                            name="name"
                                             type="text"
                                             className="input input-bordered w-full"
                                             required
@@ -104,16 +105,28 @@ function TableParcheggi() {
                                             <span className="label-text">Descrizione</span>
                                         </label>
                                         <textarea
-                                            name="descrizione"
+                                            name="description"
                                             className="textarea textarea-bordered w-full"
                                             rows={3}
+                                        />
+
+                                        <label className="label">
+                                            <span className="label-text">Posti totali</span>
+                                        </label>
+                                        <input
+                                            name="total_spots"
+                                            type="number"
+                                            step="1"
+                                            className="input input-bordered w-full"
+                                            defaultValue={50}
+                                            required
                                         />
 
                                         <label className="label">
                                             <span className="label-text">Prezzo orario (€)</span>
                                         </label>
                                         <input
-                                            name="prezzo_orario"
+                                            name="hour_tax"
                                             type="number"
                                             step="0.01"
                                             className="input input-bordered w-full"
@@ -126,7 +139,7 @@ function TableParcheggi() {
                                                     <span className="label-text">Latitudine</span>
                                                 </label>
                                                 <input
-                                                    name="lat"
+                                                    name="latitude"
                                                     type="number"
                                                     step="any"
                                                     defaultValue={45.4642}
@@ -140,7 +153,7 @@ function TableParcheggi() {
                                                     <span className="label-text">Longitudine</span>
                                                 </label>
                                                 <input
-                                                    name="lng"
+                                                    name="longitude"
                                                     type="number"
                                                     step="any"
                                                     defaultValue={9.1900}
@@ -183,11 +196,12 @@ function TableParcheggi() {
                                         try {
                                             const form = new FormData(e.target);
                                             const payload = {
-                                                nome: form.get('nome') || '',
-                                                descrizione: form.get('descrizione') || '',
-                                                prezzo_orario: parseFloat(form.get('prezzo_orario')) || 0,
-                                                lat: parseFloat(form.get('lat')) || 0,
-                                                lng: parseFloat(form.get('lng')) || 0,
+                                                name: form.get('name') || '',
+                                                description: form.get('description') || '',
+                                                hour_tax: parseFloat(form.get('hour_tax') || 0),
+                                                latitude: parseFloat(form.get('latitude') ||  0),
+                                                longitude: parseFloat(form.get('longitude') ) || 0,
+                                                total_spots: parseInt(form.get('total_spots')) || null,
                                             };
 
                                             modificaParcheggio(oggettoInModificaPark?.id, payload);
@@ -208,9 +222,9 @@ function TableParcheggi() {
                                             <span className="label-text">Nome</span>
                                         </label>
                                         <input
-                                            name="nome"
+                                            name="name"
                                             type="text"
-                                            defaultValue={oggettoInModificaPark?.nome}
+                                            defaultValue={oggettoInModificaPark?.name }
                                             className="input input-bordered w-full"
                                             required
                                         />
@@ -219,20 +233,32 @@ function TableParcheggi() {
                                             <span className="label-text">Descrizione</span>
                                         </label>
                                         <textarea
-                                            name="descrizione"
-                                            defaultValue={oggettoInModificaPark?.descrizione}
+                                            name="description"
+                                            defaultValue={oggettoInModificaPark?.description}
                                             className="textarea textarea-bordered w-full"
                                             rows={3}
+                                        />
+
+                                        <label className="label">
+                                            <span className="label-text">Posti totali</span>
+                                        </label>
+                                        <input
+                                            name="total_spots"
+                                            type="number"
+                                            step="1"
+                                            className="input input-bordered w-full"
+                                            defaultValue={oggettoInModificaPark?.total_spots ?? oggettoInModificaPark?.posti_totali ?? 50}
+                                            required
                                         />
 
                                         <label className="label">
                                             <span className="label-text">Prezzo orario (€)</span>
                                         </label>
                                         <input
-                                            name="prezzo_orario"
+                                            name="hour_tax"
                                             type="number"
                                             step="0.01"
-                                            defaultValue={oggettoInModificaPark?.prezzo_orario}
+                                            defaultValue={oggettoInModificaPark?.hour_tax}
                                             className="input input-bordered w-full"
                                             required
                                         />
@@ -243,10 +269,10 @@ function TableParcheggi() {
                                                     <span className="label-text">Latitudine</span>
                                                 </label>
                                                 <input
-                                                    name="lat"
+                                                    name="latitude"
                                                     type="number"
                                                     step="any"
-                                                    defaultValue={oggettoInModificaPark?.lat}
+                                                    defaultValue={oggettoInModificaPark?.latitude}
                                                     className="input input-bordered w-full"
                                                     required
                                                 />
@@ -257,10 +283,10 @@ function TableParcheggi() {
                                                     <span className="label-text">Longitudine</span>
                                                 </label>
                                                 <input
-                                                    name="lng"
+                                                    name="longitude"
                                                     type="number"
                                                     step="any"
-                                                    defaultValue={oggettoInModificaPark?.lng}
+                                                    defaultValue={oggettoInModificaPark?.longitude}
                                                     className="input input-bordered w-full"
                                                     required
                                                 />

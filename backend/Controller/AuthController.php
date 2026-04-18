@@ -37,7 +37,7 @@ class AuthController{
 
         $userData = $this->userRepository->verifyCredentials($data['email'], $data['password']);
 
-        if ($userData['token'] === null) {
+        if (!isset($userData['token'])) {
             return $this->JSONResponse($response, [
                 'messaggio' => 'Credenziali non valide'
             ], 401);

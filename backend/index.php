@@ -32,7 +32,7 @@ $app = AppFactory::create();
 $app->setBasePath($config['BASEPATH']);
 
 // CORS middleware
-$corsMiddleware = function (Request $request, RequestHandler $handler) {
+$CORSMiddleware = function (Request $request, RequestHandler $handler) {
     // Always add CORS headers to the response
     $response = $handler->handle($request);
 
@@ -50,10 +50,10 @@ $corsMiddleware = function (Request $request, RequestHandler $handler) {
 // Preflight handler (short-circuit OPTIONS)
 $app->options('/{routes:.+}', function (Request $request, Response $response) {
     return $response;
-})->add($corsMiddleware);
+})->add($CORSMiddleware);
 
 // Then add CORS middleware globally (must be added **first**)
-$app->add($corsMiddleware);
+$app->add($CORSMiddleware);
 
 $app->addBodyParsingMiddleware();
 
@@ -64,7 +64,7 @@ $customErrorHandler = function (
     bool $displayErrorDetails,
     bool $logErrors,
     bool $logErrorDetails
-) use ($app, $corsMiddleware) {
+) use ($app) {
     // Build the error payload
     $payload = ['error' => $exception->getMessage()];
     $response = $app->getResponseFactory()->createResponse();

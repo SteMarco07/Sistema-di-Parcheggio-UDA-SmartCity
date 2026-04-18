@@ -55,7 +55,9 @@ class AuthController{
             $request->getParsedBody()['password']
         );
 
-        return $this->JSONResponse($response, $utente, 201);
+        if($utente['success']) { return $this->JSONResponse($response, $utente, 201); }
+
+        return $this->JSONResponse($response, $utente, 409);
     }
 
     public function profile(Request $request, Response $response): Response {

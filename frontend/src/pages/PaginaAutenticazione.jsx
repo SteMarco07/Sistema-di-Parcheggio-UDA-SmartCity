@@ -6,7 +6,7 @@ function PaginaAutenticazione() {
     const { authMode, setAuthMode } = useStore();
 
     return (
-        <div className="min-h-[calc(100vh-64px)] w-full px-6 py-7 flex justify-center items-start md:items-center bg-gray-50">
+        <div className="min-h-[100vh] w-full px-6 py-7 flex justify-center items-start md:items-center bg-gray-50">
             <div className="w-full sm:w-[80%] md:w-[50%] lg:w-[30%] lg:min-w-[480px] bg-white rounded-xl shadow-lg border border-gray-200 p-6 flex flex-col items-center gap-4">
 
                 {/* Tab switcher */}

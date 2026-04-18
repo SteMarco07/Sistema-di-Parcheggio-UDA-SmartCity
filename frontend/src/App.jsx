@@ -30,7 +30,7 @@ function App() {
 
 
       <div className="min-h-screen flex flex-col bg-gray-100">
-        <div className="h-16 flex-none" aria-hidden />
+        
         <Routes>
           {/* Indirizzamento automatico verso la pagina di autenticazione */}
           <Route path="/" element={<Navigate to="/auth" replace />} />
@@ -75,7 +75,7 @@ function App() {
               <Route path="*" element={<Navigate to="/auth" replace />} />
             )
           }
-          />
+
           <Route path="/dashboard" element={
             <>
               <Navbar />

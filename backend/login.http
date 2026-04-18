@@ -1,0 +1,9 @@
+###
+POST http://localhost:9080/api/login
+    ?generated-in=PhpStorm
+Content-Type: application/json
+
+{ "email" :  "prova@gmail.com",
+  "password" : "papopepo" }
+
+###

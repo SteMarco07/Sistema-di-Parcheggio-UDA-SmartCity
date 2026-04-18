@@ -1,0 +1,19 @@
+{
+    "require": {
+        "slim/slim": "4.15.*",
+        "slim/psr7": "^1.7.1",
+        "league/plates": "^3.6",
+        "firebase/php-jwt": "^7.0",
+        "php-di/slim-bridge": "*",
+        "php-di/php-di" : "^7.0",
+        "ext-json": "*"
+    },
+
+    "autoload": {
+        "psr-4": {
+            "Util\\": "Util/",
+            "Model\\": "Model/",
+            "Controller\\": "Controller/"
+        }
+    }
+}

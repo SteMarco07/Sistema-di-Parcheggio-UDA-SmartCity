@@ -13,7 +13,7 @@ import PaginaProfilo from './pages/PaginaProfilo.jsx';
 import PaginaDashboard from './pages/PaginaDashboard.jsx';
 
 function App() {
-  const { loadFromLocalStorage, fetchParcheggi, fetchPrenotazioni, utente } = useStore();
+  const { loadFromLocalStorage, fetchParcheggi, fetchPrenotazioni, utente, token } = useStore();
 
   useEffect(() => {
     loadFromLocalStorage();
@@ -35,33 +35,45 @@ function App() {
           {/* Indirizzamento automatico verso la pagina di autenticazione */}
           <Route path="/" element={<Navigate to="/auth" replace />} />
 
-          {/* Rotta verso la pagina con la mappa ed elenco dei parcheggi */}
-          <Route path="/parcheggi" element={
-            <>
-              <Navbar />
-              <PaginaParcheggi />
-            </>
-          }
-          />
-          {/* Rotta verso la pagina con le prenotazioni */}
-          <Route path="/prenotazioni" element={
-            <>
-              <Navbar />
-              <PaginaPrenotazioni />
-            </>
-          }
-          />
-
           {/* Rotta verso la pagina di autenticazione */}
           <Route path="/auth" element={
             <PaginaAutenticazione />
           }
           />
-          <Route path="/profilo" element={
-            <>
-              <Navbar />
-              <PaginaProfilo />
-            </>
+
+          {
+            token ? (
+              <>
+                {/* Rotta verso la pagina con la mappa ed elenco dei parcheggi */}
+                <Route path="/parcheggi" element={
+                  <>
+                    <Navbar />
+                    <PaginaParcheggi />
+                  </>
+                }
+                />
+                {/* Rotta verso la pagina con le prenotazioni */}
+                <Route path="/prenotazioni" element={
+                  <>
+                    <Navbar />
+                    <PaginaPrenotazioni />
+                  </>
+                }
+                />
+
+
+                <Route path="/profilo" element={
+                  <>
+                    <Navbar />
+                    <PaginaProfilo />
+                  </>
+                }
+                />
+              </>
+            ) : (
+              // Se non c'è token, reindirizza alla pagina di autenticazione
+              <Route path="*" element={<Navigate to="/auth" replace />} />
+            )
           }
           />
           <Route path="/dashboard" element={
@@ -72,7 +84,7 @@ function App() {
           }
           />
         </Routes>
-        
+
       </div>
     </BrowserRouter>
   );

@@ -5,18 +5,23 @@ import { useNavigate } from 'react-router-dom';
 
 function LoginForm() {
 
-    const { setAuthMode } = useStore();
+    const { setAuthMode, login, remember, alternaRemember } = useStore();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
-    const [remember, setRemember] = useState(false);
 
     const navigate = useNavigate();
 
-    function handleSubmit(e) {
+    async function handleSubmit(e) {
         e.preventDefault();
         console.log("Login submit:", { email, password, remember });
         // qui andrebbe la chiamata all'API per autenticare; al momento navighiamo direttamente
-        navigate('/parcheggi');
+        const result = await login(email, password);
+        
+        if (result.success) {
+            navigate('/parcheggi');
+        } else {
+            console.error(`Errore durante il login: ${result.message}`);
+        }
     }
 
     return (
@@ -40,10 +45,10 @@ function LoginForm() {
                         id="remember"
                         type="checkbox"
                         checked={remember}
-                        onChange={(e) => setRemember(e.target.checked)}
+                        onChange={() => alternaRemember()}
                         className="checkbox"
                     />
-                    <label htmlFor="remember">Ricordami</label>
+                    <label htmlFor="remember" value={remember}>Ricordami</label>
                 </div>
 
                 <div className="flex flex-col items-center mt-20">

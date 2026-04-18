@@ -6,7 +6,7 @@ export const useStore = create((set, get) => ({
     // STATO INIZIALE
     parcheggi: [],
     parcheggiFiltrati: [],
-    ricerca : "",
+    ricerca: "",
     dataOraInizio: "",
     dataOraFine: "",
     prenotazioni: [],
@@ -28,6 +28,8 @@ export const useStore = create((set, get) => ({
     position: [45.55584514965588, 10.216172766008182],
     zoom: 18,
     authMode: "login",
+    remember: localStorage.getItem('remember') === 'true' || false,
+    token: localStorage.getItem('token') || "",
     utente: (() => {
         try {
             const raw = localStorage.getItem('user');
@@ -51,8 +53,8 @@ export const useStore = create((set, get) => ({
                 admin: false,
             };
         }
+        return { nome: "", cognome: "", email: "", targa: "", password: "", iniziali: "" }
     })(),
-
     addFieldset: () =>
         set((state) => ({
             fieldsets: [...state.fieldsets, { id: Date.now() }],
@@ -97,6 +99,55 @@ export const useStore = create((set, get) => ({
 
     },
 
+    login: async (email, password) => {
+        try {
+            const data = await api.login(email, password);
+            if (data && data.token) {
+                const token = data['token'];
+                const userInfo = {
+                    "nome": data['first_name'],
+                    "cognome": data['last_name'],
+                    "email": data['email'],
+                    "targa": data['license_plate'],
+                    "iniziali": data['first_name'][0].toUpperCase() + data['last_name'][0].toUpperCase()
+
+                }
+                get().setUser(userInfo);
+                get().setToken(data['token']);
+                if (get().remember) {
+                    localStorage.setItem('token', token);
+                    localStorage.setItem('user', JSON.stringify(userInfo));
+                }
+                get().setUser(userInfo);
+                return { success: true };
+            } else {
+                return { success: false, message: "Login fallito" };
+            }
+
+        } catch (err) {
+            return { success: false, message: err.message };
+        }
+    },
+
+    register: async (nome, cognome, email, targa, password) => {
+        try {
+            const data = await api.register(nome, cognome, email, targa, password);
+            console.log("Dati registrazione:", data);
+            if (data.success) {
+                // Dopo la registrazione, effettua il login automatico per ottenere il token
+                const loginResult = await get().login(email, password);
+                if (loginResult && loginResult.success) {
+                    return { success: true };
+                }
+            } else {
+                return { success: false, message: data.message || "Registrazione fallita" };
+            }
+        } catch (err) {
+            return { success: false, message: err.message };
+        }
+    },
+
+
 
     addPrenotazione: ({prenotazione}) => {
         prenotazione.id = get().prenotazioni.length+1;
@@ -111,6 +162,15 @@ export const useStore = create((set, get) => ({
         }
     },
 
+    setToken: (token) => {
+        try {
+            localStorage.setItem('token', token);
+        } catch (e) {
+            // ignore storage errors
+        }
+        set({ token });
+    },
+
     setUser: (userData) => {
         try {
             localStorage.setItem('user', JSON.stringify(userData));
@@ -122,18 +182,20 @@ export const useStore = create((set, get) => ({
 
     clearUser: () => {
         try {
+            localStorage.removeItem('token');
             localStorage.removeItem('user');
         } catch (e) {
             // ignore storage errors
         }
+        set({ token: "" });
         set({ utente: { nome: "", cognome: "", email: "", targa: "", password: "", iniziali: "" } });
     },
 
     // 1. Fetch dei dati (Asincrona)
-    fetchParcheggi: async () => {
+    fetchParcheggi: async (token) => {
         set({ isLoading: true, error: null });
         try {
-            const data = await api.fetchParcheggi();
+            const data = await api.fetchParcheggi(token);
             set({ parcheggi: data, isLoading: false });
             set({ parcheggiFiltrati: data, isLoading: false });
         } catch (err) {
@@ -141,10 +203,10 @@ export const useStore = create((set, get) => ({
         }
     },
 
-    fetchPrenotazioni: async () => {
+    fetchPrenotazioni: async (token) => {
         set({ isLoading: true, error: null });
         try {
-            const data = await api.fetchPrenotazioni();
+            const data = await api.fetchPrenotazioni(token);
             set({ prenotazioni: data, isLoading: false });
         } catch (err) {
             set({ error: err.message, isLoading: false });
@@ -164,6 +226,12 @@ export const useStore = create((set, get) => ({
             (p.descrizione ?? "").toLowerCase().includes(ricerca.toLowerCase())
         );
         set({ parcheggiFiltrati: filtrati });
+    },
+
+    addPrenotazione: ({ prenotazione }) => {
+        prenotazione.id = get().prenotazioni.length + 1;
+        //console.log(`Lo store aggiunge ${JSON.stringify(prenotazione)}`)
+        set({ prenotazioni: [...get().prenotazioni, prenotazione] });
     },
 
     deleteParcheggio: async (id) => {
@@ -343,6 +411,15 @@ export const useStore = create((set, get) => ({
         const [hours, minutes] = oraFine.split(':').map(Number);
         timestamp.setHours(hours, minutes, 0, 0);
         return timestamp.getTime();
+    },
+
+    getRemember: () => {
+        return get().remember;
+    },
+
+    alternaRemember: () => {
+        localStorage.setItem('remember', !get().remember);
+        set({ remember: !get().remember });
     }
 
 }));

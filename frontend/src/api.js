@@ -1,8 +1,9 @@
 import { use } from "react"
 
-const BASE = 'http://127.0.0.1:9080/parcheggi'
+const BASE = 'http://127.0.0.1:9080/api/'
 
 async function request(path, options = {}) {
+
     const res = await fetch(BASE + path, options)
     if (!res.ok) {
         const text = await res.text().catch(() => '')
@@ -15,8 +16,12 @@ async function request(path, options = {}) {
     }
 }
 
+function post(path, body, options = {}) {
+    return request(path, { method: 'POST', headers: {'Content-Type': 'application/json'} ,body: JSON.stringify(body) })
+}
+
 export const api = {
-    fetchParcheggi: () => {
+    fetchParcheggi: (token) => {
         return [
             {
                 id: 1,
@@ -44,7 +49,7 @@ export const api = {
             }
         ];
     },
-    fetchPrenotazioni: () => {
+    fetchPrenotazioni: (token) => {
         return [
             {
                 id: 1,
@@ -72,6 +77,26 @@ export const api = {
             }
         ]
     },
+
+    login: (username, password) => {
+        console.log(`Login con ${JSON.stringify({ username, password })}`)
+        return post("login", {
+                email: username,
+                password: password
+        })
+    },
+
+    register: (nome, cognome, email, targa, password) => {
+        console.log(`Registrazione con ${JSON.stringify({ nome, cognome, email, targa, password })}`)
+        return post("register", {
+            nome,
+            cognome,
+            email,
+            targa,
+            password
+        })
+    },
+  
     getCredenziali: (token) => {
 
     },
@@ -94,9 +119,7 @@ export const api = {
             id: id,
             successo: true
         }
-    }
-
-    ,
+    },
     modificaPrenotazione: (id, payload) => {
         return {
             prenotazione: payload,

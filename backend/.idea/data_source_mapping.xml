@@ -1,0 +1,8 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="DataSourcePerFileMappings">
+    <file url="file://$PROJECT_DIR$/Model/AdminRepository.php" value="1673c181-1e41-4f2e-b43b-a413fc1eb488" />
+    <file url="file://$PROJECT_DIR$/Model/ParcheggiRepository.php" value="1673c181-1e41-4f2e-b43b-a413fc1eb488" />
+    <file url="file://$PROJECT_DIR$/Model/UserRepository.php" value="1673c181-1e41-4f2e-b43b-a413fc1eb488" />
+  </component>
+</project>

@@ -1,10 +1,18 @@
 import { use } from "react"
+import { data } from "react-router-dom"
 
 const BASE = 'http://127.0.0.1:9080/api/'
 
 async function request(path, options = {}) {
 
-    const res = await fetch(BASE + path, options)
+    // estraggo token dalle options (se presente) e lo trasformo in header
+    const { token, headers: optHeaders, ...rest } = options
+    const headers = { ...(optHeaders || {}) }
+    if (token) {
+        headers['Authorization'] = `Bearer ${token}`
+    }
+
+    const res = await fetch(BASE + path, { ...rest, headers })
     if (!res.ok) {
         const text = await res.text().catch(() => '')
         throw new Error(text || `${res.status} ${res.statusText}`)
@@ -17,7 +25,15 @@ async function request(path, options = {}) {
 }
 
 function post(path, body, options = {}) {
-    return request(path, { method: 'POST', headers: {'Content-Type': 'application/json'} ,body: JSON.stringify(body) })
+    const { headers: optHeaders, token, ...rest } = options || {}
+    const headers = { 'Content-Type': 'application/json', ...(optHeaders || {}) }
+    return request(path, { method: 'POST', headers, body: JSON.stringify(body), token, ...rest })
+}
+
+function put(path, body, options = {}) {
+    const { headers: optHeaders, token, ...rest } = options || {}
+    const headers = { 'Content-Type': 'application/json', ...(optHeaders || {}) }
+    return request(path, { method: 'PUT', headers, body: JSON.stringify(body), token, ...rest })
 }
 
 function get(path, options = {}) {
@@ -80,10 +96,13 @@ export const api = {
             password
         })
     },
-  
-    getCredenziali: (token) => {
 
+    aggiungiParcheggio: (payload, token) => {
+        const data = put("park", payload, { token })
+        console.log(`Aggiungi parcheggio: ${payload}, risposta: ${data}`)
+        return data
     },
+  
     deleteParcheggio: (id) => {
         return {
             id: id,

@@ -46,7 +46,7 @@ function ChartPrenotazioniAttive() {
         <div>
             <h2 className="text-xl font-bold mb-3">Prenotazioni per stato</h2>
             <div className="w-full h-48 md:h-64 lg:h-80">
-                <ResponsiveContainer>
+                <ResponsiveContainer width="100%" height="100%">
                     <PieChart>
                         <Tooltip />
                         <Legend verticalAlign="bottom" height={36} />

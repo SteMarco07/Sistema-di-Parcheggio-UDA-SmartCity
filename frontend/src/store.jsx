@@ -228,6 +228,7 @@ export const useStore = create((set, get) => ({
         const filtrati = parcheggi.filter((p) =>
             ((p.name ??  "")).toLowerCase().includes(ricerca.toLowerCase()) ||
             ((p.description ??  "")).toLowerCase().includes(ricerca.toLowerCase())
+            ((p.description ??  "")).toLowerCase().includes(ricerca.toLowerCase())
         );
         set({ parcheggiFiltrati: filtrati });
     },
@@ -345,8 +346,8 @@ export const useStore = create((set, get) => ({
         set({ isLoading: true, error: null });
         try {
             // console.log(`Aggiungo parcheggio: ${JSON.stringify(payload)}`);
-            const data = await api.aggiungiParcheggio(payload);
-            if (data && data.successo) {
+            const data = await api.aggiungiParcheggio(payload, get().token);
+            if (data) {
                 const nuovoParcheggio = { id: data.id, ...payload };
                 const parcheggi = [...get().parcheggi, nuovoParcheggio];
                 set({ parcheggi, parcheggiFiltrati: parcheggi, isLoading: false });

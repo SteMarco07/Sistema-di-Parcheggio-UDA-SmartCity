@@ -43,7 +43,7 @@ function ChartParcheggi() {
         <div>
             <h2 className="text-xl font-bold mb-3">Prenotazioni per parcheggio</h2>
             <div className="w-full h-48 md:h-64 lg:h-80">
-                <ResponsiveContainer >
+                <ResponsiveContainer width="100%" height="100%">
                     <BarChart data={data} margin={{ top: 10, right: 12, left: 0, bottom: 72 }}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="nome" interval={0} height={64} tick={{ angle: -45, textAnchor: 'end', fontSize: 12 }} />

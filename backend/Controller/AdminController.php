@@ -27,7 +27,9 @@ class AdminController {
             $request->getParsedBody()['name'],
             $request->getParsedBody()['total_spots'],
             $request->getParsedBody()['latitude'],
-            $request->getParsedBody()['longitude']
+            $request->getParsedBody()['longitude'],
+            $request->getParsedBody()['hour_tax'],
+            $request->getParsedBody()['description']
         );
 
         $response->getBody()->write(json_encode($parcheggio));

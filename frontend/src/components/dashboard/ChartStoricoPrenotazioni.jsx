@@ -225,7 +225,7 @@ function ChartStoricoPrenotazioni() {
             <p className="text-sm text-gray-500 mb-2">{label}</p>
 
             <div className="w-full h-48 md:h-64 lg:h-80">
-                <ResponsiveContainer>
+                <ResponsiveContainer width="100%" height="100%">
                     <LineChart data={data} margin={{ top: 10, right: 12, left: 0, bottom: 24 }}>
                         <CartesianGrid strokeDasharray="3 3" />
                         <XAxis dataKey="date" tick={{ fontSize: 10 }} />

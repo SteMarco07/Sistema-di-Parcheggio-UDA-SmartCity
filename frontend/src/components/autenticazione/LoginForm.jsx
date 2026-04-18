@@ -8,6 +8,7 @@ function LoginForm() {
     const { setAuthMode, login, remember, alternaRemember } = useStore();
     const [email, setEmail] = useState("");
     const [password, setPassword] = useState("");
+    const [loginError, setLoginError] = useState(null);
 
     const navigate = useNavigate();
 
@@ -20,6 +21,7 @@ function LoginForm() {
         if (result.success) {
             navigate('/parcheggi');
         } else {
+            setLoginError(result.message['message'] || "Errore sconosciuto durante il login");
             console.error(`Errore durante il login: ${result.message}`);
         }
     }
@@ -52,6 +54,13 @@ function LoginForm() {
                 </div>
 
                 <div className="flex flex-col items-center mt-20">
+                    {
+                        loginError && <div className="alert alert-error w-full mb-4">
+                            <div>
+                                <span>{loginError}</span>
+                            </div>
+                        </div>
+                    }
                     <button type="submit" className="btn btn-primary w-[50%] items-center">Accedi</button>
                 </div>
             </form>

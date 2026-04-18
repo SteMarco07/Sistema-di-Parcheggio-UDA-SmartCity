@@ -109,6 +109,7 @@ export const useStore = create((set, get) => ({
                     "cognome": data['last_name'],
                     "email": data['email'],
                     "targa": data['license_plate'],
+                    "admin": data['role'] === 'ADMIN',
                     "iniziali": data['first_name'][0].toUpperCase() + data['last_name'][0].toUpperCase()
 
                 }
@@ -228,11 +229,6 @@ export const useStore = create((set, get) => ({
         set({ parcheggiFiltrati: filtrati });
     },
 
-    addPrenotazione: ({ prenotazione }) => {
-        prenotazione.id = get().prenotazioni.length + 1;
-        //console.log(`Lo store aggiunge ${JSON.stringify(prenotazione)}`)
-        set({ prenotazioni: [...get().prenotazioni, prenotazione] });
-    },
 
     deleteParcheggio: async (id) => {
         set({ isLoading: true, error: null });

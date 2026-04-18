@@ -98,7 +98,7 @@ $app->post('/login', [AuthController::class, 'login']);
 $app->post('/register', [AuthController::class, 'register']);
 
 // Restituisce tutti i parcheggi presenti
-$app->get('/park', [ParcheggiController::class, 'getAlSlParcheggi']);
+$app->get('/park', [ParcheggiController::class, 'getAllParcheggi']);
 
 // Restituisce un parcheggio specifico
 $app->get('/park/{park_id}',  [ParcheggiController::class, 'getParcheggioById']);

@@ -30,8 +30,8 @@ class AuthController{
         // Validazione minima: i campi devono esserci
         if (empty($data['email']) || empty($data['password'])) {
             return $this->JSONResponse($response, [
-                'messaggio' => 'Email e password sono obbligatori',
-                'contesto' => $data
+                'message' => 'Email e password sono obbligatori',
+                'context' => $data
             ], 400);
         }
 
@@ -39,7 +39,7 @@ class AuthController{
 
         if (!isset($userData['token'])) {
             return $this->JSONResponse($response, [
-                'messaggio' => 'Credenziali non valide'
+                'message' => 'Credenziali non valide'
             ], 401);
         }
 
@@ -65,6 +65,6 @@ class AuthController{
     }
 
     public function logout(Request $request, Response $response): Response {
-        return $this->JSONResponse($response, [ 'messaggio' => 'Logout effettuato. Elimina il token lato client.' ]);
+        return $this->JSONResponse($response, [ 'message' => 'Logout effettuato. Elimina il token lato client.' ]);
     }
 }

@@ -24,7 +24,7 @@ class ParcheggiController {
             $response->getBody()->write(json_encode($parking_lots));
             $response->withStatus(200);
         } else {
-            $response->getBody()->write(json_encode(['error' => 'Parcheggio non trovato']));
+            $response->getBody()->write(json_encode(['message' => 'Parcheggio non trovato']));
             $response->withStatus(404);
         }
 
@@ -46,7 +46,7 @@ class ParcheggiController {
             $response->getBody()->write(json_encode($reservation));
             $response->withStatus(200);
         } else {
-            $response->getBody()->write(json_encode(['error' => 'Prenotazione non trovata']));
+            $response->getBody()->write(json_encode(['message' => 'Prenotazione non trovata']));
             $response->withStatus(404);
         }
 
@@ -60,7 +60,7 @@ class ParcheggiController {
             $response->getBody()->write(json_encode($reservation));
             $response->withStatus(200);
         } else {
-            $response->getBody()->write(json_encode(['error' => 'Prenotazione non trovata']));
+            $response->getBody()->write(json_encode(['message' => 'Prenotazione non trovata']));
             $response->withStatus(404);
         }
 

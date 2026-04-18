@@ -14,6 +14,7 @@ function SignupForm() {
     const [targa, setTarga] = useState("");
     const [password, setPassword] = useState("");
     const [confirm, setConfirm] = useState("");
+    //const [admin, setAdmin] = useState(false);
 
     const navigate = useNavigate();
 
@@ -46,7 +47,7 @@ function SignupForm() {
 
     return (
         <>
-            <h1 className="text-3xl font-bold">Registrazione</h1>
+            <h1 className="text-3xl font-bold px-5">Registrazione</h1>
             <form onSubmit={handleSubmit} className="flex flex-col justify-between px-5 w-full h-full mt-10">
                 <div className="flex-1 space-y-4">
                     {/* Campo nome */}
@@ -93,12 +94,13 @@ function SignupForm() {
             </form>
 
             {/* Link per passare al form di login */}
-            <div className="flex flex-col items-center mb-4">
+            {/*<div className="flex flex-col items-center mb-4">
                 <div className="flex gap-2 items-center">
                     <p>Hai già un account?</p>
                     <a href="#" role="button" className="link link-primary" onClick={(e) => { e.preventDefault(); setAuthMode(0); }}>Accedi</a>
                 </div>
             </div>
+            */}
         </>
     )
 

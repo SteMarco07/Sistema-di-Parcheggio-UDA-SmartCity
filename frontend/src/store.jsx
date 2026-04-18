@@ -10,6 +10,18 @@ export const useStore = create((set, get) => ({
     dataOraInizio: "",
     dataOraFine: "",
     prenotazioni: [],
+
+    oggettoInModificaPark: null,
+    showEditModalPark: false,
+    showDeleteModalPark: false,
+
+    oggettoInModificaRes: null,
+    showEditModalRes: false,
+    showDeleteModalRes: false,
+
+    showAddParkModal: false,
+    
+
     isLoading: false,
     fieldsets: [],
     error: null,
@@ -19,14 +31,27 @@ export const useStore = create((set, get) => ({
     remember: localStorage.getItem('remember') === 'true' || false,
     token: localStorage.getItem('token') || "",
     utente: (() => {
-        const rememberFlag = localStorage.getItem('remember') === 'true'
-        if (rememberFlag) {
-            try {
-                const raw = localStorage.getItem('user')
-                return raw ? JSON.parse(raw) : { nome: "", cognome: "", email: "", targa: "", password: "", iniziali: "" }
-            } catch (e) {
-                return { nome: "", cognome: "", email: "", targa: "", password: "", iniziali: "" }
-            }
+        try {
+            const raw = localStorage.getItem('user');
+            return raw ? JSON.parse(raw) : {
+                nome: "",
+                cognome: "",
+                email: "",
+                targa: "",
+                password: "",
+                iniziali: "",
+                admin: false,
+            };
+        } catch (e) {
+            return {
+                nome: "",
+                cognome: "",
+                email: "",
+                targa: "",
+                password: "",
+                iniziali: "",
+                admin: false,
+            };
         }
         return { nome: "", cognome: "", email: "", targa: "", password: "", iniziali: "" }
     })(),
@@ -123,16 +148,17 @@ export const useStore = create((set, get) => ({
     },
 
 
+
+    addPrenotazione: ({prenotazione}) => {
+        prenotazione.id = get().prenotazioni.length+1;
+        //console.log(`Lo store aggiunge ${JSON.stringify(prenotazione)}`)
+        set({ prenotazioni: [...get().prenotazioni, prenotazione] });
+    },
+
     // Modifica modalità di autenticazione (login/signup)
     setAuthMode: (mode) => {
-        if (mode == 'login' || mode == 'signup') {
+        if (mode === "login" || mode === "signup") {
             set({ authMode: mode });
-        }
-
-        if (mode == 0) {
-            set({ authMode: 'login' });
-        } else {
-            set({ authMode: 'signup' });
         }
     },
 
@@ -208,7 +234,141 @@ export const useStore = create((set, get) => ({
         set({ prenotazioni: [...get().prenotazioni, prenotazione] });
     },
 
-    modificaPrenotazione: ({ prenotazioneModificata }) => {
+    deleteParcheggio: async (id) => {
+        set({ isLoading: true, error: null });
+        try {
+            const data = await api.deleteParcheggio(id);
+            if (data && data.successo) {
+                const filtrati = get().parcheggi.filter((p) => p.id !== data.id);
+
+                set({ parcheggi: filtrati, parcheggiFiltrati: filtrati, isLoading: false });
+                // console.log("Eliminato parcheggio con id:", data.id);
+                get().fetchPrenotazioni();
+            } else {
+                set({ isLoading: false });
+            }
+        } catch (err) {
+            set({ error: err.message, isLoading: false });
+        }
+    },
+
+    deletePrenotazione: async (id) => {
+        set({ isLoading: true, error: null });
+        try {
+            const data = await api.deletePrenotazione(id);
+            if (data && data.successo) {
+                const remaining = get().prenotazioni.filter((p) => p.id !== data.id);
+                set({ prenotazioni: remaining, isLoading: false });
+                // console.log("Eliminata prenotazione con id:", data.id);
+            } else {
+                set({ isLoading: false });
+            }
+        } catch (err) {
+            set({ error: err.message, isLoading: false });
+        }
+    },
+
+    modificaParcheggio: async (id, payload) => {
+        set({ isLoading: true, error: null });
+        try {
+            const data = await api.modificaParcheggio(id, payload);
+            if (data && data.successo) {
+                const parcheggi = get().parcheggi.map((p) => p.id === id ? { ...p, ...payload } : p);
+                set({ parcheggi, parcheggiFiltrati: parcheggi, isLoading: false });
+                // console.log("Modificato parcheggio con id:", id);
+            } else {
+                set({ isLoading: false });
+            }
+        } catch (err) {
+            set({ error: err.message, isLoading: false });
+        }
+    },
+
+    modificaPrenotazione: async (id, payload) => {
+        set({ isLoading: true, error: null });
+        try {
+            const data = await api.modificaPrenotazione(id, payload);
+            if (data && data.successo) {
+                const prenotazioni = get().prenotazioni.map((p) => p.id === id ? { ...p, ...data.prenotazione } : p);
+                set({ prenotazioni, isLoading: false });
+                // console.log("Modificata prenotazione con id:", id);
+            } else {
+                set({ isLoading: false });
+            }
+        } catch (err) {
+            set({ error: err.message, isLoading: false });
+        }
+    },
+
+
+
+    mostraModaleModificaPark: (oggettoModifica) => {
+        set({ showEditModalPark: true, oggettoInModificaPark: oggettoModifica });
+    },
+
+    nascondiModaleModificaPark: () => {
+        set({ showEditModalPark: false, oggettoInModificaPark: null });
+    },
+
+    mostraModaleEliminaPark: (oggettoElimina) => {
+        set({ showDeleteModalPark: true, oggettoInModificaPark: oggettoElimina });
+    },
+
+    nascondiModaleEliminaPark: () => {
+        set({ showDeleteModalPark: false, oggettoInModificaPark: null });
+    },
+
+    mostraModaleModificaRes: (oggettoModifica) => {
+        set({ showEditModalRes: true, oggettoInModificaRes: oggettoModifica });
+    },
+
+    nascondiModaleModificaRes: () => {
+        set({ showEditModalRes: false, oggettoInModificaRes: null });
+    },
+
+    mostraModaleEliminaRes: (oggettoElimina) => {
+        set({ showDeleteModalRes: true, oggettoInModificaRes: oggettoElimina });
+    },
+
+    nascondiModaleEliminaRes: () => {
+        set({ showDeleteModalRes: false, oggettoInModificaRes: null });
+    },
+
+    mostraModaleAggiungiParcheggio: () => {
+        set({ showAddParkModal: true });
+    },
+
+    nascondiModaleAggiungiParcheggio: () => {
+        set({ showAddParkModal: false });
+    },
+
+    aggiungiParcheggio: async (payload) => {
+        set({ isLoading: true, error: null });
+        try {
+            // console.log(`Aggiungo parcheggio: ${JSON.stringify(payload)}`);
+            const data = await api.aggiungiParcheggio(payload);
+            if (data && data.successo) {
+                const nuovoParcheggio = { id: data.id, ...payload };
+                const parcheggi = [...get().parcheggi, nuovoParcheggio];
+                set({ parcheggi, parcheggiFiltrati: parcheggi, isLoading: false });
+                // console.log("Aggiunto nuovo parcheggio con id:", data.id);
+            } else {
+                set({ isLoading: false });
+            }
+        } catch (err) {
+            set({ error: err.message, isLoading: false });
+        }
+    },
+
+    formatDate(iso) {
+        try {
+            return new Date(iso).toLocaleString();
+        } catch (e) {
+            return iso;
+        }
+    },
+
+    applicaModificaPrenotazione: ({ prenotazioneModificata }) => {
         set({
             prenotazioni: get().prenotazioni.map((p) =>
                 p.id === prenotazioneModificata.id ? prenotazioneModificata : p
@@ -244,6 +404,7 @@ export const useStore = create((set, get) => ({
 
     getTimeStampFine: () => {
         const { dataOraFine, oraFine } = get();
+        // console.log(`getTimeStampFine: dataOraFine=${dataOraFine}, oraFine=${oraFine}`);
         if (!dataOraFine || !oraFine) return null;
 
         const timestamp = new Date(dataOraFine);

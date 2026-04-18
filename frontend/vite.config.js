@@ -6,8 +6,15 @@ import tailwindcss from '@tailwindcss/vite';
 export default defineConfig({
   plugins: [
     react(),
-    // Add any additional plugins here
     tailwindcss()
-
+    
   ],
+  optimizeDeps: {
+    include: ['mapbox-gl'],
+  },
+  resolve: {
+    alias: {
+      'mapbox-gl': 'mapbox-gl',
+    }
+  }
 })

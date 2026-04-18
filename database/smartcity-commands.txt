@@ -23,23 +23,24 @@ CREATE TABLE user(
 );
 
 CREATE TABLE reservation(
-    uuid UUID PRIMARY KEY,
-    start_time DATETIME NOT NULL,
-    end_time DATETIME NOT NULL,
-    status ENUM('ACTIVE', 'CANCELLED', 'EXPIRED'),
-    id_parking_lot INTEGER NOT NULL,
-    id_user UUID NOT NULL,
-    CONSTRAINT fk_id_parking_lot
-        FOREIGN KEY (id_parking_lot)
-        REFERENCES parking_lot(id),
-    CONSTRAINT fk_id_user
-        FOREIGN KEY (id_user)
-        REFERENCES user(uuid)
+                            uuid UUID PRIMARY KEY,
+                            start_time DATETIME NOT NULL,
+                            end_time DATETIME NOT NULL,
+                            status ENUM('ACTIVE', 'CANCELLED', 'EXPIRED'),
+                            id_parking_lot INTEGER NOT NULL,
+                            id_user UUID NOT NULL,
+                            CONSTRAINT fk_id_parking_lot
+                                FOREIGN KEY (id_parking_lot)
+                                    REFERENCES parking_lot(id),
+                            CONSTRAINT fk_id_user
+                                FOREIGN KEY (id_user)
+                                    REFERENCES user(uuid)
 );
 
 CREATE INDEX indx_license_plate
     ON user(license_plate);
 
+# casi test
 INSERT INTO parking_lot(name, total_spots, latitude, longitude, description, hour_tax) VALUES('prova1', 10, 37.1941561, 10.106381910900552, 'descrizione1', 1.0);
 INSERT INTO parking_lot(name, total_spots, latitude, longitude, description, hour_tax) VALUES('prova2', 20, 36.1941561, 86.164656, 'descrizione2', 2.5);
 INSERT INTO parking_lot(name, total_spots, latitude, longitude, description, hour_tax) VALUES('prova3', 30, 54.1565165, 26.256551, 'descrizione3', 3.0);

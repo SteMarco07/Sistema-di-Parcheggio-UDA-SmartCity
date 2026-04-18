@@ -6,16 +6,16 @@ function ParcheggioCard({ parcheggio }) {
 
   const [p, setP] = useState(parcheggio);
 
-  const {modifyPosition, modifyZoom} = useStore();
+  const { modifyPosition, modifyZoom } = useStore();
 
   function handleClick() {
     modifyPosition([p.lat, p.lng]);
     modifyZoom(18);
   }
-    
+
 
   return (
-    <div onClick={handleClick}>
+    <div onClick={handleClick} className='margin-4'>
       <h1 className="text-xl font-bold">{p.nome}</h1>
       <p>Posti disponibili: {p.postiDisponibili || 0}</p>
       <p>Descrizione: {p.descrizione || "nessuna descrizione presente"}</p>

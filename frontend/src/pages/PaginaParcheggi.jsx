@@ -29,7 +29,7 @@ function PaginaParcheggi() {
                 </div>
 
                 {/* Elenco: full width su mobile, desktop usa 30% e scrolla */}
-                <div className="w-full md:w-[25%] h-[40vh] md:h-full bg-white overflow-hidden">
+                <div className="w-full md:w-[25%] h-[40vh] md:h-full overflow-hidden bg-base-100 rounded-2xl shadow-md ">
                     <ElencoParcheggi />
                 </div>
 

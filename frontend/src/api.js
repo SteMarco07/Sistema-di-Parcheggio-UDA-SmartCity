@@ -56,8 +56,8 @@ export const api = {
                 nome: 'Prenotazione 1',
                 parkingId: 1,
                 userId: 1,
-                startTime: '2026-06-01T10:00:00Z',
-                endTime: '2026-06-02T12:00:00Z'
+                startTime: '2026-03-24T10:00:00Z',
+                endTime: '2026-03-25T12:00:00Z'
             },
             {
                 id: 2,
@@ -95,6 +95,36 @@ export const api = {
             targa,
             password
         })
+    },
+  
+    getCredenziali: (token) => {
+
+    },
+    deleteParcheggio: (id) => {
+        return {
+            id: id,
+            successo: true
+        }
+    },
+
+    deletePrenotazione: (id) => {
+        return {
+            id: id,
+            successo: true
+        }
+    },
+
+    modificaParcheggio: (id, payload) => {
+        return {
+            id: id,
+            successo: true
+        }
+    },
+    modificaPrenotazione: (id, payload) => {
+        return {
+            prenotazione: payload,
+            successo: true
+        }
     }
 
 }

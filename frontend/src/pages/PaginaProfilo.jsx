@@ -37,10 +37,10 @@ const PaginaProfilo = () => {
                                 </div>
                                 <div>
                                     <div className="text-lg font-semibold text-gray-800">{user.nome} {user.cognome}</div>
-                                    <div className="text-sm text-gray-500">Utente registrato</div>
+                                    <div className="text-sm text-gray-500">{
+                                    user.admin ? 'Amministratore' : 'Utente registrato'}</div>
                                 </div>
                             </div>
-
                         
                         </div>
 

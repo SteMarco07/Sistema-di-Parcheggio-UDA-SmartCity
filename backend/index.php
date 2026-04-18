@@ -98,7 +98,7 @@ $app->post('/login', [AuthController::class, 'login']);
 $app->post('/register', [AuthController::class, 'register']);
 
 // Restituisce tutti i parcheggi presenti
-$app->get('/park', [ParcheggiController::class, 'getAllParcheggi']);
+$app->get('/park', [ParcheggiController::class, 'getAlSlParcheggi']);
 
 // Restituisce un parcheggio specifico
 $app->get('/park/{park_id}',  [ParcheggiController::class, 'getParcheggioById']);
@@ -138,7 +138,7 @@ $app->group('', function ($group) {
     $group->post('/reservation', [ParcheggiController::class, 'userEditReservation']);
 
     // Elimina una prenotazione, dal lato utente (id nel body)
-    $group->delete('/reservation', [ParcheggiController::class, 'deleteReservation']);
+    $group->delete('/reservation', [ParcheggiController::class, 'userDeleteReservation']);
 })->add(new JWTMiddleware());
 
 // Funzione per le rotte protette da autenticazione e da privilegi amministrativi

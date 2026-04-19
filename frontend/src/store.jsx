@@ -237,8 +237,9 @@ export const useStore = create((set, get) => ({
     deleteParcheggio: async (id) => {
         set({ isLoading: true, error: null });
         try {
-            const data = await api.deleteParcheggio(id);
-            if (data && data.successo) {
+            const data = await api.deleteParcheggio(id, get().token);
+            // console.log(`Risposta eliminazione parcheggio con id ${id}:`, data);
+            if (data && data.success) {
                 const filtrati = get().parcheggi.filter((p) => p.id !== data.id);
 
                 set({ parcheggi: filtrati, parcheggiFiltrati: filtrati, isLoading: false });

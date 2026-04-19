@@ -14,7 +14,7 @@ function isoToDate(iso) {
 function ModifyPrenotazioneModal({ open, onClose, prenotazione }) {
     const { modificaPrenotazione } = useStore();
 
-    console.log('Prenotazione da modificare:', prenotazione);
+    // console.log('Prenotazione da modificare:', prenotazione);
     const [parkingId, setParkingId] = useState( prenotazione ? prenotazione.parkingId : '');
     const [startDate, setStartDate] = useState(prenotazione ? isoToDate(prenotazione.startTime) : null);
     const [endDate, setEndDate] = useState(prenotazione ? isoToDate(prenotazione.endTime) : null);

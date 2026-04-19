@@ -79,6 +79,6 @@ class AdminRepository{
         $stmt = $this->pdo->prepare('DELETE FROM parking_lot WHERE id = :id');
         $stmt->execute([ 'id' => $id ]);
 
-        return [ 'id' => $id ];
+        return [ 'id' => $id, 'message' => 'Parcheggio eliminato', 'success' => true ];
     }
 }

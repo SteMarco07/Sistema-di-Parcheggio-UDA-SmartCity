@@ -26,19 +26,25 @@ async function request(path, options = {}) {
     }
 }
 
-function post(path, body, options = {}) {
+function POST(path, body, options = {}) {
     const { headers: optHeaders, token, ...rest } = options || {}
     const headers = { 'Content-Type': 'application/json', ...(optHeaders || {}) }
     return request(path, { method: 'POST', headers, body: JSON.stringify(body), token, ...rest })
 }
 
-function put(path, body, options = {}) {
+function PUT(path, body, options = {}) {
     const { headers: optHeaders, token, ...rest } = options || {}
     const headers = { 'Content-Type': 'application/json', ...(optHeaders || {}) }
     return request(path, { method: 'PUT', headers, body: JSON.stringify(body), token, ...rest })
 }
 
-function get(path, options = {}) {
+function DELETE(path, body, options = {}) {
+    const { headers: optHeaders, token, ...rest } = options || {}
+    const headers = { 'Content-Type': 'application/json', ...(optHeaders || {}) }
+    return request(path, { method: 'DELETE', headers, body: JSON.stringify(body), token, ...rest })
+}
+
+function GET(path, options = {}) {
     return request(path, { method: 'GET', ...options })
 }
 
@@ -49,7 +55,7 @@ export const api = {
     },
 
     fetchParcheggi: (token) => {
-        return get("park")
+        return GET("park")
     },
     fetchPrenotazioni: (token) => {
         return [
@@ -82,7 +88,7 @@ export const api = {
 
     login: (username, password) => {
         console.log(`Login con ${JSON.stringify({ username, password })}`)
-        return post("login", {
+        return POST("login", {
                 email: username,
                 password: password
         })
@@ -90,7 +96,7 @@ export const api = {
 
     register: (nome, cognome, email, targa, password) => {
         console.log(`Registrazione con ${JSON.stringify({ nome, cognome, email, targa, password })}`)
-        return post("register", {
+        return POST("register", {
             nome,
             cognome,
             email,
@@ -100,16 +106,14 @@ export const api = {
     },
 
     aggiungiParcheggio: (payload, token) => {
-        const data = put("park", payload, { token })
-        console.log(`Aggiungi parcheggio: ${JSON.stringify(payload)}, risposta: ${JSON.stringify(data)}`)
+        const data = PUT("park", payload, { token })
+        // console.log(`Aggiungi parcheggio: ${JSON.stringify(payload)}, risposta: ${JSON.stringify(data)}`)
         return data
     },
   
-    deleteParcheggio: (id) => {
-        return {
-            id: id,
-            successo: true
-        }
+    deleteParcheggio: (id, token) => { 
+        return DELETE("park", { id }, { token })
+         
     },
 
     deletePrenotazione: (id) => {

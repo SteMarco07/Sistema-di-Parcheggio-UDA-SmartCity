@@ -53,9 +53,9 @@ class AdminRepository{
         return (bool) $stmt->fetchColumn();
     }
 
-    public function modifyPark(int $id, string $name, int $total_spots, float $latitude, float $longitude) {
+    public function modifyPark(int $id, string $name, int $total_spots, float $latitude, float $longitude, float $hour_tax, string $description) {
         $stmt = $this->pdo->prepare('UPDATE parking_lot 
-                                    SET name = :name, total_spots = :total_spots, latitude = :latitude, longitude = :longitude
+                                    SET name = :name, total_spots = :total_spots, latitude = :latitude, longitude = :longitude, hour_tax = :hour_tax, description = :description
                                     WHERE id = :id');
 
         $stmt->execute([
@@ -63,7 +63,10 @@ class AdminRepository{
             'name' => $name,
             'total_spots' => $total_spots,
             'latitude' => $latitude,
-            'longitude' => $longitude
+            'longitude' => $longitude,
+            'hour_tax' => $hour_tax,
+            'description' => $description,
+
         ]);
 
         return [
@@ -71,7 +74,9 @@ class AdminRepository{
             'name' => $name,
             'total_spots' => $total_spots,
             'latitude' => $latitude,
-            'longitude' => $longitude
+            'longitude' => $longitude,
+            'description' => $description,
+            'hour_tax' => $hour_tax
         ];
     }
 

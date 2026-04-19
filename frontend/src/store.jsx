@@ -269,12 +269,12 @@ export const useStore = create((set, get) => ({
         }
     },
 
-    modificaParcheggio: async (id, payload) => {
+    modificaParcheggio: async (payload) => {
         set({ isLoading: true, error: null });
         try {
-            const data = await api.modificaParcheggio(id, payload);
-            if (data && data.successo) {
-                const parcheggi = get().parcheggi.map((p) => p.id === id ? { ...p, ...payload } : p);
+            const data = await api.modificaParcheggio(payload, get().token);
+            if (data) {
+                const parcheggi = get().parcheggi.map((p) => p.id === data.id ? {...payload } : p);
                 set({ parcheggi, parcheggiFiltrati: parcheggi, isLoading: false });
                 // console.log("Modificato parcheggio con id:", id);
             } else {

@@ -123,11 +123,8 @@ export const api = {
         }
     },
 
-    modificaParcheggio: (id, payload) => {
-        return {
-            id: id,
-            successo: true
-        }
+    modificaParcheggio: (payload, token) => {
+        return POST(`park`, payload, { token })
     },
     modificaPrenotazione: (id, payload) => {
         return {

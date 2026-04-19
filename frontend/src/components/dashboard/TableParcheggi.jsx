@@ -196,6 +196,7 @@ function TableParcheggi() {
                                         try {
                                             const form = new FormData(e.target);
                                             const payload = {
+                                                id: oggettoInModificaPark.id,
                                                 name: form.get('name') || '',
                                                 description: form.get('description') || '',
                                                 hour_tax: parseFloat(form.get('hour_tax') || 0),
@@ -204,7 +205,9 @@ function TableParcheggi() {
                                                 total_spots: parseInt(form.get('total_spots')) || null,
                                             };
 
-                                            modificaParcheggio(oggettoInModificaPark?.id, payload);
+                                            console.log("Dati da salvare per parcheggio con id", oggettoInModificaPark.id, ":", payload);
+
+                                            modificaParcheggio(payload);
 
 
                                             nascondiModaleModificaPark();

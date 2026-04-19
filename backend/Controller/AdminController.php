@@ -23,14 +23,30 @@ class AdminController {
     }
 
     public function addPark(Request $request, Response $response, array $args): Response {
-        $parcheggio = $this->adminRepository->addPark(
-            $request->getParsedBody()['name'],
-            $request->getParsedBody()['total_spots'],
-            $request->getParsedBody()['latitude'],
-            $request->getParsedBody()['longitude'],
-            $request->getParsedBody()['hour_tax'],
-            $request->getParsedBody()['description']
-        );
+        try {
+            $parcheggio = $this->adminRepository->addPark(
+                $request->getParsedBody()['name'],
+                $request->getParsedBody()['total_spots'],
+                $request->getParsedBody()['latitude'],
+                $request->getParsedBody()['longitude'],
+                $request->getParsedBody()['hour_tax'],
+                $request->getParsedBody()['description']
+            );
+        } catch (\RuntimeException $e) {
+            if ($e->getCode() === 409) {
+                $response->getBody()->write(json_encode([
+                    'error' => "Nome parcheggio gia' esistente"
+                ]));
+
+                return $response
+                    ->withHeader('Content-type', 'application/json')
+                    ->withStatus(409);
+            } else {
+                throw $e;
+            }
+
+
+        }
 
         $response->getBody()->write(json_encode($parcheggio));
 

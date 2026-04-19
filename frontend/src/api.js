@@ -15,7 +15,9 @@ async function request(path, options = {}) {
     const res = await fetch(BASE + path, { ...rest, headers })
     if (!res.ok) {
         const text = await res.text().catch(() => '')
-        throw new Error(text || `${res.status} ${res.statusText}`)
+        const error = new Error(text || `${res.status} ${res.statusText}`)
+        error.status = res.status
+        throw error
     }
     try {
         return await res.json()

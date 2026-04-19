@@ -353,10 +353,15 @@ export const useStore = create((set, get) => ({
                 set({ parcheggi, parcheggiFiltrati: parcheggi, isLoading: false });
                 // console.log("Aggiunto nuovo parcheggio con id:", data.id);
             } else {
+                alert(data)
                 set({ isLoading: false });
             }
-        } catch (err) {
-            set({ error: err.message, isLoading: false });
+        } catch (error) {
+            const message = error.message || "Errore durante l'aggiunta del parcheggio";
+            if (error.status === 409) {
+                alert(message);
+            }
+            set({ error: message, isLoading: false });
         }
     },
 

@@ -2,6 +2,7 @@
 
 namespace Model;
 use Util\Connection;
+use PDOException;
 
 class AdminRepository{
 
@@ -14,6 +15,12 @@ class AdminRepository{
     }
 
     public function addPark(string $name, int $total_spots, float $latitude, float $longitude, float $hour_tax, string $description) {
+        $name = trim($name);
+
+        if ($this->existsByName($name)) {
+            throw new \RuntimeException("Nome parcheggio gia' esistente", 409);
+        }
+
         $stmt = $this->pdo->prepare('INSERT INTO parking_lot (name, total_spots, latitude, longitude, description, hour_tax) 
                                     VALUES (:name, :total_spots, :latitude, :longitude, :description, :hour_tax)');
 
@@ -26,7 +33,10 @@ class AdminRepository{
             'hour_tax' => $hour_tax
         ]);
 
+        $id = $this->pdo->lastInsertId();
+
         return [
+            'id' => $id,
             'name' => $name,
             'total_spots' => $total_spots,
             'latitude' => $latitude,
@@ -34,6 +44,13 @@ class AdminRepository{
             'description' => $description,
             'hour_tax' => $hour_tax
         ];
+    }
+
+    private function existsByName(string $name): bool {
+        $stmt = $this->pdo->prepare('SELECT 1 FROM parking_lot WHERE name = :name LIMIT 1');
+        $stmt->execute([ 'name' => $name ]);
+
+        return (bool) $stmt->fetchColumn();
     }
 
     public function modifyPark(int $id, string $name, int $total_spots, float $latitude, float $longitude) {

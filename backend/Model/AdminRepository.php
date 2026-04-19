@@ -13,7 +13,7 @@ class AdminRepository{
         $this->pdo = Connection::getInstance($this->config);
     }
 
-    public function addPark(string $name, int $total_spots, float $latitude, float $longitude, string $description, float $hour_tax) {
+    public function addPark(string $name, int $total_spots, float $latitude, float $longitude, float $hour_tax, string $description) {
         $stmt = $this->pdo->prepare('INSERT INTO parking_lot (name, total_spots, latitude, longitude, description, hour_tax) 
                                     VALUES (:name, :total_spots, :latitude, :longitude, :description, :hour_tax)');
 

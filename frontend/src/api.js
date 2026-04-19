@@ -99,7 +99,7 @@ export const api = {
 
     aggiungiParcheggio: (payload, token) => {
         const data = put("park", payload, { token })
-        console.log(`Aggiungi parcheggio: ${payload}, risposta: ${data}`)
+        console.log(`Aggiungi parcheggio: ${JSON.stringify(payload)}, risposta: ${JSON.stringify(data)}`)
         return data
     },
   

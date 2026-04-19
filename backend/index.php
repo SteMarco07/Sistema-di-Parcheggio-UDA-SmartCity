@@ -4,6 +4,7 @@ use Psr\Http\Message\ResponseInterface as Response;
 use Psr\Http\Message\ServerRequestInterface as Request;
 use Psr\Http\Server\RequestHandlerInterface as RequestHandler;
 use Slim\Exception\HttpUnauthorizedException;
+use Slim\Exception\HttpException;
 use Slim\Factory\AppFactory;
 
 require './vendor/autoload.php';
@@ -31,60 +32,77 @@ AppFactory::setContainer($container);
 $app = AppFactory::create();
 $app->setBasePath($config['BASEPATH']);
 
-// CORS middleware
-$CORSMiddleware = function (Request $request, RequestHandler $handler) {
-    // Always add CORS headers to the response
-    $response = $handler->handle($request);
-
+// Funzione condivisa per applicare sempre gli header CORS
+$addCorsHeaders = function (Request $request, Response $response): Response {
     $origin = $request->getHeaderLine('Origin');
-    $allowedOrigin = $origin ?: '*'; // In production, validate against a whitelist
+
+    if ($origin !== '') {
+        $response = $response
+            ->withHeader('Access-Control-Allow-Origin', $origin)
+            ->withHeader('Access-Control-Allow-Credentials', 'true')
+            ->withHeader('Vary', 'Origin');
+    } else {
+        $response = $response->withHeader('Access-Control-Allow-Origin', '*');
+    }
 
     return $response
-        ->withHeader('Access-Control-Allow-Origin', $allowedOrigin)
         ->withHeader('Access-Control-Allow-Headers', 'X-Requested-With, Content-Type, Accept, Origin, Authorization')
         ->withHeader('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS')
-        ->withHeader('Access-Control-Allow-Credentials', 'true')
-        ->withHeader('Access-Control-Max-Age', '3600'); // Cache preflight
+        ->withHeader('Access-Control-Max-Age', '3600');
+};
+
+// CORS middleware
+$CORSMiddleware = function (Request $request, RequestHandler $handler) use ($addCorsHeaders) {
+    $response = $handler->handle($request);
+    return $addCorsHeaders($request, $response);
 };
 
 // Preflight handler (short-circuit OPTIONS)
 $app->options('/{routes:.+}', function (Request $request, Response $response) {
     return $response;
-})->add($CORSMiddleware);
-
-// Then add CORS middleware globally (must be added **first**)
-$app->add($CORSMiddleware);
+});
 
 $app->addBodyParsingMiddleware();
 
-// Da disattivare in PROD
+// Gestione errori centralizzata con risposta JSON + CORS
 $customErrorHandler = function (
     Request $request,
     Throwable $exception,
     bool $displayErrorDetails,
     bool $logErrors,
     bool $logErrorDetails
-) use ($app) {
-    // Build the error payload
-    $payload = ['error' => $exception->getMessage()];
+) use ($app, $addCorsHeaders) {
+    $status = 500;
+    if ($exception instanceof HttpUnauthorizedException) {
+        $status = 401;
+    } elseif ($exception instanceof HttpException) {
+        $status = $exception->getCode();
+    }
+
+    $payload = [
+        'error' => $displayErrorDetails ? $exception->getMessage() : 'Errore interno del server'
+    ];
+
+    if ($displayErrorDetails) {
+        $payload['type'] = get_class($exception);
+    }
+
     $response = $app->getResponseFactory()->createResponse();
-
-    // Apply CORS headers to the error response
-    $origin = $request->getHeaderLine('Origin');
-    $allowedOrigin = $origin ?: '*';
-
-    $response = $response
-        ->withHeader('Access-Control-Allow-Origin', $allowedOrigin)
-        ->withHeader('Access-Control-Allow-Credentials', 'true')
+    $response = $addCorsHeaders($request, $response)
         ->withHeader('Content-Type', 'application/json')
-        ->withStatus($exception instanceof HttpUnauthorizedException ? 401 : 500);
+        ->withStatus($status > 0 ? $status : 500);
 
     $response->getBody()->write(json_encode($payload, JSON_UNESCAPED_UNICODE));
     return $response;
 };
 
-$errorMiddleware = $app->addErrorMiddleware(true, true, true);
-if ($config['PRODUCTION']) { $errorMiddleware->setDefaultErrorHandler($customErrorHandler); }
+$displayErrorDetails = !$config['PRODUCTION'];
+$errorMiddleware = $app->addErrorMiddleware($displayErrorDetails, true, true);
+$errorMiddleware->setDefaultErrorHandler($customErrorHandler);
+
+// In Slim l'ultimo middleware aggiunto viene eseguito per primo:
+// CORS deve stare all'esterno per aggiungere header anche alle risposte d'errore.
+$app->add($CORSMiddleware);
 
 $app->get('/', function (Request $request, Response $response, $args): Response {
     $response->getBody()->write("rotta default");

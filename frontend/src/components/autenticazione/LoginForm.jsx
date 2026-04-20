@@ -21,8 +21,8 @@ function LoginForm() {
         if (result.success) {
             navigate('/parcheggi');
         } else {
-            setLoginError(result.message['message'] || "Errore sconosciuto durante il login");
-            console.error(`Errore durante il login: ${result.message}`);
+            setLoginError(JSON.parse(result.message)['message'] || "Errore sconosciuto durante il login");
+            console.error("Dettagli dell'errore:", result);
         }
     }
 

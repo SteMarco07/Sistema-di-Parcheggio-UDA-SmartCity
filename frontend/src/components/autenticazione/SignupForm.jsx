@@ -16,6 +16,8 @@ function SignupForm() {
     const [confirm, setConfirm] = useState("");
     //const [admin, setAdmin] = useState(false);
 
+    const [signupError, setSignupError] = useState(null);
+
     const navigate = useNavigate();
 
     async function handleSubmit(e) {
@@ -41,7 +43,8 @@ function SignupForm() {
         if (result.success) {
             navigate('/parcheggi');
         } else {
-            alert(result.message);
+            setSignupError(JSON.parse(result.message)['message'] || "Errore sconosciuto durante la registrazione");
+            console.error("Dettagli dell'errore:", result);
         }
     }
 
@@ -86,21 +89,25 @@ function SignupForm() {
                         <input type="password" value={confirm} placeholder="Conferma la tua password" onChange={(e) => setConfirm(e.target.value)} required className="input input-bordered w-full" />
                     </div>
 
+
+
+
                     <div className="flex flex-col items-center mt-6">
+
+                        {
+                        signupError && <div className="alert alert-error w-full mb-4">
+                            <div>
+                                <span>{signupError}</span>
+                            </div>
+                        </div>
+                    }
                         <button type="submit" className="btn btn-primary w-[50%]">Registrati</button>
                     </div>
                 </div>
 
             </form>
 
-            {/* Link per passare al form di login */}
-            {/*<div className="flex flex-col items-center mb-4">
-                <div className="flex gap-2 items-center">
-                    <p>Hai già un account?</p>
-                    <a href="#" role="button" className="link link-primary" onClick={(e) => { e.preventDefault(); setAuthMode(0); }}>Accedi</a>
-                </div>
-            </div>
-            */}
+            
         </>
     )
 

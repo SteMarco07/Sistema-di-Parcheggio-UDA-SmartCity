@@ -27,6 +27,13 @@ class ParcheggiRepository{
         return $stmt->fetchAll();
     }
 
+    public function getAllReservations() : array {
+        $stmt = $this->pdo->prepare('SELECT * FROM reservation');
+        $stmt->execute([  ]);
+
+        return $stmt->fetchAll();
+    }
+
     public function getReservationById(string $id) : array {
         $stmt = $this->pdo->prepare('SELECT * FROM reservation WHERE uuid = :id');
         $stmt->execute([ 'id' => $id ]);

@@ -104,7 +104,7 @@ $errorMiddleware->setDefaultErrorHandler($customErrorHandler);
 // CORS deve stare all'esterno per aggiungere header anche alle risposte d'errore.
 $app->add($CORSMiddleware);
 
-$app->get('/', function (Request $request, Response $response, $args): Response {
+$app->get('/', function (Request $request, Response $response): Response {
     $response->getBody()->write("rotta default");
     return $response;
 });
@@ -122,17 +122,8 @@ $app->get('/park', [ParcheggiController::class, 'getAllParcheggi']);
 $app->get('/park/{park_id}',  [ParcheggiController::class, 'getParcheggioById']);
 
 // Restituisce i posti disponibili prima che l'utente ne faccia una
-$app->get('/reservation/available/{start}/{end}', function (Request $request, Response $response, $args): Response {
-    global $pdo;
-
-    $data_inizio = $args['start'];
-    $data_fine = $args['end'];
-
-    // Logica per verificare la disponibilità delle prenotazioni
-    $disponibili = []; // Array di prenotazioni disponibili
-
-    $response->getBody()->write(json_encode($disponibili));
-    return $response->withHeader('Content-Type', 'application/json');
+$app->get('/reservation/available/{start}/{end}', function (Request $request, Response $response): Response {
+    return $response;
 });
 
 // Funzione per le rotte protette da autenticazione
@@ -169,6 +160,9 @@ $app->group('', function ($group) {
 
     // L'amministratore deve poter eliminare un parcheggio
     $group->delete('/park', [AdminController::class, 'deletePark']);
+
+    // Ritorna tutte le prenotazioni all'amministratore
+    $group->get('/reservation', [ParcheggiController::class, 'getAllReservations']);
 })->add(new JWTAdminMiddleware());
 
 $app->run();

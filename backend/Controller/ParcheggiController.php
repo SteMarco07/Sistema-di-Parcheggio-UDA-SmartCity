@@ -40,6 +40,14 @@ class ParcheggiController {
             ->withHeader('Content-Type', 'application/json');
     }
 
+    public function getAllReservations(Request $request, Response $response, array $args): Response {
+        $reservations = $this->parcheggiRepository->getAllReservations();
+        $response->getBody()->write(json_encode($reservations));
+
+        return $response
+            ->withHeader('Content-Type', 'application/json');
+    }
+
     public function getReservatonById(Request $request, Response $response, array $args): Response {
         $reservation = $this->parcheggiRepository->getReservationById($args['uuid']);
         if ($reservation) {

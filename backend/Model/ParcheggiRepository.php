@@ -2,11 +2,12 @@
 
 namespace Model;
 use Util\Connection;
+use PDO;
 
 class ParcheggiRepository{
 
     private $config;
-    private $pdo;
+    private PDO $pdo;
 
     public function __construct($config) {
         $this->config = $config;
@@ -43,54 +44,46 @@ class ParcheggiRepository{
 
     //da sistemare con l'autenitcazione
     public function getReservationByUserId($user_id) : array {
-        $stmt = $this->pdo->prepare('SELECT * FROM reservation WHERE user_id = :user_id');
+        $stmt = $this->pdo->prepare('SELECT * FROM reservation WHERE id_user = :user_id');
         $stmt->execute([ 'user_id' => $user_id ]);
 
         return $stmt->fetchAll();
     }
 
-    public function userCreateReservation(string $id, string $first_name, string $last_name, string $license_plate, string $start_time, string $end_time, string $id_parking_lot) : array {
+    public function userCreateReservation(string $start_time, string $end_time, string $id_parking_lot, string $id_user) : array {
         //Logica di creazione
-        $stmt = $this->pdo->prepare('INSERT INTO reservation (uuid, first_name, last_name, license_plate, start_time, end_time, status, id_parking_lot) 
-                                    VALUES (:id,:first_name, :last_name, :license_plate, :start_time, :end_time, :status, :id_parking_lot)');
+        $stmt = $this->pdo->prepare('INSERT INTO reservation (uuid, start_time, end_time, status, id_parking_lot, id_user) 
+                                    VALUES (UUID(), :start_time, :end_time, :status, :id_parking_lot, :id_user)');
         $stmt->execute([
-            'id' => $id,
-            'first_name' => $first_name,
-            'last_name' => $last_name,
-            'license_plate' => $license_plate,
             'start_time' => $start_time,
             'end_time' => $end_time,
             'status' => 'ACTIVE',
-            'id_parking_lot' => $id_parking_lot
+            'id_parking_lot' => $id_parking_lot,
+            'id_user' => $id_user
         ]);
 
         return [
-            'id' => $id,
-            'first_name' => $first_name,
-            'last_name' => $last_name,
-            'license_plate' => $license_plate,
             'start_time' => $start_time,
             'end_time' => $end_time,
             'status' => 'ACTIVE',
-            'id_parking_lot' => $id_parking_lot
+            'id_parking_lot' => $id_parking_lot,
+            'id_user' => $id_user
         ];
     }
 
-    public function editUserReservation(string $id, string $license_plate, string $start_time, string $end_time, string $id_parking_lot) : array {
+    public function editUserReservation(string $id, string $start_time, string $end_time, string $id_parking_lot) : array {
         //Logica di modifica
         $stmt = $this->pdo->prepare('UPDATE reservation 
-                                    SET license_plate = :license_plate, start_time = :start_time , end_time = :end_time 
+                                    SET start_time = :start_time, end_time = :end_time 
                                     WHERE uuid = :id');
         $stmt->execute([
             'id' => $id,
-            'license_plate' => $license_plate,
             'start_time' => $start_time,
             'end_time' => $end_time
         ]);
 
         return [
             'id' => $id,
-            'license_plate' => $license_plate,
             'start_time' => $start_time,
             'end_time' => $end_time,
             'id_parking_lot' => $id_parking_lot

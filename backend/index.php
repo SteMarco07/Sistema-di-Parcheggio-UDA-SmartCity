@@ -109,17 +109,17 @@ $app->get('/', function (Request $request, Response $response): Response {
     return $response;
 });
 
-// Rotta per il login
-$app->post('/login', [AuthController::class, 'login']);
-
 // Rotta per la registrazione
 $app->post('/register', [AuthController::class, 'register']);
+
+// Rotta per il login
+$app->post('/login', [AuthController::class, 'login']);
 
 // Restituisce tutti i parcheggi presenti
 $app->get('/park', [ParcheggiController::class, 'getAllParcheggi']);
 
 // Restituisce un parcheggio specifico
-$app->get('/park/{park_id}',  [ParcheggiController::class, 'getParcheggioById']);
+$app->get('/park/{id}',  [ParcheggiController::class, 'getParcheggioById']);
 
 // Restituisce i posti disponibili prima che l'utente ne faccia una
 $app->get('/reservation/available/{start}/{end}', function (Request $request, Response $response): Response {
@@ -135,10 +135,10 @@ $app->group('', function ($group) {
     $group->post('/logout', [AuthController::class, 'logout']);
 
     // Restituisce una prenotazione specifica (per id)
-    $group->get('/reservation/search-id/{uuid}',  [ParcheggiController::class, 'getReservationByUuid']);
+    $group->get('/reservation/search-id/{uuid}',  [ParcheggiController::class, 'getReservationById']);
 
     // Restituisce una prenotazione specifica (per id utente)
-    $group->get('/reservation/search-user/{uuid}',  [ParcheggiController::class, 'getReservationByUserId']);
+    $group->get('/reservation/search-user',  [ParcheggiController::class, 'getReservationByUserId']);
 
     // Crea una nuova prenotazione, l'ID del parcheggio e le date di inizio e fine sono nel body
     $group->put('/reservation', [ParcheggiController::class, 'userCreateReservation']);

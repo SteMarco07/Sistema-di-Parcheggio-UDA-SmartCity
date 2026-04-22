@@ -30,7 +30,7 @@ function App() {
 
 
       <div className="min-h-screen flex flex-col bg-gray-100">
-        
+
         <Routes>
           {/* Indirizzamento automatico verso la pagina di autenticazione */}
           <Route path="/" element={<Navigate to="/auth" replace />} />
@@ -69,6 +69,15 @@ function App() {
                   </>
                 }
                 />
+
+                <Route path="/dashboard" element={
+                  <>
+                    <Navbar />
+                    <PaginaDashboard />
+                  </>
+                }
+                />
+
               </>
             ) : (
               // Se non c'è token, reindirizza alla pagina di autenticazione
@@ -76,13 +85,7 @@ function App() {
             )
           }
 
-          <Route path="/dashboard" element={
-            <>
-              <Navbar />
-              <PaginaDashboard />
-            </>
-          }
-          />
+
         </Routes>
 
       </div>

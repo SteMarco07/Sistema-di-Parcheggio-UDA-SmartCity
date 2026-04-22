@@ -61,7 +61,7 @@ class AuthController{
     }
 
     public function profile(Request $request, Response $response): Response {
-        $utente = $this->userRepository->getUser($request->getParsedBody()['username']);
+        $utente = $this->userRepository->getUser($request->getParsedBody()['email']);
 
         return $this->JSONResponse($response, $utente);
     }

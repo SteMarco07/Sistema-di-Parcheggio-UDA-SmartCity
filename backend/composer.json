@@ -6,7 +6,8 @@
         "firebase/php-jwt": "^7.0",
         "php-di/slim-bridge": "*",
         "php-di/php-di" : "^7.0",
-        "ext-json": "*"
+        "ext-json": "*",
+        "ext-pdo": "*"
     },
 
     "autoload": {

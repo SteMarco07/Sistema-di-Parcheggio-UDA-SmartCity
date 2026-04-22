@@ -2,17 +2,24 @@
 
 namespace Controller;
 
+use Psr\Container\ContainerExceptionInterface;
 use Psr\Container\ContainerInterface;
+use Psr\Container\NotFoundExceptionInterface;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 use Model\ParcheggiRepository;
 
 class ParcheggiController {
 
-    private $container;
-    private $parcheggiRepository;
+    private ContainerInterface $container;
+    private ParcheggiRepository $parcheggiRepository;
 
     // constructor receives a container instance
+
+    /**
+     * @throws ContainerExceptionInterface
+     * @throws NotFoundExceptionInterface
+     */
     public function __construct(ContainerInterface $container) {
         $this->container = $container;
         $this->parcheggiRepository = new ParcheggiRepository($this->container->get('config'));
@@ -48,8 +55,8 @@ class ParcheggiController {
             ->withHeader('Content-Type', 'application/json');
     }
 
-    public function getReservatonById(Request $request, Response $response, array $args): Response {
-        $reservation = $this->parcheggiRepository->getReservationById($args['uuid']);
+    public function getReservationById(Request $request, Response $response): Response {
+        $reservation = $this->parcheggiRepository->getReservationById($request->getParsedBody()['id']);
         if ($reservation) {
             $response->getBody()->write(json_encode($reservation));
             $response->withStatus(200);
@@ -62,8 +69,9 @@ class ParcheggiController {
             ->withHeader('Content-Type', 'application/json');
     }
 
-    public function getReservatonByUserId(Request $request, Response $response, array $args): Response {
-        $reservation = $this->parcheggiRepository->getReservationByUserId($args['uuid']);
+
+    public function getReservationByUserId(Request $request, Response $response): Response {
+        $reservation = $this->parcheggiRepository->getReservationByUserId(json_decode(json_encode($request->getAttribute('utente')), true)['id']);
         if ($reservation) {
             $response->getBody()->write(json_encode($reservation));
             $response->withStatus(200);
@@ -79,13 +87,10 @@ class ParcheggiController {
 
     public function userCreateReservation(Request $request, Response $response, array $args) : Response {
         $prenotazione = $this->parcheggiRepository->userCreateReservation(
-            $request->getParsedBody()['id'],
-            $request->getParsedBody()['first_name'],
-            $request->getParsedBody()['last_name'],
-            $request->getParsedBody()['license_plate'],
             $request->getParsedBody()['start_time'],
             $request->getParsedBody()['end_time'],
-            $request->getParsedBody()['id_parking_lot']
+            $request->getParsedBody()['id_parking_lot'],
+            json_decode(json_encode($request->getAttribute('utente')), true)['id']
         );
 
         $response->getBody()->write(json_encode($prenotazione));

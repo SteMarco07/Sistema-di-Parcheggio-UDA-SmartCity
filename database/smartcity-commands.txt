@@ -41,11 +41,22 @@ CREATE INDEX indx_license_plate
     ON user(license_plate);
 
 # casi test
-INSERT INTO parking_lot(name, total_spots, latitude, longitude, description, hour_tax) VALUES('prova1', 10, 37.1941561, 10.106381910900552, 'descrizione1', 1.0);
-INSERT INTO parking_lot(name, total_spots, latitude, longitude, description, hour_tax) VALUES('prova2', 20, 36.1941561, 86.164656, 'descrizione2', 2.5);
-INSERT INTO parking_lot(name, total_spots, latitude, longitude, description, hour_tax) VALUES('prova3', 30, 54.1565165, 26.256551, 'descrizione3', 3.0);
-INSERT INTO parking_lot(name, total_spots, latitude, longitude, description, hour_tax) VALUES('prova4', 40, 78.1651325, 41.15655656, 'descrizione4', 4.5);
+-- Parcheggio nel cuore del centro storico (Park Vittoria)
+INSERT INTO parking_lot(name, total_spots, latitude, longitude, description, hour_tax) 
+VALUES('Parcheggio Piazza Vittoria', 500, 45.5381, 10.2192, 'Parcheggio interrato multipiano in pieno centro storico.', 3.0);
 
+-- Parcheggio zona Castello (panoramico e vicino ai musei)
+INSERT INTO parking_lot(name, total_spots, latitude, longitude, description, hour_tax) 
+VALUES('Parcheggio Castello di Brescia', 120, 45.5435, 10.2248, 'Area sosta panoramica presso il Castello di Brescia.', 1.5);
+
+-- Parcheggio scambiatore zona Nord (vicino alla Metro)
+INSERT INTO parking_lot(name, total_spots, latitude, longitude, description, hour_tax) 
+VALUES('Parcheggio Metro Prealpino', 400, 45.5786, 10.2312, 'Parcheggio scambiatore gratuito con collegamento diretto alla metropolitana.', 0.0);
+
+
+-- Parcheggio zona Ospedale Civile
+INSERT INTO parking_lot(name, total_spots, latitude, longitude, description, hour_tax) 
+VALUES('Parcheggio Ospedale Civile Sud', 600, 45.5564, 10.2289, 'Parcheggio a servizio degli Spedali Civili di Brescia.', 1.2);
 INSERT INTO user (uuid, first_name, last_name, license_plate, email, password, role)
     VALUES (UUID(), 'Mario', 'Rossi', 'AB123CD', 'pippo@gmail.com', '$2y$10$gQeJHilWS5CWRVW.aKk4eucoAw6qTlNkpIUoQyZA2KSuweAMI1Zsi', 'USER');
 # password: user

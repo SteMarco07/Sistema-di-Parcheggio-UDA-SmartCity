@@ -62,7 +62,10 @@ class ParcheggiRepository{
             'id_user' => $id_user
         ]);
 
+        $id = $this->pdo->lastInsertId();
+
         return [
+            'id' => $id,
             'start_time' => $start_time,
             'end_time' => $end_time,
             'status' => 'ACTIVE',

@@ -158,41 +158,22 @@ export const useStore = create((set, get) => ({
 
     addPrenotazione: async (prenotazione) => {
         const formatForBackend = (v) => {
-            if (!v) return v;
-            try {
-                let d;
-                if (typeof v === 'number') d = new Date(v);
-                else if (/^\d+$/.test(v)) d = new Date(Number(v));
-                else {
-                    // try native parse
-                    d = new Date(v);
-                    if (Number.isNaN(d.getTime())) {
-                        // try DD/MM/YYYY[ ,] HH:MM:SS
-                        const m = String(v).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})[ ,]+(\d{1,2}):(\d{2})(?::(\d{2}))?/);
-                        if (m) {
-                            const day = m[1].padStart(2, '0');
-                            const month = m[2].padStart(2, '0');
-                            const year = m[3];
-                            const hh = (m[4] || '00').padStart(2, '0');
-                            const mm = (m[5] || '00').padStart(2, '0');
-                            const ss = (m[6] || '00').padStart(2, '0');
-                            // build ISO-compatible string then parse
-                            d = new Date(`${year}-${month}-${day}T${hh}:${mm}:${ss}`);
-                        }
-                    }
-                }
-                if (!d || Number.isNaN(d.getTime())) return v;
-                const pad = (n) => String(n).padStart(2, '0');
-                const YYYY = d.getFullYear();
-                const MM = pad(d.getMonth() + 1);
-                const DD = pad(d.getDate());
-                const hh = pad(d.getHours());
-                const mm = pad(d.getMinutes());
-                const ss = pad(d.getSeconds());
-                return `${YYYY}-${MM}-${DD} ${hh}:${mm}:${ss}`;
-            } catch (e) {
-                return v;
+            // Accept numeric timestamps or ISO-like strings; minimal fallback for DD/MM/YYYY
+            let d;
+            if (typeof v === 'number' || /^\d+$/.test(String(v))) {
+                d = new Date(Number(v));
+            } else {
+                d = new Date(v);
             }
+
+            const pad = (n) => String(n).padStart(2, '0');
+            const YYYY = d.getFullYear();
+            const MM = pad(d.getMonth() + 1);
+            const DD = pad(d.getDate());
+            const hh = pad(d.getHours());
+            const mm = pad(d.getMinutes());
+            const ss = pad(d.getSeconds());
+            return `${YYYY}-${MM}-${DD} ${hh}:${mm}:${ss}`;
         };
 
         try {
@@ -205,8 +186,9 @@ export const useStore = create((set, get) => ({
 
             const data = await api.aggiungiPrenotazione(body, get().token);
             console.log("Dati prenotazione:", data);
-            if (data && data.success) {
-                const updatedPrenotazioni = [...get().prenotazioni, data.prenotazione || body];
+            if (data) {
+                
+                const updatedPrenotazioni = [...get().prenotazioni, data];
                 set({ prenotazioni: updatedPrenotazioni });
                 return { success: true };
             } else {

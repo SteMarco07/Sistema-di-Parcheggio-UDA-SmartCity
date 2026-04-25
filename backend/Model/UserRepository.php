@@ -29,6 +29,7 @@ class UserRepository
             $token = self::generateToken($user['uuid'], $email, $user['role']);
             return [
                 'token' => $token,
+                'uuid' => $user['uuid'],
                 'first_name' => $user['first_name'],
                 'last_name' => $user['last_name'],
                 'license_plate' => $user['license_plate'],

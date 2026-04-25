@@ -34,6 +34,7 @@ export const useStore = create((set, get) => ({
         try {
             const raw = localStorage.getItem('user');
             return raw ? JSON.parse(raw) : {
+                uuid: "",
                 nome: "",
                 cognome: "",
                 email: "",
@@ -44,6 +45,7 @@ export const useStore = create((set, get) => ({
             };
         } catch (e) {
             return {
+                uuid: "",
                 nome: "",
                 cognome: "",
                 email: "",
@@ -53,7 +55,7 @@ export const useStore = create((set, get) => ({
                 admin: false,
             };
         }
-        return { nome: "", cognome: "", email: "", targa: "", password: "", iniziali: "" }
+        return {uuid: "", nome: "", cognome: "", email: "", targa: "", password: "", iniziali: "" }
     })(),
     addFieldset: () =>
         set((state) => ({
@@ -108,6 +110,7 @@ export const useStore = create((set, get) => ({
             if (data && data.token) {
                 const token = data['token'];
                 const userInfo = {
+                    "uuid": data['uuid'],
                     "nome": data['first_name'],
                     "cognome": data['last_name'],
                     "email": data['email'],
@@ -153,10 +156,65 @@ export const useStore = create((set, get) => ({
 
 
 
-    addPrenotazione: ({prenotazione}) => {
-        prenotazione.id = get().prenotazioni.length+1;
-        //console.log(`Lo store aggiunge ${JSON.stringify(prenotazione)}`)
-        set({ prenotazioni: [...get().prenotazioni, prenotazione] });
+    addPrenotazione: async (prenotazione) => {
+        const formatForBackend = (v) => {
+            if (!v) return v;
+            try {
+                let d;
+                if (typeof v === 'number') d = new Date(v);
+                else if (/^\d+$/.test(v)) d = new Date(Number(v));
+                else {
+                    // try native parse
+                    d = new Date(v);
+                    if (Number.isNaN(d.getTime())) {
+                        // try DD/MM/YYYY[ ,] HH:MM:SS
+                        const m = String(v).match(/(\d{1,2})\/(\d{1,2})\/(\d{4})[ ,]+(\d{1,2}):(\d{2})(?::(\d{2}))?/);
+                        if (m) {
+                            const day = m[1].padStart(2, '0');
+                            const month = m[2].padStart(2, '0');
+                            const year = m[3];
+                            const hh = (m[4] || '00').padStart(2, '0');
+                            const mm = (m[5] || '00').padStart(2, '0');
+                            const ss = (m[6] || '00').padStart(2, '0');
+                            // build ISO-compatible string then parse
+                            d = new Date(`${year}-${month}-${day}T${hh}:${mm}:${ss}`);
+                        }
+                    }
+                }
+                if (!d || Number.isNaN(d.getTime())) return v;
+                const pad = (n) => String(n).padStart(2, '0');
+                const YYYY = d.getFullYear();
+                const MM = pad(d.getMonth() + 1);
+                const DD = pad(d.getDate());
+                const hh = pad(d.getHours());
+                const mm = pad(d.getMinutes());
+                const ss = pad(d.getSeconds());
+                return `${YYYY}-${MM}-${DD} ${hh}:${mm}:${ss}`;
+            } catch (e) {
+                return v;
+            }
+        };
+
+        try {
+            const body = { ...prenotazione };
+            // accept both camelCase and snake_case from UI
+            if (body.startTime) body.start_time = formatForBackend(body.startTime);
+            else if (body.start_time) body.start_time = formatForBackend(body.start_time);
+            if (body.endTime) body.end_time = formatForBackend(body.endTime);
+            else if (body.end_time) body.end_time = formatForBackend(body.end_time);
+
+            const data = await api.aggiungiPrenotazione(body, get().token);
+            console.log("Dati prenotazione:", data);
+            if (data && data.success) {
+                const updatedPrenotazioni = [...get().prenotazioni, data.prenotazione || body];
+                set({ prenotazioni: updatedPrenotazioni });
+                return { success: true };
+            } else {
+                return { success: false, message: data?.message || "Prenotazione fallita" };
+            }
+        } catch (err) {
+            return { success: false, message: err.message };
+        }
     },
 
     // Modifica modalità di autenticazione (login/signup)
@@ -239,14 +297,27 @@ export const useStore = create((set, get) => ({
         try {
             const data = await api.deleteParcheggio(id, get().token);
             // console.log(`Risposta eliminazione parcheggio con id ${id}:`, data);
+            // Backend may not echo the deleted id; use the requested id as fallback
+            const success = Boolean(data && (data.success || data.successo || data.deleted));
             if (data && data.success) {
-                const filtrati = get().parcheggi.filter((p) => p.id !== data.id);
-
+                // prefer backend-provided id when present
+                const removedId = data.id;
+                const filtrati = get().parcheggi.filter((p) => {
+                    return p.id !== removedId;
+                });
+                // console.log(`Parcheggi rimanenti dopo eliminazione:`, filtrati);
                 set({ parcheggi: filtrati, parcheggiFiltrati: filtrati, isLoading: false });
-                // console.log("Eliminato parcheggio con id:", data.id);
+                // refresh reservations just in case
+                get().fetchPrenotazioni();
+            } else if (success) {
+                // success flag present but different shape
+                const filtrati = get().parcheggi.filter((p) => p.id !== id);
+                set({ parcheggi: filtrati, parcheggiFiltrati: filtrati, isLoading: false });
                 get().fetchPrenotazioni();
             } else {
-                set({ isLoading: false });
+                // If backend returned nothing useful, still remove locally by id
+                const filtrati = get().parcheggi.filter((p) => p.id !== id);
+                set({ parcheggi: filtrati, parcheggiFiltrati: filtrati, isLoading: false });
             }
         } catch (err) {
             set({ error: err.message, isLoading: false });
@@ -349,8 +420,8 @@ export const useStore = create((set, get) => ({
             // console.log(`Aggiungo parcheggio: ${JSON.stringify(payload)}`);
             const data = await api.aggiungiParcheggio(payload, get().token);
             if (data) {
-                const nuovoParcheggio = { id: data.id, ...payload };
-                const parcheggi = [...get().parcheggi, nuovoParcheggio];
+                console.log(`Parcheggio aggiunto con id ${data.id}:`, data);
+                const parcheggi = [...get().parcheggi, data];
                 set({ parcheggi, parcheggiFiltrati: parcheggi, isLoading: false });
                 // console.log("Aggiunto nuovo parcheggio con id:", data.id);
             } else {

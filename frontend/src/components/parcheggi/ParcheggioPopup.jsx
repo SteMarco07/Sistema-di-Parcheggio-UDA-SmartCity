@@ -10,7 +10,7 @@ function ParcheggioPopup({ parcheggio }) {
 
     const [modalOpen, setModalOpen] = useState(false);
     const [preview, setPreview] = useState({ start: null, end: null });
-
+    
     const handlePrenota = () => {
         // prepara dati di anteprima e apre il modal di conferma
         // console.log(`ParcheggioPopup: getTimeStampInizio=${getTimeStampInizio()}, getTimeStampFine=${getTimeStampFine()}`);
@@ -34,15 +34,14 @@ function ParcheggioPopup({ parcheggio }) {
     };
 
     const confirmPrenotazione = () => {
+        // send numeric timestamps to the store; store will format for backend
         const prenotazione = {
-            id: 0,
-            parkingId: parcheggio.id,
-            nome: parcheggio.nome,
-            userId: 0,
+            id_parking_lot: parcheggio.id,
             startTime: preview.start,
             endTime: preview.end,
         };
-        addPrenotazione({ prenotazione });
+        console.log(`Confermo prenotazione: ${JSON.stringify(prenotazione)}`);
+        addPrenotazione(prenotazione);
         setModalOpen(false);
         navigate('/prenotazioni');
     };

@@ -21,10 +21,6 @@ function App() {
     fetchPrenotazioni();
   }, [loadFromLocalStorage, fetchParcheggi, fetchPrenotazioni]);
 
-  useEffect(() => {
-    console.log("Utente cambiato:", utente);
-  }, [utente]);
-
   return (
     <BrowserRouter>
 

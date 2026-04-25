@@ -58,32 +58,7 @@ export const api = {
         return GET("park")
     },
     fetchPrenotazioni: (token) => {
-        return [
-            {
-                id: 1,
-                nome: 'Prenotazione 1',
-                parkingId: 1,
-                userId: 1,
-                startTime: '2026-03-24T10:00:00Z',
-                endTime: '2026-03-25T12:00:00Z'
-            },
-            {
-                id: 2,
-                nome: 'Prenotazione 2',
-                parkingId: 2,
-                userId: 2,
-                startTime: '2026-06-01T10:00:00Z',
-                endTime: '2026-06-03T12:00:00Z'
-            },
-            {
-                id: 3,
-                nome: 'Prenotazione 3',
-                parkingId: 3,
-                userId: 3,
-                startTime: '2026-06-01T10:00:00Z',
-                endTime: '2026-06-01T12:00:00Z'
-            }
-        ]
+        return []
     },
 
     login: (username, password) => {
@@ -108,6 +83,12 @@ export const api = {
     aggiungiParcheggio: (payload, token) => {
         const data = PUT("park", payload, { token })
         // console.log(`Aggiungi parcheggio: ${JSON.stringify(payload)}, risposta: ${JSON.stringify(data)}`)
+        return data
+    },
+
+    aggiungiPrenotazione: (payload, token) => {
+        // console.log(`Aggiungo prenotazione: ${JSON.stringify(payload)}`)
+        const data = PUT("reservation", payload, { token })
         return data
     },
   

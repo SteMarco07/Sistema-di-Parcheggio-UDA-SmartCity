@@ -12,20 +12,24 @@ function isoToDate(iso) {
 }
 
 function ModifyPrenotazioneModal({ open, onClose, prenotazione }) {
-    const { modificaPrenotazione } = useStore();
+    const { modificaPrenotazione, verificaDisponibilitaPrenotazione } = useStore();
 
-    // console.log('Prenotazione da modificare:', prenotazione);
-    const [parkingId, setParkingId] = useState( prenotazione ? prenotazione.parkingId : '');
-    const [startDate, setStartDate] = useState(prenotazione ? isoToDate(prenotazione.startTime) : null);
-    const [endDate, setEndDate] = useState(prenotazione ? isoToDate(prenotazione.endTime) : null);
+    const [parkingId, setParkingId] = useState(prenotazione ? prenotazione.id_parking_lot : '');
+    const [startDate, setStartDate] = useState(prenotazione ? isoToDate(prenotazione.start_time) : null);
+    const [endDate, setEndDate] = useState(prenotazione ? isoToDate(prenotazione.end_time) : null);
     const [busy, setBusy] = useState(false);
     const [error, setError] = useState(null);
+    const [availLoading, setAvailLoading] = useState(false);
+    const [availOk, setAvailOk] = useState(null); // null = unknown, true/false = result
+    const [availMessage, setAvailMessage] = useState('');
 
     useEffect(() => {
         if (!prenotazione) return;
-        setStartDate(isoToDate(prenotazione.startTime));
-        setEndDate(isoToDate(prenotazione.endTime));
+        setStartDate(isoToDate(prenotazione.start_time));
+        setEndDate(isoToDate(prenotazione.end_time));
         setError(null);
+        // keep parkingId for availability check only
+        setParkingId(prenotazione.id_parking_lot);
     }, [prenotazione]);
 
     if (!prenotazione) return null;
@@ -42,10 +46,12 @@ function ModifyPrenotazioneModal({ open, onClose, prenotazione }) {
 
         setBusy(true);
         try {
-            await modificaPrenotazione(prenotazione.id, {
-                parkingId: Number(parkingId),
-                startTime: startIso,
-                endTime: endIso
+            // send only reservation id as first arg; payload contains start/end only
+            const reservationId = prenotazione.uuid;
+            await modificaPrenotazione(reservationId, {
+                start_time: startIso,
+                end_time: endIso,
+                id_parking_lot: parkingId
             });
             onClose();
         } catch (err) {
@@ -55,9 +61,42 @@ function ModifyPrenotazioneModal({ open, onClose, prenotazione }) {
         }
     };
 
-     return (
+    const checkAvailability = async () => {
+        setAvailMessage('');
+        setAvailOk(null);
+        if (!startDate || !endDate) {
+            setAvailOk(false);
+            setAvailMessage('Inserisci data/ora di inizio e fine prima di verificare.');
+            return;
+        }
+        const startIso = startDate.toISOString();
+        const endIso = endDate.toISOString();
+        const lotId = Number(parkingId ?? prenotazione.id_parking_lot ?? prenotazione.parking_id ?? prenotazione.parkingId);
+        setAvailLoading(true);
+        try {
+            const avail = await verificaDisponibilitaPrenotazione(lotId, startIso, endIso);
+            let isAvailable = true;
+            if (avail === false) isAvailable = false;
+            if (typeof avail === 'object' && avail != null) {
+                if (avail.available === false || avail.success === false || avail.successo === false) isAvailable = false;
+            }
+            setAvailOk(isAvailable);
+            setAvailMessage(isAvailable ? 'Disponibile' : 'Non disponibile per l\'intervallo selezionato');
+        } catch (err) {
+            setAvailOk(false);
+            setAvailMessage(err.message || 'Errore durante la verifica');
+        } finally {
+            setAvailLoading(false);
+        }
+    };
+
+    const handleSubmitFromFooter = async () => {
+        await handleSubmit({ preventDefault: () => {} });
+    };
+
+    return (
         <div className={"modal " + (open ? 'modal-open' : '')}>
-            <div className="modal-box">
+            <div className="modal-box w-11/12 md:w-3/4 lg:w-2/3 max-w-4xl min-h-[50vh] overflow-y-auto">
                 <h3 className="font-bold text-lg">Modifica prenotazione</h3>
                 <form onSubmit={handleSubmit} className="space-y-4 py-2">
 
@@ -76,11 +115,21 @@ function ModifyPrenotazioneModal({ open, onClose, prenotazione }) {
 
                     {error && <div className="text-sm text-error">{error}</div>}
 
-                    <div className="modal-action">
-                        <button type="button" className="btn" onClick={() => onClose()} disabled={busy}>Annulla</button>
-                        <button type="submit" className="btn btn-primary" disabled={busy}>{busy ? 'Salvando...' : 'Salva'}</button>
-                    </div>
                 </form>
+
+                <div className="sticky mt-42 bg-white/90 backdrop-blur-sm py-3 flex items-center justify-between gap-2 border-t px-4">
+                    <div className="flex items-center gap-3">
+                        <button type="button" className="btn btn-outline" onClick={checkAvailability} disabled={availLoading}>
+                            {availLoading ? 'Verifico...' : 'Verifica disponibilità'}
+                        </button>
+                        {availOk === true && <div className="text-sm text-green-600">{availMessage}</div>}
+                        {availOk === false && <div className="text-sm text-red-600">{availMessage}</div>}
+                    </div>
+                    <div className="flex items-center gap-2">
+                        <button type="button" className="btn" onClick={() => onClose()} disabled={busy}>Annulla</button>
+                        <button type="button" className="btn btn-primary" onClick={handleSubmitFromFooter} disabled={busy}>{busy ? 'Salvando...' : 'Salva'}</button>
+                    </div>
+                </div>
             </div>
         </div>
     );

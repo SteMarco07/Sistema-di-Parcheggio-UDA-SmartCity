@@ -77,7 +77,7 @@ function ClusteredMarkers({ parcheggi, onMarkerClick }) {
 function getMarkerColor(parcheggio) {
 
   const total = parcheggio.total_spots
-  const free = parcheggio.posti_liberi ?? parcheggio.available_spots ?? parcheggio.free_spots ?? null
+  const free = parcheggio.free_spots
 
   if (!total || free == null) return '#EF4444' // dati assenti
 

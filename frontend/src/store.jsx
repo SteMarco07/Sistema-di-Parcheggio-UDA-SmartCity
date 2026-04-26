@@ -360,16 +360,57 @@ export const useStore = create((set, get) => ({
     modificaPrenotazione: async (id, payload) => {
         set({ isLoading: true, error: null });
         try {
-            const data = await api.modificaPrenotazione(id, payload);
-            if (data && data.successo) {
-                const prenotazioni = get().prenotazioni.map((p) => p.id === id ? { ...p, ...data.prenotazione } : p);
+            // build body including id and normalize fields
+            const body = { id, ...payload };
+
+            // normalize parking id into id_parking_lot
+            if (body.parkingId) {
+                body.id_parking_lot = body.parkingId;
+                delete body.parkingId;
+            }
+            if (body.parking_id) {
+                body.id_parking_lot = body.parking_id;
+                delete body.parking_id;
+            }
+
+            // Format dates for backend and remove camelCase keys
+            if (body.startTime) {
+                body.start_time = formatForBackend(body.startTime);
+                delete body.startTime;
+            } else if (body.start_time) {
+                body.start_time = formatForBackend(body.start_time);
+            }
+
+            if (body.endTime) {
+                body.end_time = formatForBackend(body.endTime);
+                delete body.endTime;
+            } else if (body.end_time) {
+                body.end_time = formatForBackend(body.end_time);
+            }
+
+            const data = await api.modificaPrenotazione(body, get().token);
+            console.log("Risposta modifica prenotazione:", data);
+            if (data) {
+                const updated = data.prenotazione || data.reservation || body;
+                const prenotazioni = get().prenotazioni.map((p) => (p.id === id || p.uuid === id) ? { ...p, ...updated } : p);
                 set({ prenotazioni, isLoading: false });
-                // console.log("Modificata prenotazione con id:", id);
             } else {
                 set({ isLoading: false });
             }
         } catch (err) {
             set({ error: err.message, isLoading: false });
+        }
+    },
+
+    verificaDisponibilitaPrenotazione: async (parkingId, startIso, endIso) => {
+        set({ isLoading: true, error: null });
+        try {
+            const data = await api.checkAvailability(parkingId, startIso, endIso);
+            set({ isLoading: false });
+            return data;
+        } catch (err) {
+            set({ error: err.message, isLoading: false });
+            throw err;
         }
     },
 

@@ -124,6 +124,9 @@ $app->get('/park/{id}',  [ParcheggiController::class, 'getParcheggioById']);
 // Restituisce tutti i parcheggi con almeno un posto libero nell'intervallo richiesto
 $app->get('/park/available/{start_time}/{end_time}', [ParcheggiController::class, 'getAvailableParcheggi']);
 
+// Verifica se un parcheggio specifico ha almeno un posto libero nell'intervallo richiesto
+$app->get('/park/{id}/available/{start_time}/{end_time}', [ParcheggiController::class, 'isParkingLotAvailable']);
+
 // Funzione per le rotte protette da autenticazione
 $app->group('', function ($group) {
     // Restituisce i dati dell'utente

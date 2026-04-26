@@ -1,5 +1,6 @@
 import { use } from "react"
 import { data } from "react-router-dom"
+import { formatForBackend } from './utils/time';
 
 const BASE = 'http://127.0.0.1:9080/api/'
 
@@ -51,15 +52,14 @@ function GET(path, options = {}) {
 export const api = {
 
     fetchPargeggiDisponibili: (opts = {}) => {
-        // opts: { start, end } - strings formatted for backend (e.g. "YYYY-MM-DD HH:mm:ss") or timestamps
         let start = opts.start;
         let end = opts.end;
-        // Expect `start` and `end` to be pre-formatted strings (e.g. "YYYY-MM-DD HH:mm:ss").
-        // The store is responsible for formatting; API just uses them as-is.
 
         if (start && end) {
-            const s = encodeURIComponent(String(start));
-            const e = encodeURIComponent(String(end));
+            const sRaw = formatForBackend(start) || String(start);
+            const eRaw = formatForBackend(end) || String(end);
+            const s = encodeURIComponent(sRaw);
+            const e = encodeURIComponent(eRaw);
             return GET(`park/available/${s}/${e}`);
         }
 
@@ -68,6 +68,18 @@ export const api = {
 
     fetchParcheggi: () => {
         return GET("park")
+    },
+
+    checkAvailability: (parkingId, start, end) => {
+        const sRaw = formatForBackend(start) || String(start);
+        const eRaw = formatForBackend(end) || String(end);
+        const s = encodeURIComponent(sRaw);
+        const e = encodeURIComponent(eRaw);
+        const rotta = `park/${parkingId}/available/${s}/${e}`;
+
+        // console.log(`Controllo disponibilità per parcheggio ${parkingId} da ${sRaw} a ${eRaw} (rotta: ${rotta})`);
+
+        return GET(rotta);
     },
 
     fetchPrenotazioni: (token) => {
@@ -125,11 +137,9 @@ export const api = {
     modificaParcheggio: (payload, token) => {
         return POST(`park`, payload, { token })
     },
-    modificaPrenotazione: (id, payload) => {
-        return {
-            prenotazione: payload,
-            successo: true
-        }
+    modificaPrenotazione: (payload, token) => {
+        console.log(`Modifico prenotazione con payload: ${JSON.stringify(payload)}`)
+        return POST('reservation', payload, { token })
     }
 
 }

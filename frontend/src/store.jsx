@@ -155,7 +155,15 @@ export const useStore = create((set, get) => ({
         }
     },
 
-
+    profileById: async (id) => {
+        try {
+            const data = await api.profiloById(id, get().token);
+            return data;
+        } catch (err) {
+            console.error("Errore durante il recupero del profilo:", err);
+            return { success: false, message: err.message };
+        }
+    },
 
     addPrenotazione: async (prenotazione) => {
         try {

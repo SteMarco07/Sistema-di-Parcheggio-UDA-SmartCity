@@ -97,6 +97,10 @@ export const api = {
         })
     },
 
+    profiloById: (id, token) => {
+        return GET(`profile/${String(id)}`, { token })
+    },
+
     aggiungiParcheggio: (payload, token) => {
         const data = PUT("park", payload, { token })
         // console.log(`Aggiungi parcheggio: ${JSON.stringify(payload)}, risposta: ${JSON.stringify(data)}`)

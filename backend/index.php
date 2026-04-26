@@ -150,6 +150,9 @@ $app->group('', function ($group) {
 
 // Funzione per le rotte protette da autenticazione e da privilegi amministrativi
 $app->group('', function ($group) {
+    // Restituisce i dati dell'utente specificato dall'id
+    $group->get('/profile/{id}', [AuthController::class, 'profileById']);
+
     // L'amministratore deve poter creare un parcheggio
     $group->put('/park', [AdminController::class, 'addPark']);
 

@@ -283,7 +283,6 @@ export const useStore = create((set, get) => ({
         const filtrati = parcheggi.filter((p) =>
             ((p.name ?? "")).toLowerCase().includes(ricerca.toLowerCase()) ||
             ((p.description ?? "")).toLowerCase().includes(ricerca.toLowerCase())
-                ((p.description ?? "")).toLowerCase().includes(ricerca.toLowerCase())
         );
         set({ parcheggiFiltrati: filtrati });
     },

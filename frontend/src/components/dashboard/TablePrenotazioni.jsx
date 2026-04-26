@@ -46,15 +46,6 @@ function TablePrenotazioni() {
             <DeletePrenotazioneModal
                 open={showDeleteModalRes}
                 onClose={() => nascondiModaleEliminaRes()}
-                onConfirm={async (id) => {
-                    setBusy(true);
-                    try {
-                        await deletePrenotazione(id);
-                    } finally {
-                        setBusy(false);
-                        nascondiModaleEliminaRes();
-                    }
-                }}
                 prenotazione={oggettoInModificaRes}
             />
             <ModifyPrenotazioneModal

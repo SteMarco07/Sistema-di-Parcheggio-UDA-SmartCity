@@ -20,7 +20,6 @@ function PaginaPrenotazioni() {
 
   useEffect(() => {
     fetchPrenotazioni();
-    console.log("Prenotazioni caricate:", prenotazioni);
   }, []);
 
   const salvaModifiche = (prenotazioneModificata) => {

@@ -17,8 +17,7 @@ function App() {
 
   useEffect(() => {
     loadFromLocalStorage();
-    fetchPrenotazioni();
-  }, [loadFromLocalStorage, fetchPrenotazioni, token]);
+  }, [loadFromLocalStorage, token]);
 
   return (
     <BrowserRouter>

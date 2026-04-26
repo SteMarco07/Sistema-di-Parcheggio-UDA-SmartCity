@@ -14,14 +14,6 @@ function TablePrenotazioni() {
 
     const [busy, setBusy] = useState(false);
 
-
-    const parcheggiMap = useMemo(() => {
-        const m = new Map();
-        (parcheggi || []).forEach((p) => m.set(p.id, p.nome || `#${p.id}`));
-        return m;
-    }, [parcheggi]);
-
-
     return (
         <>
             <h1 className="text-2xl font-bold mb-4">Elenco delle Prenotazioni</h1>
@@ -39,9 +31,15 @@ function TablePrenotazioni() {
                         </tr>
                     </thead>
                     <tbody>
-                        {prenotazioni.map((p, i) => (
-                            <RecordPrenotazioni key={p.id} numero={i + 1} prenotazione={p} parcheggiMap={parcheggiMap} />
-                        ))}
+                        {Array.isArray(prenotazioni) && prenotazioni.length > 0 ? (
+                            prenotazioni.map((p, i) => (
+                                <RecordPrenotazioni key={p.uuid} numero={i + 1} prenotazione={p}/>
+                            ))
+                        ) : (
+                            <tr>
+                                <td colSpan={7} className="text-center py-4 text-gray-500">Nessuna prenotazione trovata.</td>
+                            </tr>
+                        )}
                     </tbody>
                 </table>
             </div>
@@ -58,14 +56,13 @@ function TablePrenotazioni() {
                     }
                 }}
                 prenotazione={oggettoInModificaRes}
-                parkingName={parcheggiMap.get(oggettoInModificaRes?.parkingId)}
             />
             <ModifyPrenotazioneModal
                 open={showEditModalRes}
                 onClose={() => nascondiModaleModificaRes()}
                 prenotazione={oggettoInModificaRes}
             />
-            
+
         </>
     );
 }

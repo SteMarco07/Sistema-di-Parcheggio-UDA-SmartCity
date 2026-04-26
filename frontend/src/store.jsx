@@ -254,6 +254,16 @@ export const useStore = create((set, get) => ({
         }
     },
 
+    fetchAllPrenotazioni: async () => {
+        set({ isLoading: true, error: null });
+        try {
+            const data = await api.fetchAllPrenotazioni(get().token);
+            set({ prenotazioni: data, isLoading: false });
+        } catch (err) {
+            set({ error: err.message, isLoading: false });
+        }
+    },
+
     setRicerca: (testo) => {
         //console.log("Imposto ricerca:", testo);
         set({ ricerca: testo, isLoading: false });

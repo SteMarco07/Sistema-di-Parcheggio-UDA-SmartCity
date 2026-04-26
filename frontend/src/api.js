@@ -74,6 +74,10 @@ export const api = {
         return GET("reservation/search-user", { token })
     },
 
+    fetchAllPrenotazioni: (token) => {
+        return GET("reservation", { token })
+    },
+
     login: (username, password) => {
         console.log(`Login con ${JSON.stringify({ username, password })}`)
         return POST("login", {

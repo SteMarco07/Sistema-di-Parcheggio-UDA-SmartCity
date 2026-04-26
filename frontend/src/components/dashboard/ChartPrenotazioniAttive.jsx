@@ -11,12 +11,14 @@ import {
 function ChartPrenotazioniAttive() {
     const { prenotazioni } = useStore();
 
-    if ((!prenotazioni || prenotazioni.length === 0)) {
+    const items = Array.isArray(prenotazioni) ? prenotazioni : [];
+
+    if (items.length === 0) {
         return <div className="text-sm text-gray-500">Nessun dato disponibile per il grafico</div>;
     }
     const now = Date.now();
 
-    const counts = prenotazioni.reduce((acc, p) => {
+    const counts = items.reduce((acc, p) => {
 
         // Calcola usando la data di fine per evitare di fare fetch e update al DB ogni ora per aggiornare lo stato
         const end = p.endTime ? new Date(p.endTime).getTime() : NaN;

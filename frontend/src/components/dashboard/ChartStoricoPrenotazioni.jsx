@@ -41,12 +41,13 @@ function generateHourRange(start, end) {
 }
 
 function ChartStoricoPrenotazioni() {
-    const { prenotazioni } = useStore();
+    const { prenotazioni, parcheggi } = useStore();
+    const items = Array.isArray(prenotazioni) ? prenotazioni : [];
     const [range, setRange] = useState('week'); // giorno ~ settimana ~ mese ~ anno ~ tutto lo storico perché QUALCUNO ha messo prenotazioni del 2024 nell'API
 
 
     const { data, label } = useMemo(() => {
-        if (!prenotazioni || prenotazioni.length === 0) {
+        if (!(items.length > 0) || !( parcheggi && Array.isArray(parcheggi) && parcheggi.length > 0)) {
             return { data: [], label: '' };
         }
 
@@ -73,7 +74,7 @@ function ChartStoricoPrenotazioni() {
             case 'all':
             default: {
                 let minDate = null;
-                prenotazioni.forEach((p) => {
+                items.map((p) => {
                     const d = p.startTime ? new Date(p.startTime) : (p.endTime ? new Date(p.endTime) : null);
                     if (d && !Number.isNaN(d.getTime())) {
                         const sod = startOfDay(d);
@@ -105,7 +106,7 @@ function ChartStoricoPrenotazioni() {
 
         // Conteggio prenotazioni per bucket (ora o giorno)
         const counts = {};
-        prenotazioni.forEach((p) => {
+                items.map((p) => {
             const rawDate = p.startTime ? new Date(p.startTime) : (p.endTime ? new Date(p.endTime) : null);
             if (!rawDate || Number.isNaN(rawDate.getTime())) return;
 

@@ -12,14 +12,15 @@ import {
 
 function ChartParcheggi() {
     const { parcheggi, prenotazioni } = useStore();
+    const items = Array.isArray(prenotazioni) ? prenotazioni : [];
 
-    if ((!parcheggi || parcheggi.length === 0) || (!prenotazioni || prenotazioni.length === 0)) {
+    if (!(items.length > 0) || !(Array.isArray(parcheggi) && parcheggi.length > 0)) {
         return <div className="text-sm text-gray-500">Nessun dato disponibile per il grafico</div>;
     }
 
     // Conta prenotazioni per parcheggio usando parkingId
     const counts = {};
-    prenotazioni.forEach((pr) => {
+    prenotazioni.map((pr) => {
         const pid = pr.parkingId;
         if (pid != null) counts[pid] = (counts[pid] || 0) + 1;
     });

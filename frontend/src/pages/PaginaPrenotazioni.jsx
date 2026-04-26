@@ -234,7 +234,7 @@ function PaginaPrenotazioni() {
     <div className="p-6 space-y-6">
       <h2 className="text-2xl font-semibold mb-4">Prenotazioni</h2>
 
-      {prenotazioni.length === 0 || !prenotazioni ? (
+      {(!Array.isArray(prenotazioni) || prenotazioni.length === 0) ? (
         <p>Qui verranno mostrate le prenotazioni future.</p>
       ) : (
         <div className="grid grid-cols-3 gap-4">

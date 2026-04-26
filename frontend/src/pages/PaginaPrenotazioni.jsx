@@ -1,5 +1,6 @@
 import { useState, useEffect } from "react";
 import PrenotazioneCard from "../components/PrenotazioneCard.jsx";
+import DeletePrenotazioneModal from "../components/modals/DeletePrenotazioneModal.jsx";
 import { api } from "../api.js";
 import DatePicker from "react-datepicker";
 import { registerLocale } from "react-datepicker";
@@ -10,8 +11,10 @@ import { useStore } from "../store.jsx";
 registerLocale("it", it);
 
 function PaginaPrenotazioni() {
-  const { prenotazioni, eliminaPrenotazione, applicaModificaPrenotazione, fetchPrenotazioni } = useStore();
+  const { prenotazioni, eliminaPrenotazione, applicaModificaPrenotazione, fetchPrenotazioni, deletePrenotazione } = useStore();
   const [prenotazioneDaModificare, setPrenotazioneDaModificare] = useState(null);
+  const [deleteTarget, setDeleteTarget] = useState(null);
+  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
 
 
@@ -241,7 +244,7 @@ function PaginaPrenotazioni() {
             <PrenotazioneCard
               key={prenotazione.uuid}
               prenotazione={prenotazione}
-              onElimina={() => eliminaPrenotazione(prenotazione.id)}
+              onElimina={() => { setDeleteTarget(prenotazione); setShowDeleteModal(true); }}
               onModifica={() => apriModifica(prenotazione)}
             />
           ))}
@@ -249,6 +252,11 @@ function PaginaPrenotazioni() {
       )}
 
       {prenotazioneDaModificare && <ModaleModifica />}
+      <DeletePrenotazioneModal
+        open={showDeleteModal}
+        onClose={() => setShowDeleteModal(false)}
+        prenotazione={deleteTarget}
+      />
     </div>
   );
 }

@@ -43,13 +43,15 @@ class ParcheggiRepository{
                                      FROM parking_lot p
                                      LEFT JOIN reservation r
                                        ON r.id_parking_lot = p.id
+                                      AND r.status = :status
                                       AND :start_time < r.end_time
                                       AND :end_time > r.start_time
                                      GROUP BY p.id, p.name, p.total_spots, p.latitude, p.longitude, p.description, p.hour_tax
                                      HAVING free_spots > 0');
         $stmt->execute([
             'start_time' => $start_time,
-            'end_time' => $end_time
+            'end_time' => $end_time,
+            'status' => 'ACTIVE'
         ]);
 
         return $stmt->fetchAll();
@@ -156,11 +158,13 @@ class ParcheggiRepository{
         $query = 'SELECT COUNT(*)
                   FROM reservation r
                   WHERE r.id_parking_lot = :id_parking_lot
+                    AND r.status = :status
                     AND :start_time < r.end_time
                     AND :end_time > r.start_time';
 
         $params = [
             'id_parking_lot' => $id_parking_lot,
+            'status' => 'ACTIVE',
             'start_time' => $start_time,
             'end_time' => $end_time
         ];
@@ -187,7 +191,9 @@ class ParcheggiRepository{
 
     public function deleteReservation(string $id) : string {
         //Logica di eliminazione
-        $stmt = $this->pdo->prepare('DELETE FROM reservation WHERE uuid = :id');
+        $stmt = $this->pdo->prepare('UPDATE reservation 
+                                    SET status = "CANCELLED"
+                                    WHERE uuid = :id');
         $stmt->execute([ 'id' => $id ]);
 
         return $id;

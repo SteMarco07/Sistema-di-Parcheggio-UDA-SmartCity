@@ -15,8 +15,8 @@ export default function DeletePrenotazioneModal({ open, onClose, onConfirm, pren
         <div className="space-y-2 text-sm">
           <div><strong>Utente:</strong> {prenotazione.id_user}</div>
           <div><strong>Parcheggio:</strong> {prenotazione.parking_name}</div>
-          <div><strong>Inizio:</strong> {formatDate(prenotazione.startTime)}</div>
-          <div><strong>Fine:</strong> {formatDate(prenotazione.endTime)}</div>
+          <div><strong>Inizio:</strong> {prenotazione.start_time}</div>
+          <div><strong>Fine:</strong> {prenotazione.end_time}</div>
         </div>
 
         <div className="modal-action mt-4">

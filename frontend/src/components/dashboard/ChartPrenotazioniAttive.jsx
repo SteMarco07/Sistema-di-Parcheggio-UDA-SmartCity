@@ -20,18 +20,11 @@ function ChartPrenotazioniAttive() {
 
     const counts = items.reduce((acc, p) => {
 
-        // Calcola usando la data di fine per evitare di fare fetch e update al DB ogni ora per aggiornare lo stato
-        const end = p.end_time ? new Date(p.end_time).getTime() : NaN;
-
-
-        if (!Number.isNaN(end) && end >= now) {
-            acc.attive += 1;
-        } else {
-            acc.terminate += 1;
-        }
+        // console.log("Prenotazione:", p);
+        acc[p.status] = (acc[p.status] || 0) + 1;
 
         return acc;
-    }, { attive: 0, terminate: 0, cancellate: 0 });
+    }, { active: 0, expired: 0, cancelled: 0 });
 
     const coloriStatus = {
         Attive: '#16a34a',
@@ -40,9 +33,9 @@ function ChartPrenotazioniAttive() {
     };
 
     const data = [
-        { nome: 'Attive', count: counts.attive, fill: coloriStatus.Attive },
-        { nome: 'Terminate', count: counts.terminate, fill: coloriStatus.Terminate },
-        { nome: 'Cancellate', count: counts.cancellate, fill: coloriStatus.Cancellate },
+        { nome: 'Attive', count: counts.ACTIVE, fill: coloriStatus.Attive },
+        { nome: 'Terminate', count: counts.EXPIRED, fill: coloriStatus.Terminate },
+        { nome: 'Cancellate', count: counts.CANCELLED, fill: coloriStatus.Cancellate },
     ];
 
     return (

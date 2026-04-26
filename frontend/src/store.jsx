@@ -318,8 +318,16 @@ export const useStore = create((set, get) => ({
             const data = await api.deletePrenotazione(id, get().token);
             if (data) {
                 // console.log(data)
-                const remaining = get().prenotazioni.filter((p) => p.uuid !== data.id);
-                set({ prenotazioni: remaining, isLoading: false });
+                let prenotazioniFiltrate = get().prenotazioni
+                prenotazioniFiltrate.map((p) => {
+                    if (p.uuid === data.id) {
+                        // console.log("Cancellazione prenotazione con id:", p.uuid);
+                        p.status = "CANCELLED";
+                    }
+                    return p
+                })
+                // console.log(JSON.stringify(prenotazioniFiltrate))
+                set({ prenotazioni: prenotazioniFiltrate, isLoading: false });
                 // console.log("Eliminata prenotazione con id:", data.id);
             } else {
                 set({ isLoading: false });

@@ -24,6 +24,7 @@ function TablePrenotazioni() {
                             <th></th>
                             <th>Utente</th>
                             <th>Parcheggio</th>
+                            <th>Stato</th>
                             <th>Data inizio</th>
                             <th>Data fine</th>
                             <th>Modifica</th>
@@ -32,12 +33,14 @@ function TablePrenotazioni() {
                     </thead>
                     <tbody>
                         {Array.isArray(prenotazioni) && prenotazioni.length > 0 ? (
-                            prenotazioni.map((p, i) => (
-                                <RecordPrenotazioni key={p.uuid} numero={i + 1} prenotazione={p}/>
-                            ))
+                            prenotazioni.map((p, i) => {
+                                // console.log("Prenotazione:", p);
+                                return <RecordPrenotazioni key={p.uuid} numero={i + 1} prenotazione={p} />
+                            }
+                            )
                         ) : (
                             <tr>
-                                <td colSpan={7} className="text-center py-4 text-gray-500">Nessuna prenotazione trovata.</td>
+                                <td colSpan={8} className="text-center py-4 text-gray-500">Nessuna prenotazione trovata.</td>
                             </tr>
                         )}
                     </tbody>

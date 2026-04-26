@@ -30,10 +30,13 @@ function RecordPrenotazioni({ numero, prenotazione }) {
                 <td>{numero}</td>
                 <td><button className="btn btn-ghost" onClick={() => handleClick(prenotazione.id_user)}>{prenotazione.id_user}</button></td>
                 <td>{prenotazione.parking_name}</td>
+                <td>{prenotazione.status}</td>
                 <td>{prenotazione.start_time}</td>
                 <td>{prenotazione.end_time}</td>
-                <td><button className="btn btn-ghost" onClick={() => mostraModaleModificaRes(prenotazione)}><img src="src/assets/icona_modifica.svg" alt="Modifica" className='h-8 ' /></button></td>
-                <td><button className="btn btn-ghost" onClick={() => mostraModaleEliminaRes(prenotazione)}><img src="src/assets/icona_cestino.svg" alt="Elimina" className='h-8 ' /></button></td>
+                <td><button className={"btn btn-ghost" + (prenotazione.status === "CANCELLED" ? " btn-disabled" : "")}
+                    onClick={() => mostraModaleModificaRes(prenotazione)}><img src="src/assets/icona_modifica.svg" alt="Modifica" className='h-8 ' /></button></td>
+                <td><button className={"btn btn-ghost" + (prenotazione.status === "CANCELLED" ? " btn-disabled" : "")}
+                    onClick={() => mostraModaleEliminaRes(prenotazione)}><img src="src/assets/icona_cestino.svg" alt="Elimina" className='h-8 ' /></button></td>
             </tr>
 
             <UserProfileModal

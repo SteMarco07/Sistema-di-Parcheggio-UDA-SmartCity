@@ -21,7 +21,7 @@ export const useStore = create((set, get) => ({
     showDeleteModalRes: false,
 
     showAddParkModal: false,
-    
+
 
     isLoading: false,
     fieldsets: [],
@@ -56,7 +56,7 @@ export const useStore = create((set, get) => ({
                 admin: false,
             };
         }
-        return {uuid: "", nome: "", cognome: "", email: "", targa: "", password: "", iniziali: "" }
+        return { uuid: "", nome: "", cognome: "", email: "", targa: "", password: "", iniziali: "" }
     })(),
     addFieldset: () =>
         set((state) => ({
@@ -168,7 +168,7 @@ export const useStore = create((set, get) => ({
 
             const data = await api.aggiungiPrenotazione(body, get().token);
 
-            if (data) {                
+            if (data) {
                 const updatedPrenotazioni = [...get().prenotazioni, data];
                 set({ prenotazioni: updatedPrenotazioni });
                 return { success: true };
@@ -273,9 +273,9 @@ export const useStore = create((set, get) => ({
     filtraParcheggi: () => {
         const { parcheggi, ricerca } = get();
         const filtrati = parcheggi.filter((p) =>
-            ((p.name ??  "")).toLowerCase().includes(ricerca.toLowerCase()) ||
-            ((p.description ??  "")).toLowerCase().includes(ricerca.toLowerCase())
-            ((p.description ??  "")).toLowerCase().includes(ricerca.toLowerCase())
+            ((p.name ?? "")).toLowerCase().includes(ricerca.toLowerCase()) ||
+            ((p.description ?? "")).toLowerCase().includes(ricerca.toLowerCase())
+                ((p.description ?? "")).toLowerCase().includes(ricerca.toLowerCase())
         );
         set({ parcheggiFiltrati: filtrati });
     },
@@ -285,33 +285,20 @@ export const useStore = create((set, get) => ({
         set({ isLoading: true, error: null });
         try {
             const data = await api.deleteParcheggio(id, get().token);
-            // console.log(`Risposta eliminazione parcheggio con id ${id}:`, data);
-            // Backend may not echo the deleted id; use the requested id as fallback
-            const success = Boolean(data && (data.success || data.successo || data.deleted));
-            if (data && data.success) {
-                // prefer backend-provided id when present
-                const removedId = data.id;
-                const filtrati = get().parcheggi.filter((p) => {
-                    return p.id !== removedId;
-                });
-                // console.log(`Parcheggi rimanenti dopo eliminazione:`, filtrati);
-                set({ parcheggi: filtrati, parcheggiFiltrati: filtrati, isLoading: false });
-                // refresh reservations just in case
-                get().fetchPrenotazioni();
-                // refresh available parks for main UI
-                try { get().fetchParcheggiDisponibili(); } catch (e) { }
-            } else if (success) {
-                // success flag present but different shape
-                const filtrati = get().parcheggi.filter((p) => p.id !== id);
-                set({ parcheggi: filtrati, parcheggiFiltrati: filtrati, isLoading: false });
-                get().fetchPrenotazioni();
-                try { get().fetchParcheggiDisponibili(); } catch (e) { }
-            } else {
-                // If backend returned nothing useful, still remove locally by id
-                const filtrati = get().parcheggi.filter((p) => p.id !== id);
-                set({ parcheggi: filtrati, parcheggiFiltrati: filtrati, isLoading: false });
-                try { get().fetchParcheggiDisponibili(); } catch (e) { }
-            }
+
+            const successFlag = Boolean(data && (data.success || data.successo || data.deleted));
+
+            // Determine which id was removed: prefer backend-provided id, fallback to requested id
+            const removedId = (data && (data.id || data.removedId)) ? (data.id || data.removedId) : (successFlag ? id : null);
+
+            // Remove locally (use removedId when available, otherwise fallback to requested id)
+            const targetId = removedId ?? id;
+            const filtrati = get().parcheggi.filter((p) => p.id !== targetId);
+            set({ parcheggi: filtrati, parcheggiFiltrati: filtrati, isLoading: false });
+
+            // Refresh dependent data: reservations and available parks (best-effort)
+            try { get().fetchAllPrenotazioni(); } catch (e) { /* ignore */ }
+
         } catch (err) {
             set({ error: err.message, isLoading: false });
         }
@@ -338,11 +325,13 @@ export const useStore = create((set, get) => ({
         try {
             const data = await api.modificaParcheggio(payload, get().token);
             if (data) {
-                const parcheggi = get().parcheggi.map((p) => p.id === data.id ? {...payload } : p);
+                const parcheggi = get().parcheggi.map((p) => p.id === data.id ? { ...payload } : p);
                 set({ parcheggi, parcheggiFiltrati: parcheggi, isLoading: false });
                 // console.log("Modificato parcheggio con id:", id);
                 // refresh available parks for main UI
-                try { get().fetchParcheggiDisponibili(); } catch (e) { }
+                try {
+                    get().fetchAllPrenotazioni();
+                } catch (e) { }
             } else {
                 set({ isLoading: false });
             }
@@ -420,7 +409,10 @@ export const useStore = create((set, get) => ({
                 set({ parcheggi, parcheggiFiltrati: parcheggi, isLoading: false });
                 // console.log("Aggiunto nuovo parcheggio con id:", data.id);
                 // refresh available parks for main UI
-                try { get().fetchParcheggiDisponibili(); } catch (e) { }
+                try {
+                    get().fetchParcheggiDisponibili();
+                    get().fetchAllPrenotazioni();
+                } catch (e) { }
             } else {
                 alert(data)
                 set({ isLoading: false });

@@ -118,11 +118,8 @@ export const api = {
          
     },
 
-    deletePrenotazione: (id) => {
-        return {
-            id: id,
-            successo: true
-        }
+    deletePrenotazione: (id, token) => {
+        return DELETE(`reservation/${id}`, { id }, { token })
     },
 
     modificaParcheggio: (payload, token) => {

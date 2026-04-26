@@ -4,13 +4,12 @@ import { useStore } from "../../store.jsx";
 export default function DeletePrenotazioneModal({ open, onClose, prenotazione }) {
   if (!prenotazione) return null;
 
-  const { formatDate, nascondiModaleEliminaRes,  } = useStore();
+  const { formatDate, nascondiModaleEliminaRes, deletePrenotazione } = useStore();
 
   const onConfirm = (prenotazione) => {
     try {
-      await deletePrenotazione(prenotazione.uuid);
+      deletePrenotazione(prenotazione.uuid);
     } finally {
-      setBusy(false);
       nascondiModaleEliminaRes();
     }
   }

@@ -314,9 +314,11 @@ export const useStore = create((set, get) => ({
     deletePrenotazione: async (id) => {
         set({ isLoading: true, error: null });
         try {
-            const data = await api.deletePrenotazione(id);
-            if (data && data.successo) {
-                const remaining = get().prenotazioni.filter((p) => p.id !== data.id);
+            // console.log("Eliminazione prenotazione con id:", id);
+            const data = await api.deletePrenotazione(id, get().token);
+            if (data) {
+                // console.log(data)
+                const remaining = get().prenotazioni.filter((p) => p.uuid !== data.id);
                 set({ prenotazioni: remaining, isLoading: false });
                 // console.log("Eliminata prenotazione con id:", data.id);
             } else {

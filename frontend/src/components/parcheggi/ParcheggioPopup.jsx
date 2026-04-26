@@ -44,8 +44,8 @@ function ParcheggioPopup({ parcheggio }) {
         // send numeric timestamps to the store; store will format for backend
         const prenotazione = {
             id_parking_lot: parcheggio.id,
-            startTime: preview.start,
-            endTime: preview.end,
+            start_time: preview.start,
+            end_time: preview.end,
         };
         console.log(`Confermo prenotazione: ${JSON.stringify(prenotazione)}`);
         addPrenotazione(prenotazione);

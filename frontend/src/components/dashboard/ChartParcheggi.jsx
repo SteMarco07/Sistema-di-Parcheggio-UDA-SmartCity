@@ -12,27 +12,32 @@ import {
 
 function ChartParcheggi() {
     const { parcheggi, prenotazioni } = useStore();
-    const items = Array.isArray(prenotazioni) ? prenotazioni : [];
 
-    if (!(items.length > 0) || !(Array.isArray(parcheggi) && parcheggi.length > 0)) {
+    if (!(Array.isArray(parcheggi) && parcheggi.length > 0) || !(Array.isArray(prenotazioni) && prenotazioni.length > 0)) {
         return <div className="text-sm text-gray-500">Nessun dato disponibile per il grafico</div>;
     }
 
     // Conta prenotazioni per parcheggio usando parkingId
     const counts = {};
     prenotazioni.map((pr) => {
-        const pid = pr.parkingId;
+        const pid = pr.id_parking_lot;
         if (pid != null) counts[pid] = (counts[pid] || 0) + 1;
     });
 
+    console.log('counts per parcheggio:', counts);
+
     // Trasforma in array con nome parcheggio (se disponibile)
-    let data = (parcheggi || []).map((p) => ({
-        nome: p.nome || `#${p.id}`,
+    let data = (parcheggi).map((p) => ({
+        nome: p.name || `#${p.id}`,
         count: counts[p.id] || 0,
     }));
 
+    // console.log(`data=${JSON.stringify(data)}`);
+
     // Mostra solo parcheggi con almeno una prenotazione e ordina per count desc
     data = data.filter(d => d.count > 0).sort((a, b) => b.count - a.count);
+
+    // console.log(`ChartParcheggi: dati per grafico: ${JSON.stringify(data)}`);
 
     if (data.length === 0) {
         return <div className="text-sm text-gray-500">Nessuna prenotazione disponibile per il grafico</div>;

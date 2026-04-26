@@ -11,10 +11,8 @@ import { useStore } from "../store.jsx";
 registerLocale("it", it);
 
 function PaginaPrenotazioni() {
-  const { prenotazioni, eliminaPrenotazione, applicaModificaPrenotazione, fetchPrenotazioni, deletePrenotazione } = useStore();
+  const { prenotazioni, eliminaPrenotazione, applicaModificaPrenotazione, fetchPrenotazioni, deletePrenotazione, oggettoInModificaRes, nascondiModaleEliminaRes, showDeleteModalRes, mostraModaleEliminaRes } = useStore();
   const [prenotazioneDaModificare, setPrenotazioneDaModificare] = useState(null);
-  const [deleteTarget, setDeleteTarget] = useState(null);
-  const [showDeleteModal, setShowDeleteModal] = useState(false);
 
 
 
@@ -29,6 +27,10 @@ function PaginaPrenotazioni() {
     applicaModificaPrenotazione({ prenotazioneModificata });
     chiudiModifica();
   };
+
+  const visiblePrenotazioni = Array.isArray(prenotazioni)
+    ? prenotazioni.filter((p) => ((p.status || '').toString().toUpperCase() === 'ACTIVE'))
+    : [];
 
   const ModaleModifica = () => {
     const pren = prenotazioneDaModificare;
@@ -236,15 +238,15 @@ function PaginaPrenotazioni() {
     <div className="p-6 space-y-6">
       <h2 className="text-2xl font-semibold mb-4">Prenotazioni</h2>
 
-      {(!Array.isArray(prenotazioni) || prenotazioni.length === 0) ? (
+      {(!Array.isArray(visiblePrenotazioni) || visiblePrenotazioni.length === 0) ? (
         <p>Qui verranno mostrate le prenotazioni future.</p>
       ) : (
         <div className="grid grid-cols-3 gap-4">
-          {prenotazioni.map((prenotazione) => (
+          {visiblePrenotazioni.map((prenotazione) => (
             <PrenotazioneCard
               key={prenotazione.uuid}
               prenotazione={prenotazione}
-              onElimina={() => { setDeleteTarget(prenotazione); setShowDeleteModal(true); }}
+              onElimina={() => mostraModaleEliminaRes(prenotazione)}
               onModifica={() => apriModifica(prenotazione)}
             />
           ))}
@@ -253,9 +255,9 @@ function PaginaPrenotazioni() {
 
       {prenotazioneDaModificare && <ModaleModifica />}
       <DeletePrenotazioneModal
-        open={showDeleteModal}
-        onClose={() => setShowDeleteModal(false)}
-        prenotazione={deleteTarget}
+        open={showDeleteModalRes}
+        onClose={() => nascondiModaleEliminaRes()}
+        prenotazione={oggettoInModificaRes}
       />
     </div>
   );

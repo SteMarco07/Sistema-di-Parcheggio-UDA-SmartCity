@@ -19,7 +19,7 @@ function PaginaDashboard() {
             fetchParcheggi();
             fetchAllPrenotazioni();
         }
-    }, [utente, fetchParcheggi, fetchAllPrenotazioni]);
+    }, []);
 
 
     useEffect(() => {

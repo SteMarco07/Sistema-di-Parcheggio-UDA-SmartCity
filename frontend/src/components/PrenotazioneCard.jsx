@@ -1,41 +1,42 @@
 import * as motion from "motion/react-client"
+import { useStore } from "../store.jsx";
 
 function PrenotazioneCard({ prenotazione, onElimina, onModifica }) {
-  const start = prenotazione?.startTime ? new Date(prenotazione.startTime) : null
-  const end = prenotazione?.endTime ? new Date(prenotazione.endTime) : null
 
-  const formatDate = (d) => d.toLocaleDateString("it-IT")
-  const formatTime = (d) =>
-    d.toLocaleTimeString("it-IT", { hour: "2-digit", minute: "2-digit" })
+  const formatDateOnly = useStore((s) => s.formatDateOnly);
+  const formatTime = useStore((s) => s.formatTime);
+  const parcheggi = useStore((s) => s.parcheggi);
 
-  let contenuto
+  console.log(`Render PrenotazioneCard: ${JSON.stringify(prenotazione)}`)
+
+  const start = prenotazione.start_time;
+  const end = prenotazione.end_time;
+  
+  const parkingLabel = prenotazione.parking_name;
+
+  let contenuto;
+
   if (start && end) {
-    const startDate = formatDate(start)
-    const endDate = formatDate(end)
-    const startTime = formatTime(start)
-    const endTime = formatTime(end)
+    const startDate = formatDateOnly(start);
+    const endDate = formatDateOnly(end);
+    const startTime = formatTime(start);
+    const endTime = formatTime(end);
 
     contenuto =
       startDate === endDate ? (
         <>
           <p className="text-gray-600">Data: {startDate}</p>
-          <p className="text-gray-600">
-            Orario: {startTime} - {endTime}
-          </p>
+          <p className="text-gray-600">Orario: {startTime} - {endTime}</p>
         </>
       ) : (
         <>
-          <p className="text-gray-600">
-            Inizio: {startDate} {startTime}
-          </p>
-          <p className="text-gray-600">
-            Fine: {endDate} {endTime}
-          </p>
+          <p className="text-gray-600">Inizio: {startDate} {startTime}</p>
+          <p className="text-gray-600">Fine: {endDate} {endTime}</p>
         </>
       )
   } else {
-    const date = start ? formatDate(start) : "—"
-    const time = start ? formatTime(start) : "—"
+    const date = start ? formatDateOnly(start) : "—";
+    const time = start ? formatTime(start) : "—";
     contenuto = (
       <>
         <p className="text-gray-600">Data: {date}</p>
@@ -55,9 +56,7 @@ function PrenotazioneCard({ prenotazione, onElimina, onModifica }) {
       className="bg-white shadow-md rounded-lg p-4 mb-4 flex flex-col justify-between"
     >
       <div>
-        <h3 className="text-lg font-semibold mb-2">
-          {prenotazione?.nome ?? "Prenotazione"}
-        </h3>
+        <h3 className="text-lg font-semibold mb-2">{parkingLabel}</h3>
         {contenuto}
       </div>
 

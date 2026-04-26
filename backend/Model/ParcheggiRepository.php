@@ -29,14 +29,19 @@ class ParcheggiRepository{
     }
 
     public function getAllReservations() : array {
-        $stmt = $this->pdo->prepare('SELECT * FROM reservation');
+        $stmt = $this->pdo->prepare('SELECT r.uuid, r.start_time, r.end_time, r.status, r.id_user, r.id_parking_lot, p.name AS parking_name
+                                     FROM reservation r
+                                     INNER JOIN parking_lot p ON p.id = r.id_parking_lot');
         $stmt->execute([  ]);
 
         return $stmt->fetchAll();
     }
 
     public function getReservationById(string $id) : array {
-        $stmt = $this->pdo->prepare('SELECT * FROM reservation WHERE uuid = :id');
+        $stmt = $this->pdo->prepare('SELECT r.uuid, r.start_time, r.end_time, r.status, r.id_user, r.id_parking_lot, p.name AS parking_name
+                                     FROM reservation r
+                                     INNER JOIN parking_lot p ON p.id = r.id_parking_lot
+                                     WHERE r.uuid = :id');
         $stmt->execute([ 'id' => $id ]);
 
         return $stmt->fetchAll();
@@ -44,7 +49,10 @@ class ParcheggiRepository{
 
     //da sistemare con l'autenitcazione
     public function getReservationByUserId($user_id) : array {
-        $stmt = $this->pdo->prepare('SELECT * FROM reservation WHERE id_user = :user_id');
+        $stmt = $this->pdo->prepare('SELECT r.uuid, r.start_time, r.end_time, r.status, r.id_user, r.id_parking_lot, p.name AS parking_name
+                                     FROM reservation r
+                                     INNER JOIN parking_lot p ON p.id = r.id_parking_lot
+                                     WHERE r.id_user = :user_id');
         $stmt->execute([ 'user_id' => $user_id ]);
 
         return $stmt->fetchAll();
@@ -70,11 +78,12 @@ class ParcheggiRepository{
             'end_time' => $end_time,
             'status' => 'ACTIVE',
             'id_parking_lot' => $id_parking_lot,
+            'parking_name' => $this->getParkingNameById($id_parking_lot),
             'id_user' => $id_user
         ];
     }
 
-    public function editUserReservation(string $id, string $start_time, string $end_time, string $id_parking_lot) : array {
+    public function editUserReservation(string $id, string $license_plate, string $start_time, string $end_time, string $id_parking_lot) : array {
         //Logica di modifica
         $stmt = $this->pdo->prepare('UPDATE reservation 
                                     SET start_time = :start_time, end_time = :end_time 
@@ -89,8 +98,18 @@ class ParcheggiRepository{
             'id' => $id,
             'start_time' => $start_time,
             'end_time' => $end_time,
-            'id_parking_lot' => $id_parking_lot
+            'id_parking_lot' => $id_parking_lot,
+            'parking_name' => $this->getParkingNameById($id_parking_lot)
         ];
+    }
+
+    private function getParkingNameById(string $id_parking_lot): ?string {
+        $stmt = $this->pdo->prepare('SELECT name FROM parking_lot WHERE id = :id LIMIT 1');
+        $stmt->execute([ 'id' => $id_parking_lot ]);
+
+        $parkingName = $stmt->fetchColumn();
+
+        return $parkingName === false ? null : $parkingName;
     }
 
     public function deleteReservation(string $id) : string {

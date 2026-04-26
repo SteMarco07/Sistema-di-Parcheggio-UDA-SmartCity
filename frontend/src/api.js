@@ -57,8 +57,9 @@ export const api = {
     fetchParcheggi: (token) => {
         return GET("park")
     },
+    
     fetchPrenotazioni: (token) => {
-        return []
+        return GET("reservation/search-user", { token })
     },
 
     login: (username, password) => {

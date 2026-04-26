@@ -247,10 +247,10 @@ export const useStore = create((set, get) => ({
         }
     },
 
-    fetchPrenotazioni: async (token) => {
+    fetchPrenotazioni: async () => {
         set({ isLoading: true, error: null });
         try {
-            const data = await api.fetchPrenotazioni(token);
+            const data = await api.fetchPrenotazioni(get().token);
             set({ prenotazioni: data, isLoading: false });
         } catch (err) {
             set({ error: err.message, isLoading: false });
@@ -422,6 +422,22 @@ export const useStore = create((set, get) => ({
     formatDate(iso) {
         try {
             return new Date(iso).toLocaleString();
+        } catch (e) {
+            return iso;
+        }
+    },
+
+    formatDateOnly(iso) {
+        try {
+            return new Date(iso).toLocaleDateString();
+        } catch (e) {
+            return iso;
+        }
+    },
+
+    formatTime(iso) {
+        try {
+            return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         } catch (e) {
             return iso;
         }

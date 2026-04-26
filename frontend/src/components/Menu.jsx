@@ -144,7 +144,7 @@ function Menu() {
                 initial={false}
                 animate={isOpen ? "open" : "closed"}
                 custom={height}
-                style={styles.nav}
+                style={{ ...styles.nav, pointerEvents: isOpen ? "auto" : "none" }}
             >
                 <motion.div style={styles.background} variants={sidebarVariants} />
                 <NavLinks links={links} onClose={close} />
@@ -170,7 +170,6 @@ const styles = {
         width: 280,
         height: "calc(100vh - 64px)",
         zIndex: 45,        // above backdrop (40), below navbar (50)
-        pointerEvents: "auto",
         overflow: "hidden",
     },
     background: {

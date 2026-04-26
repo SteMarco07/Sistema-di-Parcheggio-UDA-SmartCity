@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { api } from './api';
+import { formatForBackend } from './utils/time';
 
 
 export const useStore = create((set, get) => ({
@@ -157,25 +158,6 @@ export const useStore = create((set, get) => ({
 
 
     addPrenotazione: async (prenotazione) => {
-        const formatForBackend = (v) => {
-            // Accept numeric timestamps or ISO-like strings; minimal fallback for DD/MM/YYYY
-            let d;
-            if (typeof v === 'number' || /^\d+$/.test(String(v))) {
-                d = new Date(Number(v));
-            } else {
-                d = new Date(v);
-            }
-
-            const pad = (n) => String(n).padStart(2, '0');
-            const YYYY = d.getFullYear();
-            const MM = pad(d.getMonth() + 1);
-            const DD = pad(d.getDate());
-            const hh = pad(d.getHours());
-            const mm = pad(d.getMinutes());
-            const ss = pad(d.getSeconds());
-            return `${YYYY}-${MM}-${DD} ${hh}:${mm}:${ss}`;
-        };
-
         try {
             const body = { ...prenotazione };
             // accept both camelCase and snake_case from UI
@@ -185,9 +167,8 @@ export const useStore = create((set, get) => ({
             else if (body.end_time) body.end_time = formatForBackend(body.end_time);
 
             const data = await api.aggiungiPrenotazione(body, get().token);
-            console.log("Dati prenotazione:", data);
-            if (data) {
-                
+
+            if (data) {                
                 const updatedPrenotazioni = [...get().prenotazioni, data];
                 set({ prenotazioni: updatedPrenotazioni });
                 return { success: true };
@@ -247,6 +228,22 @@ export const useStore = create((set, get) => ({
         }
     },
 
+    // Fetch only available parking lots (used in the main UI)
+    fetchParcheggiDisponibili: async () => {
+        set({ isLoading: true, error: null });
+        try {
+            const startStr = get().getTimeStampInizio();
+            const endStr = get().getTimeStampFine();
+            const opts = {};
+            if (startStr) opts.start = startStr;
+            if (endStr) opts.end = endStr;
+            const data = await api.fetchPargeggiDisponibili(opts);
+            set({ parcheggi: data, parcheggiFiltrati: data, isLoading: false });
+        } catch (err) {
+            set({ error: err.message, isLoading: false });
+        }
+    },
+
     fetchPrenotazioni: async () => {
         set({ isLoading: true, error: null });
         try {
@@ -291,15 +288,19 @@ export const useStore = create((set, get) => ({
                 set({ parcheggi: filtrati, parcheggiFiltrati: filtrati, isLoading: false });
                 // refresh reservations just in case
                 get().fetchPrenotazioni();
+                // refresh available parks for main UI
+                try { get().fetchParcheggiDisponibili(); } catch (e) { }
             } else if (success) {
                 // success flag present but different shape
                 const filtrati = get().parcheggi.filter((p) => p.id !== id);
                 set({ parcheggi: filtrati, parcheggiFiltrati: filtrati, isLoading: false });
                 get().fetchPrenotazioni();
+                try { get().fetchParcheggiDisponibili(); } catch (e) { }
             } else {
                 // If backend returned nothing useful, still remove locally by id
                 const filtrati = get().parcheggi.filter((p) => p.id !== id);
                 set({ parcheggi: filtrati, parcheggiFiltrati: filtrati, isLoading: false });
+                try { get().fetchParcheggiDisponibili(); } catch (e) { }
             }
         } catch (err) {
             set({ error: err.message, isLoading: false });
@@ -330,6 +331,8 @@ export const useStore = create((set, get) => ({
                 const parcheggi = get().parcheggi.map((p) => p.id === data.id ? {...payload } : p);
                 set({ parcheggi, parcheggiFiltrati: parcheggi, isLoading: false });
                 // console.log("Modificato parcheggio con id:", id);
+                // refresh available parks for main UI
+                try { get().fetchParcheggiDisponibili(); } catch (e) { }
             } else {
                 set({ isLoading: false });
             }
@@ -406,6 +409,8 @@ export const useStore = create((set, get) => ({
                 const parcheggi = [...get().parcheggi, data];
                 set({ parcheggi, parcheggiFiltrati: parcheggi, isLoading: false });
                 // console.log("Aggiunto nuovo parcheggio con id:", data.id);
+                // refresh available parks for main UI
+                try { get().fetchParcheggiDisponibili(); } catch (e) { }
             } else {
                 alert(data)
                 set({ isLoading: false });
@@ -471,10 +476,10 @@ export const useStore = create((set, get) => ({
         const { dataOraInizio, oraInizio } = get();
         if (!dataOraInizio || !oraInizio) return null;
 
-        const timestamp = new Date(dataOraInizio);
-        const [hours, minutes] = oraInizio.split(':').map(Number);
-        timestamp.setHours(hours, minutes, 0, 0);
-        return timestamp.getTime();
+        const d = new Date(dataOraInizio);
+        const [hours, minutes] = (oraInizio || '00:00').split(':').map(Number);
+        d.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+        return formatForBackend(d);
     },
 
     getTimeStampFine: () => {
@@ -482,10 +487,10 @@ export const useStore = create((set, get) => ({
         // console.log(`getTimeStampFine: dataOraFine=${dataOraFine}, oraFine=${oraFine}`);
         if (!dataOraFine || !oraFine) return null;
 
-        const timestamp = new Date(dataOraFine);
-        const [hours, minutes] = oraFine.split(':').map(Number);
-        timestamp.setHours(hours, minutes, 0, 0);
-        return timestamp.getTime();
+        const d = new Date(dataOraFine);
+        const [hours, minutes] = (oraFine || '00:00').split(':').map(Number);
+        d.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+        return formatForBackend(d);
     },
 
     getRemember: () => {

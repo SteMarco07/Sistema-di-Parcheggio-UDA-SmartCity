@@ -10,13 +10,18 @@ import { useStore } from "../store.jsx";
 registerLocale("it", it);
 
 function PaginaPrenotazioni() {
-  const { prenotazioni, eliminaPrenotazione, applicaModificaPrenotazione } = useStore();
+  const { prenotazioni, eliminaPrenotazione, applicaModificaPrenotazione, fetchPrenotazioni } = useStore();
   const [prenotazioneDaModificare, setPrenotazioneDaModificare] = useState(null);
 
 
 
   const apriModifica = (prenotazione) => setPrenotazioneDaModificare(prenotazione);
   const chiudiModifica = () => setPrenotazioneDaModificare(null);
+
+  useEffect(() => {
+    fetchPrenotazioni();
+    console.log("Prenotazioni caricate:", prenotazioni);
+  }, []);
 
   const salvaModifiche = (prenotazioneModificata) => {
     applicaModificaPrenotazione({ prenotazioneModificata });
@@ -229,13 +234,13 @@ function PaginaPrenotazioni() {
     <div className="p-6 space-y-6">
       <h2 className="text-2xl font-semibold mb-4">Prenotazioni</h2>
 
-      {prenotazioni.length === 0 ? (
+      {prenotazioni.length === 0 || !prenotazioni ? (
         <p>Qui verranno mostrate le prenotazioni future.</p>
       ) : (
         <div className="grid grid-cols-3 gap-4">
           {prenotazioni.map((prenotazione) => (
             <PrenotazioneCard
-              key={prenotazione.id}
+              key={prenotazione.uuid}
               prenotazione={prenotazione}
               onElimina={() => eliminaPrenotazione(prenotazione.id)}
               onModifica={() => apriModifica(prenotazione)}

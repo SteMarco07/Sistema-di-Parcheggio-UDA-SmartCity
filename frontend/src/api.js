@@ -50,14 +50,26 @@ function GET(path, options = {}) {
 
 export const api = {
 
-    fetchPargeggiDisponibili: (token) => {
-        return []
+    fetchPargeggiDisponibili: (opts = {}) => {
+        // opts: { start, end } - strings formatted for backend (e.g. "YYYY-MM-DD HH:mm:ss") or timestamps
+        let start = opts.start;
+        let end = opts.end;
+        // Expect `start` and `end` to be pre-formatted strings (e.g. "YYYY-MM-DD HH:mm:ss").
+        // The store is responsible for formatting; API just uses them as-is.
+
+        if (start && end) {
+            const s = encodeURIComponent(String(start));
+            const e = encodeURIComponent(String(end));
+            return GET(`park/available/${s}/${e}`);
+        }
+
+        return GET("park/available");
     },
 
-    fetchParcheggi: (token) => {
+    fetchParcheggi: () => {
         return GET("park")
     },
-    
+
     fetchPrenotazioni: (token) => {
         return GET("reservation/search-user", { token })
     },

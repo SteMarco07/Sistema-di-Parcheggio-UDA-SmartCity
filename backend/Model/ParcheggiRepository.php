@@ -28,6 +28,33 @@ class ParcheggiRepository{
         return $stmt->fetchAll();
     }
 
+    public function getAvailableParcheggi(string $start_time, string $end_time) : array {
+        $this->validateTimeRange($start_time, $end_time);
+
+        $stmt = $this->pdo->prepare('SELECT p.id,
+                                            p.name,
+                                            p.total_spots,
+                                            p.latitude,
+                                            p.longitude,
+                                            p.description,
+                                            p.hour_tax,
+                                            COUNT(r.uuid) AS occupied_spots,
+                                            (p.total_spots - COUNT(r.uuid)) AS free_spots
+                                     FROM parking_lot p
+                                     LEFT JOIN reservation r
+                                       ON r.id_parking_lot = p.id
+                                      AND :start_time < r.end_time
+                                      AND :end_time > r.start_time
+                                     GROUP BY p.id, p.name, p.total_spots, p.latitude, p.longitude, p.description, p.hour_tax
+                                     HAVING free_spots > 0');
+        $stmt->execute([
+            'start_time' => $start_time,
+            'end_time' => $end_time
+        ]);
+
+        return $stmt->fetchAll();
+    }
+
     public function getAllReservations() : array {
         $stmt = $this->pdo->prepare('SELECT r.uuid, r.start_time, r.end_time, r.status, r.id_user, r.id_parking_lot, p.name AS parking_name
                                      FROM reservation r
@@ -59,6 +86,12 @@ class ParcheggiRepository{
     }
 
     public function userCreateReservation(string $start_time, string $end_time, string $id_parking_lot, string $id_user) : array {
+        $this->validateTimeRange($start_time, $end_time);
+
+        if (!$this->isParkingLotAvailable($id_parking_lot, $start_time, $end_time)) {
+            throw new \RuntimeException('Parcheggio non disponibile nell\'intervallo selezionato', 409);
+        }
+
         //Logica di creazione
         $stmt = $this->pdo->prepare('INSERT INTO reservation (uuid, start_time, end_time, status, id_parking_lot, id_user) 
                                     VALUES (UUID(), :start_time, :end_time, :status, :id_parking_lot, :id_user)');
@@ -73,7 +106,7 @@ class ParcheggiRepository{
         $id = $this->pdo->lastInsertId();
 
         return [
-            'id' => $id,
+            'uuid' => $id,
             'start_time' => $start_time,
             'end_time' => $end_time,
             'status' => 'ACTIVE',
@@ -84,14 +117,21 @@ class ParcheggiRepository{
     }
 
     public function editUserReservation(string $id, string $license_plate, string $start_time, string $end_time, string $id_parking_lot) : array {
+        $this->validateTimeRange($start_time, $end_time);
+
+        if (!$this->isParkingLotAvailable($id_parking_lot, $start_time, $end_time, $id)) {
+            throw new \RuntimeException('Parcheggio non disponibile nell\'intervallo selezionato', 409);
+        }
+
         //Logica di modifica
         $stmt = $this->pdo->prepare('UPDATE reservation 
-                                    SET start_time = :start_time, end_time = :end_time 
+                                    SET start_time = :start_time, end_time = :end_time, id_parking_lot = :id_parking_lot
                                     WHERE uuid = :id');
         $stmt->execute([
             'id' => $id,
             'start_time' => $start_time,
-            'end_time' => $end_time
+            'end_time' => $end_time,
+            'id_parking_lot' => $id_parking_lot
         ]);
 
         return [
@@ -110,6 +150,39 @@ class ParcheggiRepository{
         $parkingName = $stmt->fetchColumn();
 
         return $parkingName === false ? null : $parkingName;
+    }
+
+    private function isParkingLotAvailable(string $id_parking_lot, string $start_time, string $end_time, ?string $reservation_uuid_to_ignore = null): bool {
+        $query = 'SELECT COUNT(*)
+                  FROM reservation r
+                  WHERE r.id_parking_lot = :id_parking_lot
+                    AND :start_time < r.end_time
+                    AND :end_time > r.start_time';
+
+        $params = [
+            'id_parking_lot' => $id_parking_lot,
+            'start_time' => $start_time,
+            'end_time' => $end_time
+        ];
+
+        if ($reservation_uuid_to_ignore !== null) {
+            $query .= ' AND r.uuid <> :reservation_uuid_to_ignore';
+            $params['reservation_uuid_to_ignore'] = $reservation_uuid_to_ignore;
+        }
+
+        $stmt = $this->pdo->prepare($query);
+        $stmt->execute($params);
+
+        return (int) $stmt->fetchColumn() === 0;
+    }
+
+    private function validateTimeRange(string $start_time, string $end_time): void {
+        $start = strtotime($start_time);
+        $end = strtotime($end_time);
+
+        if ($start === false || $end === false || $start >= $end) {
+            throw new \RuntimeException('Intervallo orario non valido', 422);
+        }
     }
 
     public function deleteReservation(string $id) : string {

@@ -9,6 +9,15 @@ import ChartStoricoPrenotazioni from '../components/dashboard/ChartStoricoPrenot
 
 function PaginaDashboard() {
     const { nascondiModaleEliminaPark, nascondiModaleModificaPark, nascondiModaleEliminaRes, nascondiModaleModificaRes, nascondiModaleAggiungiParcheggio } = useStore();
+    const fetchParcheggi = useStore((s) => s.fetchParcheggi);
+    const utente = useStore((s) => s.utente);
+
+    // fetch full parcheggi list only for admin dashboard
+    useEffect(() => {
+        if (utente && utente.admin) {
+            fetchParcheggi();
+        }
+    }, [utente, fetchParcheggi]);
 
 
     useEffect(() => {

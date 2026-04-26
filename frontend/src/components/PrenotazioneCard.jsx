@@ -7,8 +7,6 @@ function PrenotazioneCard({ prenotazione, onElimina, onModifica }) {
   const formatTime = useStore((s) => s.formatTime);
   const parcheggi = useStore((s) => s.parcheggi);
 
-  console.log(`Render PrenotazioneCard: ${JSON.stringify(prenotazione)}`)
-
   const start = prenotazione.start_time;
   const end = prenotazione.end_time;
   

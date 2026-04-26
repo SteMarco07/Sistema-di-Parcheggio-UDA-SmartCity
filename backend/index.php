@@ -121,10 +121,8 @@ $app->get('/park', [ParcheggiController::class, 'getAllParcheggi']);
 // Restituisce un parcheggio specifico
 $app->get('/park/{id}',  [ParcheggiController::class, 'getParcheggioById']);
 
-// Restituisce i posti disponibili prima che l'utente ne faccia una
-$app->get('/reservation/available/{start}/{end}', function (Request $request, Response $response): Response {
-    return $response;
-});
+// Restituisce tutti i parcheggi con almeno un posto libero nell'intervallo richiesto
+$app->get('/park/available/{start_time}/{end_time}', [ParcheggiController::class, 'getAvailableParcheggi']);
 
 // Funzione per le rotte protette da autenticazione
 $app->group('', function ($group) {

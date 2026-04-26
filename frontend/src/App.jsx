@@ -13,13 +13,12 @@ import PaginaProfilo from './pages/PaginaProfilo.jsx';
 import PaginaDashboard from './pages/PaginaDashboard.jsx';
 
 function App() {
-  const { loadFromLocalStorage, fetchParcheggi, fetchPrenotazioni, utente, token } = useStore();
+  const { loadFromLocalStorage, fetchPrenotazioni, utente, token } = useStore();
 
   useEffect(() => {
     loadFromLocalStorage();
-    fetchParcheggi();
     fetchPrenotazioni();
-  }, [loadFromLocalStorage, fetchParcheggi, fetchPrenotazioni]);
+  }, [loadFromLocalStorage, fetchPrenotazioni]);
 
   return (
     <BrowserRouter>

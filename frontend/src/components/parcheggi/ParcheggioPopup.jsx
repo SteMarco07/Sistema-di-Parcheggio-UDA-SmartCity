@@ -10,7 +10,7 @@ function ParcheggioPopup({ parcheggio }) {
 
     const [modalOpen, setModalOpen] = useState(false);
     const [preview, setPreview] = useState({ start: null, end: null });
-    
+
     const handlePrenota = () => {
         // prepara dati di anteprima e apre il modal di conferma
         // console.log(`ParcheggioPopup: getTimeStampInizio=${getTimeStampInizio()}, getTimeStampFine=${getTimeStampFine()}`);
@@ -22,9 +22,16 @@ function ParcheggioPopup({ parcheggio }) {
         try { return ts ? new Date(ts).toLocaleString() : '—'; } catch (e) { return String(ts); }
     };
 
+    function toTimestampMs(datetimeStr, assumeUTC = false) {
+        const t = datetimeStr.trim().replace(' ', 'T');
+        const normalized = assumeUTC ? t + 'Z' : t;
+        return new Date(normalized).getTime(); // millisecondi (integer) o NaN se non valido
+    }
+
     const calcDurationHours = () => {
         if (!preview.start || !preview.end) return 0;
-        return Math.max(0, (preview.end - preview.start) / (1000 * 60 * 60));
+        const data = (toTimestampMs(preview.end) - (toTimestampMs(preview.start))) / (1000 * 60 * 60)
+        return data;
     };
 
     const calcEstimatedPrice = () => {

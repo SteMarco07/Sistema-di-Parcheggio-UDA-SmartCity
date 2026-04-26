@@ -75,7 +75,7 @@ function ChartStoricoPrenotazioni() {
             default: {
                 let minDate = null;
                 items.map((p) => {
-                    const d = p.startTime ? new Date(p.startTime) : (p.endTime ? new Date(p.endTime) : null);
+                    const d = p.start_time ? new Date(p.start_time) : (p.end_time ? new Date(p.end_time) : null);
                     if (d && !Number.isNaN(d.getTime())) {
                         const sod = startOfDay(d);
                         if (!minDate || sod < minDate) {
@@ -107,7 +107,7 @@ function ChartStoricoPrenotazioni() {
         // Conteggio prenotazioni per bucket (ora o giorno)
         const counts = {};
                 items.map((p) => {
-            const rawDate = p.startTime ? new Date(p.startTime) : (p.endTime ? new Date(p.endTime) : null);
+            const rawDate = p.start_time ? new Date(p.start_time) : (p.end_time ? new Date(p.end_time) : null);
             if (!rawDate || Number.isNaN(rawDate.getTime())) return;
 
             if (range === 'day') {

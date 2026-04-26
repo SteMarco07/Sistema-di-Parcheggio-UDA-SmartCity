@@ -24,7 +24,7 @@ function ChartParcheggi() {
         if (pid != null) counts[pid] = (counts[pid] || 0) + 1;
     });
 
-    console.log('counts per parcheggio:', counts);
+    // console.log('counts per parcheggio:', counts);
 
     // Trasforma in array con nome parcheggio (se disponibile)
     let data = (parcheggi).map((p) => ({

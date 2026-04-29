@@ -4,9 +4,9 @@ import 'mapbox-gl/dist/mapbox-gl.css'
 import { useStore } from '../store.jsx'
 import ParcheggioPopup from './parcheggi/ParcheggioPopup.jsx'
 import ClusteredMarkers from './Markers.jsx'
- 
+
 const MAPBOX_TOKEN = import.meta.env.VITE_MAPBOX_TOKEN || 'pk.eyJ1IjoiZmFiaW9zMDciLCJhIjoiY21tcTU2aDNoMHRuMDMxc2RycHZqZ2Z2OCJ9._GIagSs30ZeuZRHeLw02pA'
- 
+
 function add3DBuildings(map) {
   map.addLayer({
     id: '3d-buildings',
@@ -23,7 +23,7 @@ function add3DBuildings(map) {
     },
   })
 }
- 
+
 // ── SearchBar ────────────────────────────────────────────────────────────────
 function SearchBar({ onSelect }) {
   const [query, setQuery] = useState('')
@@ -32,7 +32,7 @@ function SearchBar({ onSelect }) {
   const [open, setOpen] = useState(false)
   const debounceRef = useRef(null)
   const wrapperRef = useRef(null)
- 
+
   // Chiudi dropdown cliccando fuori
   useEffect(() => {
     function handleClickOutside(e) {
@@ -43,18 +43,18 @@ function SearchBar({ onSelect }) {
     document.addEventListener('mousedown', handleClickOutside)
     return () => document.removeEventListener('mousedown', handleClickOutside)
   }, [])
- 
+
   function handleChange(e) {
     const value = e.target.value
     setQuery(value)
     clearTimeout(debounceRef.current)
- 
+
     if (value.trim().length < 2) {
       setResults([])
       setOpen(false)
       return
     }
- 
+
     debounceRef.current = setTimeout(async () => {
       setLoading(true)
       try {
@@ -75,7 +75,7 @@ function SearchBar({ onSelect }) {
       }
     }, 350)
   }
- 
+
   function handleSelect(feature) {
     const [lng, lat] = feature.center
     setQuery(feature.place_name)
@@ -83,15 +83,15 @@ function SearchBar({ onSelect }) {
     setOpen(false)
     onSelect({ lng, lat, name: feature.place_name })
   }
- 
+
   function handleClear() {
     setQuery('')
     setResults([])
     setOpen(false)
   }
- 
+
   return (
-<div
+    <div
       ref={wrapperRef}
       style={{
         position: 'absolute',
@@ -102,9 +102,9 @@ function SearchBar({ onSelect }) {
         width: 'min(420px, 90vw)',
         fontFamily: 'system-ui, sans-serif',
       }}
->
+    >
       {/* Input */}
-<div style={{
+      <div style={{
         display: 'flex',
         alignItems: 'center',
         background: '#fff',
@@ -114,10 +114,10 @@ function SearchBar({ onSelect }) {
         gap: 8,
       }}>
         {/* Icona cerca */}
-<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
-<circle cx="11" cy="11" r="8"/><line x1="21" y1="21" x2="16.65" y2="16.65"/>
-</svg>
- 
+        <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#888" strokeWidth="2.2" strokeLinecap="round" strokeLinejoin="round">
+          <circle cx="11" cy="11" r="8" /><line x1="21" y1="21" x2="16.65" y2="16.65" />
+        </svg>
+
         <input
           type="text"
           value={query}
@@ -133,27 +133,27 @@ function SearchBar({ onSelect }) {
             background: 'transparent',
           }}
         />
- 
+
         {loading && (
-<svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" strokeLinecap="round">
-<path d="M12 2a10 10 0 0 1 10 10">
-<animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite"/>
-</path>
-</svg>
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#aaa" strokeWidth="2" strokeLinecap="round">
+            <path d="M12 2a10 10 0 0 1 10 10">
+              <animateTransform attributeName="transform" type="rotate" from="0 12 12" to="360 12 12" dur="0.8s" repeatCount="indefinite" />
+            </path>
+          </svg>
         )}
- 
+
         {query && !loading && (
-<button onClick={handleClear} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: '#aaa' }}>
-<svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
-<line x1="18" y1="6" x2="6" y2="18"/><line x1="6" y1="6" x2="18" y2="18"/>
-</svg>
-</button>
+          <button onClick={handleClear} style={{ background: 'none', border: 'none', cursor: 'pointer', padding: 0, display: 'flex', color: '#aaa' }}>
+            <svg width="16" height="16" viewBox="0 0 24 24" fill="none" stroke="currentColor" strokeWidth="2.5" strokeLinecap="round">
+              <line x1="18" y1="6" x2="6" y2="18" /><line x1="6" y1="6" x2="18" y2="18" />
+            </svg>
+          </button>
         )}
-</div>
- 
+      </div>
+
       {/* Dropdown risultati */}
       {open && results.length > 0 && (
-<ul style={{
+        <ul style={{
           margin: 0,
           padding: 0,
           listStyle: 'none',
@@ -168,9 +168,9 @@ function SearchBar({ onSelect }) {
             const parts = feature.place_name.split(',')
             const main = parts[0]
             const secondary = parts.slice(1).join(',').trim()
- 
+
             return (
-<li
+              <li
                 key={feature.id}
                 onClick={() => handleSelect(feature)}
                 style={{
@@ -184,35 +184,42 @@ function SearchBar({ onSelect }) {
                 }}
                 onMouseEnter={e => e.currentTarget.style.background = '#f7f9ff'}
                 onMouseLeave={e => e.currentTarget.style.background = '#fff'}
->
+              >
                 {/* Pin icon */}
-<svg width="14" height="14" viewBox="0 0 24 24" fill="#6c8ebf" stroke="none" style={{ flexShrink: 0 }}>
-<path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z"/>
-</svg>
-<div style={{ overflow: 'hidden' }}>
-<div style={{ fontWeight: 600, fontSize: 14, color: '#222', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                <svg width="14" height="14" viewBox="0 0 24 24" fill="#6c8ebf" stroke="none" style={{ flexShrink: 0 }}>
+                  <path d="M12 2C8.13 2 5 5.13 5 9c0 5.25 7 13 7 13s7-7.75 7-13c0-3.87-3.13-7-7-7zm0 9.5c-1.38 0-2.5-1.12-2.5-2.5s1.12-2.5 2.5-2.5 2.5 1.12 2.5 2.5-1.12 2.5-2.5 2.5z" />
+                </svg>
+                <div style={{ overflow: 'hidden' }}>
+                  <div style={{ fontWeight: 600, fontSize: 14, color: '#222', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                     {main}
-</div>
+                  </div>
                   {secondary && (
-<div style={{ fontSize: 12, color: '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
+                    <div style={{ fontSize: 12, color: '#888', whiteSpace: 'nowrap', overflow: 'hidden', textOverflow: 'ellipsis' }}>
                       {secondary}
-</div>
+                    </div>
                   )}
-</div>
-</li>
+                </div>
+              </li>
             )
           })}
-</ul>
+        </ul>
       )}
-</div>
+    </div>
   )
 }
- 
+
 // ── Mappa ────────────────────────────────────────────────────────────────────
 function Mappa() {
-  const { parcheggiFiltrati = [], position, zoom, modifyPosition, modifyZoom } = useStore()
+  const {
+    parcheggiFiltrati,
+    position,
+    zoom,
+    modifyPosition,
+    modifyZoom
+  } = useStore()
+
   const [selectedParcheggio, setSelectedParcheggio] = useState(null)
- 
+
   const [viewState, setViewState] = useState({
     longitude: position[1],
     latitude: position[0],
@@ -220,19 +227,23 @@ function Mappa() {
     pitch: 45,
     bearing: 0,
   })
- 
+
   useEffect(() => {
-    setViewState(v => ({ ...v, longitude: position[1], latitude: position[0], zoom }))
+    setViewState(v => ({
+      ...v,
+      longitude: position[1],
+      latitude: position[0],
+      zoom
+    }))
   }, [position, zoom])
- 
+
   function handleMove(evt) {
     const { longitude, latitude, zoom } = evt.viewState
     setViewState(evt.viewState)
     modifyPosition([latitude, longitude])
     modifyZoom(zoom)
   }
- 
-  // Vola alla location selezionata dalla searchbar
+
   function handleSearchSelect({ lng, lat }) {
     const newView = {
       ...viewState,
@@ -245,11 +256,16 @@ function Mappa() {
     modifyPosition([lat, lng])
     modifyZoom(16)
   }
- 
+
+  // 🔴 FIX IMPORTANTISSIMO
+  const hasParcheggi =
+    Array.isArray(parcheggiFiltrati) &&
+    parcheggiFiltrati.length > 0
+
   return (
-<div style={{ position: 'relative', height: '100%', width: '100%' }}>
-<SearchBar onSelect={handleSearchSelect} />
- 
+    <div style={{ position: 'relative', height: '100%', width: '100%' }}>
+      <SearchBar onSelect={handleSearchSelect} />
+
       <Map
         {...viewState}
         onMove={handleMove}
@@ -257,27 +273,51 @@ function Mappa() {
         mapStyle="mapbox://styles/mapbox/streets-v12"
         mapboxAccessToken={MAPBOX_TOKEN}
         onLoad={(e) => add3DBuildings(e.target)}
->
-<NavigationControl position="top-right" />
- 
-        <ClusteredMarkers
-          parcheggi={parcheggiFiltrati}
-          onMarkerClick={setSelectedParcheggio}
-        />
- 
+      >
+        <NavigationControl position="top-right" />
+
+        {/* 🔥 SOLO SE DATI VALIDI */}
+        {hasParcheggi && (
+          <ClusteredMarkers
+            parcheggi={parcheggiFiltrati}
+            onMarkerClick={(p) => {
+              console.log('parcheggio selezionato:', p); // ← guarda qui
+              setSelectedParcheggio(p);
+            }}
+          />
+        )}
+
+        {(() => {
+          if (!selectedParcheggio) return null;
+          const lng = selectedParcheggio.longitude ?? selectedParcheggio.lng;
+          const lat = selectedParcheggio.latitude ?? selectedParcheggio.lat;
+          if (!lng || !lat || isNaN(lng) || isNaN(lat)) return null;
+
+          return (
+            <Popup
+              longitude={lng}
+              latitude={lat}
+              onClose={() => setSelectedParcheggio(null)}
+              closeOnClick={false}
+            >
+              <ParcheggioPopup parcheggio={selectedParcheggio} />
+            </Popup>
+          );
+        })()}
+
         {selectedParcheggio && (
-<Popup
-            longitude={selectedParcheggio.lng}
-            latitude={selectedParcheggio.lat}
+          <Popup
+            longitude={selectedParcheggio.longitude ?? selectedParcheggio.lng}
+            latitude={selectedParcheggio.latitude ?? selectedParcheggio.lat}
             onClose={() => setSelectedParcheggio(null)}
             closeOnClick={false}
->
-<ParcheggioPopup parcheggio={selectedParcheggio} />
-</Popup>
+          >
+            <ParcheggioPopup parcheggio={selectedParcheggio} />
+          </Popup>
         )}
-</Map>
-</div>
+      </Map>
+    </div>
   )
 }
- 
+
 export default Mappa

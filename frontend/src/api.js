@@ -60,7 +60,9 @@ export const api = {
             const eRaw = formatForBackend(end) || String(end);
             const s = encodeURIComponent(sRaw);
             const e = encodeURIComponent(eRaw);
-            return GET(`park/available/${s}/${e}`);
+            const rotta = `park/available/${s}/${e}`;
+            console.log(`fetchPargeggiDisponibili:, rotta: ${rotta}`);
+            return GET(rotta);
         }
 
         return GET("park/available");
@@ -77,7 +79,7 @@ export const api = {
         const e = encodeURIComponent(eRaw);
         const rotta = `park/${parkingId}/available/${s}/${e}`;
 
-        // console.log(`Controllo disponibilità per parcheggio ${parkingId} da ${sRaw} a ${eRaw} (rotta: ${rotta})`);
+        console.log(`Verifico disponibilità con rotta: ${rotta}`)
 
         return GET(rotta);
     },

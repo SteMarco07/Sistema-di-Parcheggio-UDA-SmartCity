@@ -41,16 +41,16 @@ function ModifyPrenotazioneModal({ open, onClose, prenotazione }) {
             setError('Inserisci data/ora di inizio e fine');
             return;
         }
-        const startIso = startDate.toISOString();
-        const endIso = endDate.toISOString();
+        // const startIso = startDate.toISOString();
+        // const endIso = endDate.toISOString();
 
         setBusy(true);
         try {
             // send only reservation id as first arg; payload contains start/end only
             const reservationId = prenotazione.uuid;
             await modificaPrenotazione(reservationId, {
-                start_time: startIso,
-                end_time: endIso,
+                start_time: startDate,
+                end_time: endDate,
                 id_parking_lot: parkingId
             });
             onClose();
@@ -69,12 +69,11 @@ function ModifyPrenotazioneModal({ open, onClose, prenotazione }) {
             setAvailMessage('Inserisci data/ora di inizio e fine prima di verificare.');
             return;
         }
-        const startIso = startDate.toISOString();
-        const endIso = endDate.toISOString();
-        const lotId = Number(parkingId ?? prenotazione.id_parking_lot ?? prenotazione.parking_id ?? prenotazione.parkingId);
+        // const startIso = startDate.toISOString();
+        // const endIso = endDate.toISOString();
         setAvailLoading(true);
         try {
-            const avail = await verificaDisponibilitaPrenotazione(lotId, startIso, endIso);
+            const avail = await verificaDisponibilitaPrenotazione(prenotazione.id_parking_lot, startDate, endDate);
             let isAvailable = true;
             if (avail === false) isAvailable = false;
             if (typeof avail === 'object' && avail != null) {

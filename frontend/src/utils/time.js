@@ -19,6 +19,6 @@ export function formatForBackend(v) {
   const hh = pad(d.getHours());
   const mm = pad(d.getMinutes());
   const ss = pad(d.getSeconds());
-
-  return `${YYYY}-${MM}-${DD} ${hh}:${mm}:${ss}`;
+  // Use ISO-like format with 'T' separator to avoid spaces in URL path segments
+  return `${YYYY}-${MM}-${DD}T${hh}:${mm}:${ss}`;
 }

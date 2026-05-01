@@ -11,25 +11,74 @@ import { useStore } from "../store.jsx";
 registerLocale("it", it);
 
 function PaginaPrenotazioni() {
-  const { prenotazioni, eliminaPrenotazione, applicaModificaPrenotazione, fetchPrenotazioni, deletePrenotazione, oggettoInModificaRes, nascondiModaleEliminaRes, showDeleteModalRes, mostraModaleEliminaRes } = useStore();
-  const [prenotazioneDaModificare, setPrenotazioneDaModificare] = useState(null);
+  const {
+    prenotazioni,
+    eliminaPrenotazione,
+    applicaModificaPrenotazione,
+    fetchPrenotazioni,
+    deletePrenotazione,
+    oggettoInModificaRes,
+    nascondiModaleEliminaRes,
+    showDeleteModalRes,
+    mostraModaleEliminaRes,
+  } = useStore();
+  const [prenotazioneDaModificare, setPrenotazioneDaModificare] =
+    useState(null);
 
-
-
-  const apriModifica = (prenotazione) => setPrenotazioneDaModificare(prenotazione);
+  const apriModifica = (prenotazione) =>
+    setPrenotazioneDaModificare(prenotazione);
   const chiudiModifica = () => setPrenotazioneDaModificare(null);
 
   useEffect(() => {
     fetchPrenotazioni();
   }, []);
 
+  const Elenco = ({ titolo, lista, messaggio, pulsanti = false }) => {
+    return (
+      <>
+        <h2 className="text-2xl font-semibold mb-4">{titolo}</h2>
+
+        {!Array.isArray(lista) || lista.length === 0 ? (
+          <p>{messaggio}</p>
+        ) : (
+          <div className="grid grid-cols-3 gap-4">
+            {lista.map((prenotazione) => (
+              <PrenotazioneCard
+                key={prenotazione.uuid}
+                prenotazione={prenotazione}
+                pulsanti = {pulsanti}
+                onElimina={() => mostraModaleEliminaRes(prenotazione)}
+                onModifica={() => apriModifica(prenotazione)}
+              />
+            ))}
+          </div>
+        )}
+
+        {prenotazioneDaModificare && <ModaleModifica />}
+        <DeletePrenotazioneModal
+          open={showDeleteModalRes}
+          onClose={() => nascondiModaleEliminaRes()}
+          prenotazione={oggettoInModificaRes}
+        />
+      </>
+    );
+  };
+
   const salvaModifiche = (prenotazioneModificata) => {
     applicaModificaPrenotazione({ prenotazioneModificata });
     chiudiModifica();
   };
 
-  const visiblePrenotazioni = Array.isArray(prenotazioni)
-    ? prenotazioni.filter((p) => ((p.status || '').toString().toUpperCase() === 'ACTIVE'))
+  const prenotazioniAttive = Array.isArray(prenotazioni)
+    ? prenotazioni.filter(
+        (p) => (p.status || "").toString().toUpperCase() === "ACTIVE",
+      )
+    : [];
+
+  const prenotazioniCancellate = Array.isArray(prenotazioni)
+    ? prenotazioni.filter(
+        (p) => (p.status || "").toString().toUpperCase() === "CANCELLED",
+      )
     : [];
 
   const ModaleModifica = () => {
@@ -48,8 +97,9 @@ function PaginaPrenotazioni() {
     const [openStart, setOpenStart] = useState(false);
     const [openEnd, setOpenEnd] = useState(false);
 
-    const timeSlots = Array.from({ length: 24 }, (_, i) =>
-      `${i.toString().padStart(2, "0")}:00`
+    const timeSlots = Array.from(
+      { length: 24 },
+      (_, i) => `${i.toString().padStart(2, "0")}:00`,
     );
 
     const formatHour = (date) =>
@@ -123,7 +173,12 @@ function PaginaPrenotazioni() {
 
                   if (date >= endDateTime) {
                     const newEnd = new Date(date);
-                    newEnd.setHours(date.getHours() + 1, date.getMinutes(), 0, 0);
+                    newEnd.setHours(
+                      date.getHours() + 1,
+                      date.getMinutes(),
+                      0,
+                      0,
+                    );
                     setEndDateTime(newEnd);
                   }
                 }}
@@ -236,29 +291,8 @@ function PaginaPrenotazioni() {
 
   return (
     <div className="p-6 space-y-6">
-      <h2 className="text-2xl font-semibold mb-4">Prenotazioni</h2>
-
-      {(!Array.isArray(visiblePrenotazioni) || visiblePrenotazioni.length === 0) ? (
-        <p>Qui verranno mostrate le prenotazioni future.</p>
-      ) : (
-        <div className="grid grid-cols-3 gap-4">
-          {visiblePrenotazioni.map((prenotazione) => (
-            <PrenotazioneCard
-              key={prenotazione.uuid}
-              prenotazione={prenotazione}
-              onElimina={() => mostraModaleEliminaRes(prenotazione)}
-              onModifica={() => apriModifica(prenotazione)}
-            />
-          ))}
-        </div>
-      )}
-
-      {prenotazioneDaModificare && <ModaleModifica />}
-      <DeletePrenotazioneModal
-        open={showDeleteModalRes}
-        onClose={() => nascondiModaleEliminaRes()}
-        prenotazione={oggettoInModificaRes}
-      />
+      <Elenco titolo={"Prenotazioni attive"} lista={prenotazioniAttive} messaggio = {"Qui verranno mostrate le prenotazioni future"} pulsanti={true}/>
+      <Elenco titolo={"Prenotazioni cancellate"} lista={prenotazioniCancellate}  messaggio = {"Qui verranno mostrate le prenotazioni cancellate"} pulsanti = {false}/>
     </div>
   );
 }

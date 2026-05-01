@@ -1,15 +1,14 @@
-import * as motion from "motion/react-client"
+import * as motion from "motion/react-client";
 import { useStore } from "../store.jsx";
 
-function PrenotazioneCard({ prenotazione, onElimina, onModifica }) {
-
+function PrenotazioneCard({ prenotazione, pulsanti = true, onElimina, onModifica }) {
   const formatDateOnly = useStore((s) => s.formatDateOnly);
   const formatTime = useStore((s) => s.formatTime);
   const parcheggi = useStore((s) => s.parcheggi);
 
   const start = prenotazione.start_time;
   const end = prenotazione.end_time;
-  
+
   const parkingLabel = prenotazione.parking_name;
 
   let contenuto;
@@ -24,14 +23,20 @@ function PrenotazioneCard({ prenotazione, onElimina, onModifica }) {
       startDate === endDate ? (
         <>
           <p className="text-gray-600">Data: {startDate}</p>
-          <p className="text-gray-600">Orario: {startTime} - {endTime}</p>
+          <p className="text-gray-600">
+            Orario: {startTime} - {endTime}
+          </p>
         </>
       ) : (
         <>
-          <p className="text-gray-600">Inizio: {startDate} {startTime}</p>
-          <p className="text-gray-600">Fine: {endDate} {endTime}</p>
+          <p className="text-gray-600">
+            Inizio: {startDate} {startTime}
+          </p>
+          <p className="text-gray-600">
+            Fine: {endDate} {endTime}
+          </p>
         </>
-      )
+      );
   } else {
     const date = start ? formatDateOnly(start) : "—";
     const time = start ? formatTime(start) : "—";
@@ -40,7 +45,7 @@ function PrenotazioneCard({ prenotazione, onElimina, onModifica }) {
         <p className="text-gray-600">Data: {date}</p>
         <p className="text-gray-600">Orario: {time}</p>
       </>
-    )
+    );
   }
 
   return (
@@ -58,27 +63,29 @@ function PrenotazioneCard({ prenotazione, onElimina, onModifica }) {
         {contenuto}
       </div>
 
-      <div className="mt-4 flex justify-end gap-2">
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={onModifica}
-          className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
-        >
-          Modifica
-        </motion.button>
+      {pulsanti && (
+        <div className="mt-4 flex justify-end gap-2">
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={onModifica}
+            className="px-3 py-1 bg-blue-500 text-white rounded hover:bg-blue-600"
+          >
+            Modifica
+          </motion.button>
 
-        <motion.button
-          whileHover={{ scale: 1.1 }}
-          whileTap={{ scale: 0.9 }}
-          onClick={onElimina}
-          className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
-        >
-          Elimina
-        </motion.button>
-      </div>
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={onElimina}
+            className="px-3 py-1 bg-red-500 text-white rounded hover:bg-red-600"
+          >
+            Elimina
+          </motion.button>
+        </div>
+      )}
     </motion.div>
-  )
+  );
 }
 
-export default PrenotazioneCard
+export default PrenotazioneCard;

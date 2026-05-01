@@ -81,8 +81,7 @@ class ParcheggiRepository{
         $stmt = $this->pdo->prepare('SELECT r.uuid, r.start_time, r.end_time, r.status, r.id_user, r.id_parking_lot, p.name AS parking_name
                                      FROM reservation r
                                     JOIN parking_lot p ON p.id = r.id_parking_lot
-                                     WHERE r.id_user = :user_id AND
-                                        r.status = "ACTIVE"');
+                                     WHERE r.id_user = :user_id');
         $stmt->execute([ 'user_id' => $user_id ]);
 
         return $stmt->fetchAll();

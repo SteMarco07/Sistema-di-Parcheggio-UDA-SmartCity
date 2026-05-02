@@ -80,8 +80,8 @@ export const api = {
         const rotta = `park/${parkingId}/available/${s}/${e}`;
 
         console.log(`Verifico disponibilità con rotta: ${rotta}`)
-
-        return GET(rotta);
+        const data = GET(rotta)
+        return data;
     },
 
     fetchPrenotazioni: (token) => {
@@ -122,7 +122,7 @@ export const api = {
     },
 
     aggiungiPrenotazione: (payload, token) => {
-        // console.log(`Aggiungo prenotazione: ${JSON.stringify(payload)}`)
+        console.log(`Aggiungo prenotazione: ${JSON.stringify(payload)}, con token: ${token}`)
         const data = PUT("reservation", payload, { token })
         return data
     },

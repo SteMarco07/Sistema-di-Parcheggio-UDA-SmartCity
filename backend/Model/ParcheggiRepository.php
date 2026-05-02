@@ -89,6 +89,7 @@ class ParcheggiRepository{
 
     public function userCreateReservation(string $start_time, string $end_time, string $id_parking_lot, string $id_user) : array {
         $this->validateTimeRange($start_time, $end_time);
+        $this->validateFutureTimeRange($start_time, $end_time);
 
         if (!$this->isParkingLotAvailable($id_parking_lot, $start_time, $end_time)) {
             throw new \RuntimeException('Parcheggio non disponibile nell\'intervallo selezionato', 409);
@@ -120,6 +121,7 @@ class ParcheggiRepository{
 
     public function editUserReservation(string $id, string $start_time, string $end_time, string $id_parking_lot) : array {
         $this->validateTimeRange($start_time, $end_time);
+        $this->validateFutureTimeRange($start_time, $end_time);
 
         if (!$this->isParkingLotAvailable($id_parking_lot, $start_time, $end_time)) {
             throw new \RuntimeException('Parcheggio non disponibile nell\'intervallo selezionato', 409);
@@ -156,21 +158,35 @@ class ParcheggiRepository{
 
     public function isParkingLotAvailable(string $id_parking_lot, string $start_time, string $end_time): bool {
         $this->validateTimeRange($start_time, $end_time);
+        $this->validateFutureTimeRange($start_time, $end_time);
 
-        $stmt = $this->pdo->prepare('SELECT COUNT(*)
+        $spotsStmt = $this->pdo->prepare('SELECT total_spots FROM parking_lot WHERE id = :id');
+        $spotsStmt->execute(['id' => $id_parking_lot]);
+
+        $totalSpots = $spotsStmt->fetchColumn();
+        if ($totalSpots === false) {
+            return false;
+        }
+
+        $sql = 'SELECT COUNT(*)
                   FROM reservation r
-                  WHERE r.id_parking_lot = :id_parking_lot
-                    AND r.status = :status
-                    AND :start_time < r.end_time
-                    AND :end_time > r.start_time');
-        $stmt->execute([
+                 WHERE r.id_parking_lot = :id_parking_lot
+                   AND r.status = :status
+                   AND :start_time < r.end_time
+                   AND :end_time > r.start_time';
+
+        $stmt = $this->pdo->prepare($sql);
+        $params = [
             'id_parking_lot' => $id_parking_lot,
             'status' => 'ACTIVE',
             'start_time' => $start_time,
             'end_time' => $end_time
-        ]);
+        ];
 
-        return (int) $stmt->fetchColumn() === 0;
+
+        $stmt->execute($params);
+
+        return (int) $stmt->fetchColumn() < (int) $totalSpots;
     }
 
     private function validateTimeRange(string $start_time, string $end_time): void {
@@ -179,6 +195,18 @@ class ParcheggiRepository{
 
         if ($start === false || $end === false || $start >= $end) {
             throw new \RuntimeException('Intervallo orario non valido', 422);
+        }
+    }
+
+    private function validateFutureTimeRange(string $start_time, string $end_time): void {
+        $now = time();
+        $start = strtotime($start_time);
+        $end = strtotime($end_time);
+
+
+
+        if ($start <= $now || $end <= $now) {
+            throw new \RuntimeException('Le date devono essere nel futuro', 422);
         }
     }
 

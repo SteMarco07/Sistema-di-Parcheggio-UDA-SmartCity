@@ -47,7 +47,7 @@ function ParcheggioPopup({ parcheggio }) {
             start_time: preview.start,
             end_time: preview.end,
         };
-        console.log(`Confermo prenotazione: ${JSON.stringify(prenotazione)}`);
+        // console.log(`Confermo prenotazione: ${JSON.stringify(prenotazione)}`);
         addPrenotazione(prenotazione);
         setModalOpen(false);
         navigate('/prenotazioni');

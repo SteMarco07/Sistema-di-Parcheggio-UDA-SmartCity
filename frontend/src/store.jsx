@@ -406,6 +406,7 @@ export const useStore = create((set, get) => ({
         set({ isLoading: true, error: null });
         try {
             const data = await api.checkAvailability(parkingId, startIso, endIso);
+            console.log("Risposta verifica disponibilità:", data);
             set({ isLoading: false });
             return data;
         } catch (err) {

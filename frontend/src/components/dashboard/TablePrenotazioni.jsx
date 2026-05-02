@@ -50,6 +50,7 @@ function TablePrenotazioni() {
                 open={showDeleteModalRes}
                 onClose={() => nascondiModaleEliminaRes()}
                 prenotazione={oggettoInModificaRes}
+                showUser={true}
             />
             <ModifyPrenotazioneModal
                 open={showEditModalRes}

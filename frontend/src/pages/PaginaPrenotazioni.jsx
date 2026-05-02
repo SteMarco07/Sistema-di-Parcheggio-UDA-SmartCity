@@ -40,21 +40,26 @@ function PaginaPrenotazioni() {
               />
             ))}
           </div>
-        )}
-
-        <DeletePrenotazioneModal
-          open={showDeleteModalRes}
-          onClose={() => nascondiModaleEliminaRes()}
-          prenotazione={oggettoInModificaRes}
-        />
-      </>
-    );
+          )}
+        </>
+      );
   };
 
   const prenotazioniAttive = Array.isArray(prenotazioni)
-    ? prenotazioni.filter(
-        (p) => (p.status || "").toString().toUpperCase() === "ACTIVE",
-      )
+    ? prenotazioni.filter((p) => {
+        if (((p.status || "").toString().toUpperCase() !== "ACTIVE")) return false;
+        const d = new Date(p.end_time);
+        const ts = !Number.isNaN(d.getTime()) ? d.getTime() : null;
+        return ts === null || ts >= Date.now();
+      })
+    : [];
+
+  const prenotazioniTerminate = Array.isArray(prenotazioni)
+    ? prenotazioni.filter((p) => {
+        const d = new Date(p.end_time);
+        const ts = !Number.isNaN(d.getTime()) ? d.getTime() : null;
+        return ts !== null && ts < Date.now();
+      })
     : [];
 
   const prenotazioniCancellate = Array.isArray(prenotazioni)
@@ -71,6 +76,13 @@ function PaginaPrenotazioni() {
         messaggio={"Qui verranno mostrate le prenotazioni future"}
         pulsanti={true}
       />
+
+      <Elenco
+        titolo={"Prenotazioni terminate"}
+        lista={prenotazioniTerminate}
+        messaggio={"Qui verranno mostrate le prenotazioni concluse"}
+        pulsanti={false}
+      />
       <Elenco
         titolo={"Prenotazioni cancellate"}
         lista={prenotazioniCancellate}
@@ -81,6 +93,12 @@ function PaginaPrenotazioni() {
       <ModifyPrenotazioneModal
         open={showEditModalRes}
         onClose={() => nascondiModaleModificaRes()}
+        prenotazione={oggettoInModificaRes}
+      />
+
+      <DeletePrenotazioneModal
+        open={showDeleteModalRes}
+        onClose={() => nascondiModaleEliminaRes()}
         prenotazione={oggettoInModificaRes}
       />
     </div>

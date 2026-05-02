@@ -1,7 +1,7 @@
 import React from 'react';
 import { useStore } from "../../store.jsx";
 
-export default function DeletePrenotazioneModal({ open, onClose, prenotazione }) {
+export default function DeletePrenotazioneModal({ open, onClose, prenotazione, showUser = false }) {
   if (!prenotazione) return null;
 
   const { formatDate, nascondiModaleEliminaRes, deletePrenotazione } = useStore();
@@ -22,7 +22,7 @@ return (
       <p className="py-2">Sei sicuro di voler eliminare la seguente prenotazione?</p>
 
       <div className="space-y-2 text-sm">
-        <div><strong>Utente:</strong> {prenotazione.id_user}</div>
+        {showUser && <div><strong>Utente:</strong> {prenotazione.id_user}</div>}
         <div><strong>Parcheggio:</strong> {prenotazione.parking_name}</div>
         <div><strong>Inizio:</strong> {prenotazione.start_time}</div>
         <div><strong>Fine:</strong> {prenotazione.end_time}</div>

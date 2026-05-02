@@ -1,10 +1,13 @@
 import * as motion from "motion/react-client";
+import { useState } from "react";
+import QRCode from "qrcode";
 import { useStore } from "../store.jsx";
 
 function PrenotazioneCard({ prenotazione, pulsanti = true, onElimina, onModifica }) {
   const formatDateOnly = useStore((s) => s.formatDateOnly);
   const formatTime = useStore((s) => s.formatTime);
   const parcheggi = useStore((s) => s.parcheggi);
+  const [qrLoading, setQrLoading] = useState(false);
 
   const start = prenotazione.start_time;
   const end = prenotazione.end_time;
@@ -65,6 +68,37 @@ function PrenotazioneCard({ prenotazione, pulsanti = true, onElimina, onModifica
 
       {pulsanti && (
         <div className="mt-4 flex justify-end gap-2">
+          <motion.button
+            whileHover={{ scale: 1.1 }}
+            whileTap={{ scale: 0.9 }}
+            onClick={async () => {
+              if (qrLoading) return;
+              try {
+                setQrLoading(true);
+                const id = prenotazione.uuid;
+                const dataUrl = await QRCode.toDataURL(String(id));
+                const w = window.open();
+                if (w) {
+                  w.document.write(`<img src="${dataUrl}" alt="QR code"/>`);
+                  w.document.title = 'QR Prenotazione';
+                } else {
+                  const a = document.createElement('a');
+                  a.href = dataUrl;
+                  a.download = `prenotazione-${id}.png`;
+                  a.click();
+                }
+              } catch (e) {
+                console.error('Errore generazione QR', e);
+                alert('Errore generazione QR');
+              } finally {
+                setQrLoading(false);
+              }
+            }}
+            className="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
+          >
+            {qrLoading ? 'Generazione...' : 'QR'}
+          </motion.button>
+
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}

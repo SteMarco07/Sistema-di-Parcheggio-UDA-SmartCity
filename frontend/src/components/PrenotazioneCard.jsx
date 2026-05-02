@@ -1,13 +1,14 @@
 import * as motion from "motion/react-client";
 import { useState } from "react";
-import QRCode from "qrcode";
+import QRCodeModal from "./modals/QRCodeModal.jsx";
 import { useStore } from "../store.jsx";
 
 function PrenotazioneCard({ prenotazione, pulsanti = true, onElimina, onModifica }) {
   const formatDateOnly = useStore((s) => s.formatDateOnly);
   const formatTime = useStore((s) => s.formatTime);
   const parcheggi = useStore((s) => s.parcheggi);
-  const [qrLoading, setQrLoading] = useState(false);
+  const [qrOpen, setQrOpen] = useState(false);
+  const [qrReservation, setQrReservation] = useState(null);
 
   const start = prenotazione.start_time;
   const end = prenotazione.end_time;
@@ -71,32 +72,13 @@ function PrenotazioneCard({ prenotazione, pulsanti = true, onElimina, onModifica
           <motion.button
             whileHover={{ scale: 1.1 }}
             whileTap={{ scale: 0.9 }}
-            onClick={async () => {
-              if (qrLoading) return;
-              try {
-                setQrLoading(true);
-                const id = prenotazione.uuid;
-                const dataUrl = await QRCode.toDataURL(String(id));
-                const w = window.open();
-                if (w) {
-                  w.document.write(`<img src="${dataUrl}" alt="QR code"/>`);
-                  w.document.title = 'QR Prenotazione';
-                } else {
-                  const a = document.createElement('a');
-                  a.href = dataUrl;
-                  a.download = `prenotazione-${id}.png`;
-                  a.click();
-                }
-              } catch (e) {
-                console.error('Errore generazione QR', e);
-                alert('Errore generazione QR');
-              } finally {
-                setQrLoading(false);
-              }
+            onClick={() => {
+              setQrReservation(prenotazione);
+              setQrOpen(true);
             }}
             className="px-3 py-1 bg-gray-200 text-gray-800 rounded hover:bg-gray-300"
           >
-            {qrLoading ? 'Generazione...' : 'QR'}
+            QR
           </motion.button>
 
           <motion.button
@@ -118,6 +100,12 @@ function PrenotazioneCard({ prenotazione, pulsanti = true, onElimina, onModifica
           </motion.button>
         </div>
       )}
+      <QRCodeModal
+        open={qrOpen}
+        onClose={() => setQrOpen(false)}
+        filename={`prenotazione-${(qrReservation?.uuid || qrReservation?.id) || 'qr'}.png`}
+        reservation={qrReservation}
+      />
     </motion.div>
   );
 }

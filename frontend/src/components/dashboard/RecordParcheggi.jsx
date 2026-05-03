@@ -13,6 +13,7 @@ function RecordParcheggi({ numero, parcheggio }) {
                 <td>{parcheggio.name}</td>
                 <td>{parcheggio.id}</td>
                 <td>{parcheggio.description}</td>
+                <td>{parcheggio.total_spots}</td>
                 <td>{(parcheggio.hour_tax) } €/h</td>
                 <td>{parcheggio.latitude}</td>
                 <td>{parcheggio.longitude}</td>

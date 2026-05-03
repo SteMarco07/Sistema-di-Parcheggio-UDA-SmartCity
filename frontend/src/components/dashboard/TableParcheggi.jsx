@@ -40,6 +40,7 @@ function TableParcheggi() {
                             <th>Nome</th>
                             <th>Id</th>
                             <th>Descrizione</th>
+                            <th>Posti Totali</th>
                             <th>Prezzo Orario</th>
                             <th>Latitudine</th>
                             <th>Longitudine</th>

@@ -58,9 +58,12 @@ class ParcheggiRepository{
     }
 
     public function getAllReservations() : array {
-        $stmt = $this->pdo->prepare('SELECT r.uuid, r.start_time, r.end_time, r.status, r.id_user, r.id_parking_lot, p.name AS parking_name
+        $stmt = $this->pdo->prepare('SELECT r.uuid, r.start_time, r.end_time, r.status, r.id_user,
+                                            u.first_name AS user_first_name, u.last_name AS user_last_name,
+                                            r.id_parking_lot, p.name AS parking_name
                                      FROM reservation r
-                                    JOIN parking_lot p ON p.id = r.id_parking_lot');
+                                     JOIN parking_lot p ON p.id = r.id_parking_lot
+                                     JOIN user u ON u.uuid = r.id_user');
         $stmt->execute([  ]);
 
         return $stmt->fetchAll();

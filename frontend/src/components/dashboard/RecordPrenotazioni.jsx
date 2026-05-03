@@ -28,7 +28,7 @@ function RecordPrenotazioni({ numero, prenotazione }) {
         <>
             <tr>
                 <td>{numero}</td>
-                <td><button className="btn btn-ghost" onClick={() => handleClick(prenotazione.id_user)}>{prenotazione.id_user}</button></td>
+                <td><button className="btn btn-ghost" onClick={() => handleClick(prenotazione.id_user)}>{prenotazione.user_first_name} {prenotazione.user_last_name}</button></td>
                 <td>{prenotazione.parking_name}</td>
                 <td>{prenotazione.status}</td>
                 <td>{prenotazione.start_time}</td>

@@ -17,13 +17,13 @@ export default function UserProfileModal({ open, onClose, user, loading }) {
             <div className="text-sm">Nessun dato disponibile</div>
           ) : (
             <div className="space-y-3 text-sm">
-              <div><strong>Nome:</strong> {user.first_name ?? user.nome ?? user.name ?? '-'}</div>
-              <div><strong>Cognome:</strong> {user.last_name ?? user.cognome ?? '-'}</div>
+              <div><strong>Nome:</strong> {user.first_name ?? '-'}</div>
+              <div><strong>Cognome:</strong> {user.last_name ?? '-'}</div>
               <div><strong>Email:</strong> {user.email ?? '-'}</div>
-              <div><strong>Targa:</strong> {user.license_plate ?? user.targa ?? '-'}</div>
-              {user.phone && <div><strong>Telefono:</strong> {user.phone}</div>}
+              <div><strong>Targa:</strong> {user.license_plate ?? '-'}</div>
               {user.role && <div><strong>Ruolo:</strong> {user.role}</div>}
               {user.note && <div><strong>Note:</strong> {user.note}</div>}
+              <div><strong>ID:</strong> {user.uuid ?? '-'}</div>
             </div>
           )}
         </div>

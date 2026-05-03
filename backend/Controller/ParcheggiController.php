@@ -8,6 +8,7 @@ use Psr\Container\NotFoundExceptionInterface;
 use Slim\Psr7\Request;
 use Slim\Psr7\Response;
 use Model\ParcheggiRepository;
+use RuntimeException;
 
 class ParcheggiController {
 
@@ -45,6 +46,50 @@ class ParcheggiController {
 
         return $response
             ->withHeader('Content-Type', 'application/json');
+    }
+
+    public function getAvailableParcheggi(Request $request, Response $response, array $args) : Response {
+        try {
+            $parking_lots = $this->parcheggiRepository->getAvailableParcheggi($args['start_time'], $args['end_time']);
+            $response->getBody()->write(json_encode($parking_lots));
+
+            return $response
+                ->withHeader('Content-Type', 'application/json');
+        } catch (RuntimeException $e) {
+            $status = $e->getCode() === 422 ? 422 : 400;
+            $response->getBody()->write(json_encode(['message' => $e->getMessage()]));
+
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus($status);
+        }
+    }
+
+    public function isParkingLotAvailable(Request $request, Response $response, array $args) : Response {
+        try {
+            $isAvailable = $this->parcheggiRepository->isParkingLotAvailable(
+                $args['id'],
+                $args['start_time'],
+                $args['end_time']
+            );
+
+            $response->getBody()->write(json_encode([
+                'id_parking_lot' => $args['id'],
+                'start_time' => $args['start_time'],
+                'end_time' => $args['end_time'],
+                'available' => $isAvailable
+            ]));
+
+            return $response
+                ->withHeader('Content-Type', 'application/json');
+        } catch (RuntimeException $e) {
+            $status = $e->getCode();
+            $response->getBody()->write(json_encode(['message' => $e->getMessage()]));
+
+            return $response
+                ->withHeader('Content-Type', 'application/json')
+                ->withStatus($status);
+        }
     }
 
     public function getAllReservations(Request $request, Response $response, array $args): Response {
@@ -103,7 +148,6 @@ class ParcheggiController {
     public function userEditReservation(Request $request, Response $response, array $args) : Response {
         $prenotazione = $this->parcheggiRepository->editUserReservation(
             $request->getParsedBody()['id'],
-            $request->getParsedBody()['license_plate'],
             $request->getParsedBody()['start_time'],
             $request->getParsedBody()['end_time'],
             $request->getParsedBody()['id_parking_lot']

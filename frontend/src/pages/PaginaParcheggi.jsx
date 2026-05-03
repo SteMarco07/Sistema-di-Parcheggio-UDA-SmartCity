@@ -1,11 +1,17 @@
 import ElencoParcheggi from '../components/parcheggi/ElencoParcheggi.jsx';
 import OrarioParcheggi from '../components/OrarioParcheggi.jsx';
 import Mappa from '../components/Mappa.jsx';
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import { useStore } from '../store.jsx';
 
 
 function PaginaParcheggi() {
+    const fetchParcheggiDisponibili = useStore((s) => s.fetchParcheggiDisponibili);
+
+    useEffect(() => {
+        // load only available parks for the main UI
+        fetchParcheggiDisponibili();
+    }, [fetchParcheggiDisponibili]);
 
     return (
         <>

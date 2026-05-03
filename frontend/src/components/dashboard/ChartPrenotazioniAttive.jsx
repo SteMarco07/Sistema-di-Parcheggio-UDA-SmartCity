@@ -11,35 +11,31 @@ import {
 function ChartPrenotazioniAttive() {
     const { prenotazioni } = useStore();
 
-    if ((!prenotazioni || prenotazioni.length === 0)) {
+    const items = Array.isArray(prenotazioni) ? prenotazioni : [];
+
+    if (items.length === 0) {
         return <div className="text-sm text-gray-500">Nessun dato disponibile per il grafico</div>;
     }
     const now = Date.now();
 
-    const counts = prenotazioni.reduce((acc, p) => {
+    const counts = items.reduce((acc, p) => {
 
-        // Calcola usando la data di fine per evitare di fare fetch e update al DB ogni ora per aggiornare lo stato
-        const end = p.endTime ? new Date(p.endTime).getTime() : NaN;
-
-        if (!Number.isNaN(end) && end >= now) {
-            acc.attive += 1;
-        } else {
-            acc.scadute += 1;
-        }
+        // console.log("Prenotazione:", p);
+        acc[p.status] = (acc[p.status] || 0) + 1;
 
         return acc;
-    }, { attive: 0, scadute: 0, cancellate: 0 });
+    }, { active: 0, expired: 0, cancelled: 0 });
 
     const coloriStatus = {
         Attive: '#16a34a',
-        Scadute: '#dc2626',
+        Terminate: '#dc2626',
         Cancellate: '#6b7280',
     };
 
     const data = [
-        { nome: 'Attive', count: counts.attive, fill: coloriStatus.Attive },
-        { nome: 'Scadute', count: counts.scadute, fill: coloriStatus.Scadute },
-        { nome: 'Cancellate', count: counts.cancellate, fill: coloriStatus.Cancellate },
+        { nome: 'Attive', count: counts.ACTIVE, fill: coloriStatus.Attive },
+        { nome: 'Terminate', count: counts.EXPIRED, fill: coloriStatus.Terminate },
+        { nome: 'Cancellate', count: counts.CANCELLED, fill: coloriStatus.Cancellate },
     ];
 
     return (

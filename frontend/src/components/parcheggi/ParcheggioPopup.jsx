@@ -22,9 +22,16 @@ function ParcheggioPopup({ parcheggio }) {
         try { return ts ? new Date(ts).toLocaleString() : '—'; } catch (e) { return String(ts); }
     };
 
+    function toTimestampMs(datetimeStr, assumeUTC = false) {
+        const t = datetimeStr.trim().replace(' ', 'T');
+        const normalized = assumeUTC ? t + 'Z' : t;
+        return new Date(normalized).getTime(); // millisecondi (integer) o NaN se non valido
+    }
+
     const calcDurationHours = () => {
         if (!preview.start || !preview.end) return 0;
-        return Math.max(0, (preview.end - preview.start) / (1000 * 60 * 60));
+        const data = (toTimestampMs(preview.end) - (toTimestampMs(preview.start))) / (1000 * 60 * 60)
+        return data;
     };
 
     const calcEstimatedPrice = () => {
@@ -34,15 +41,14 @@ function ParcheggioPopup({ parcheggio }) {
     };
 
     const confirmPrenotazione = () => {
+        // send numeric timestamps to the store; store will format for backend
         const prenotazione = {
-            id: 0,
-            parkingId: parcheggio.id,
-            nome: parcheggio.nome,
-            userId: 0,
-            startTime: preview.start,
-            endTime: preview.end,
+            id_parking_lot: parcheggio.id,
+            start_time: preview.start,
+            end_time: preview.end,
         };
-        addPrenotazione({ prenotazione });
+        // console.log(`Confermo prenotazione: ${JSON.stringify(prenotazione)}`);
+        addPrenotazione(prenotazione);
         setModalOpen(false);
         navigate('/prenotazioni');
     };

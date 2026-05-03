@@ -133,22 +133,24 @@ function Menu() {
                 <MenuToggle toggle={toggle} />
             </motion.div>
 
-            {/* ② Backdrop — below navbar, closes panel on click */}
-            {isOpen && (
-                <div onClick={close} style={styles.backdrop} />
-            )}
+                    {/* ② Backdrop — below navbar, closes panel on click */}
+                    {isOpen && (
+                        <div onClick={close} style={styles.backdrop} />
+                    )}
 
-            {/* ③ Sliding panel — starts at 64px (navbar height) */}
-            <motion.nav
-                ref={containerRef}
-                initial={false}
-                animate={isOpen ? "open" : "closed"}
-                custom={height}
-                style={styles.nav}
-            >
-                <motion.div style={styles.background} variants={sidebarVariants} />
-                <NavLinks links={links} onClose={close} />
-            </motion.nav>
+                    {/* ③ Sliding panel — rendered only when open to avoid occupying layout space when closed */}
+                    {isOpen && (
+                        <motion.nav
+                            ref={containerRef}
+                            initial={false}
+                            animate={"open"}
+                            custom={height}
+                            style={{ ...styles.nav, pointerEvents: "auto" }}
+                        >
+                            <motion.div style={styles.background} variants={sidebarVariants} initial="open" animate="open" />
+                            <NavLinks links={links} onClose={close} />
+                        </motion.nav>
+                    )}
         </>
     )
 }
@@ -170,7 +172,6 @@ const styles = {
         width: 280,
         height: "calc(100vh - 64px)",
         zIndex: 45,        // above backdrop (40), below navbar (50)
-        pointerEvents: "auto",
         overflow: "hidden",
     },
     background: {

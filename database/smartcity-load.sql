@@ -1,9 +1,9 @@
 /*M!999999\- enable the sandbox mode */ 
--- MariaDB dump 10.19  Distrib 10.11.14-MariaDB, for debian-linux-gnu (x86_64)
+-- MariaDB dump 10.19  Distrib 10.11.15-MariaDB, for debian-linux-gnu (x86_64)
 --
 -- Host: localhost    Database: smartcity
 -- ------------------------------------------------------
--- Server version	10.11.14-MariaDB-ubu2204
+-- Server version	10.11.15-MariaDB-ubu2204
 
 /*!40101 SET @OLD_CHARACTER_SET_CLIENT=@@CHARACTER_SET_CLIENT */;
 /*!40101 SET @OLD_CHARACTER_SET_RESULTS=@@CHARACTER_SET_RESULTS */;
@@ -29,6 +29,8 @@ CREATE TABLE `parking_lot` (
   `total_spots` int(11) NOT NULL,
   `latitude` float(23,20) NOT NULL,
   `longitude` float(23,20) NOT NULL,
+  `description` text NOT NULL,
+  `hour_tax` float(5,2) NOT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `name` (`name`)
 ) ENGINE=InnoDB AUTO_INCREMENT=5 DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
@@ -41,10 +43,10 @@ CREATE TABLE `parking_lot` (
 LOCK TABLES `parking_lot` WRITE;
 /*!40000 ALTER TABLE `parking_lot` DISABLE KEYS */;
 INSERT INTO `parking_lot` VALUES
-(1,'prova1',10,37.19415664672851600000,10.10638236999511700000),
-(2,'prova2',20,36.19415664672851600000,86.16465759277344000000),
-(3,'prova3',30,54.15651702880859400000,26.25655174255371000000),
-(4,'prova4',40,78.16513061523438000000,41.15655517578125000000);
+(1,'Parcheggio Piazza Vittoria',500,45.53810119628906000000,10.21920013427734400000,'Parcheggio interrato multipiano in pieno centro storico.',3.00),
+(2,'Parcheggio Castello di Brescia',120,45.54349899291992000000,10.22480010986328100000,'Area sosta panoramica presso il Castello di Brescia.',1.50),
+(3,'Parcheggio Metro Prealpino',400,45.57860183715820000000,10.23120021820068400000,'Parcheggio scambiatore gratuito con collegamento diretto alla metropolitana.',0.00),
+(4,'Parcheggio Ospedale Civile Sud',600,45.55640029907226600000,10.22889995574951200000,'Parcheggio a servizio degli Spedali Civili di Brescia.',1.20);
 /*!40000 ALTER TABLE `parking_lot` ENABLE KEYS */;
 UNLOCK TABLES;
 
@@ -57,17 +59,16 @@ DROP TABLE IF EXISTS `reservation`;
 /*!40101 SET character_set_client = utf8mb4 */;
 CREATE TABLE `reservation` (
   `uuid` uuid NOT NULL,
-  `first_name` char(100) NOT NULL,
-  `last_name` char(100) NOT NULL,
-  `license_plate` char(10) NOT NULL,
   `start_time` datetime NOT NULL,
   `end_time` datetime NOT NULL,
   `status` enum('ACTIVE','CANCELLED','EXPIRED') DEFAULT NULL,
   `id_parking_lot` int(11) NOT NULL,
+  `id_user` uuid NOT NULL,
   PRIMARY KEY (`uuid`),
   KEY `fk_id_parking_lot` (`id_parking_lot`),
-  KEY `indx_license_plate` (`license_plate`),
-  CONSTRAINT `fk_id_parking_lot` FOREIGN KEY (`id_parking_lot`) REFERENCES `parking_lot` (`id`)
+  KEY `fk_id_user` (`id_user`),
+  CONSTRAINT `fk_id_parking_lot` FOREIGN KEY (`id_parking_lot`) REFERENCES `parking_lot` (`id`),
+  CONSTRAINT `fk_id_user` FOREIGN KEY (`id_user`) REFERENCES `user` (`uuid`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
 /*!40101 SET character_set_client = @saved_cs_client */;
 
@@ -79,6 +80,39 @@ LOCK TABLES `reservation` WRITE;
 /*!40000 ALTER TABLE `reservation` DISABLE KEYS */;
 /*!40000 ALTER TABLE `reservation` ENABLE KEYS */;
 UNLOCK TABLES;
+
+--
+-- Table structure for table `user`
+--
+
+DROP TABLE IF EXISTS `user`;
+/*!40101 SET @saved_cs_client     = @@character_set_client */;
+/*!40101 SET character_set_client = utf8mb4 */;
+CREATE TABLE `user` (
+  `uuid` uuid NOT NULL,
+  `first_name` char(100) NOT NULL,
+  `last_name` char(100) NOT NULL,
+  `license_plate` char(10) NOT NULL,
+  `email` char(100) NOT NULL,
+  `password` char(100) NOT NULL,
+  `role` enum('USER','ADMIN') NOT NULL,
+  PRIMARY KEY (`uuid`),
+  UNIQUE KEY `email` (`email`),
+  KEY `indx_license_plate` (`license_plate`)
+) ENGINE=InnoDB DEFAULT CHARSET=utf8mb4 COLLATE=utf8mb4_general_ci;
+/*!40101 SET character_set_client = @saved_cs_client */;
+
+--
+-- Dumping data for table `user`
+--
+
+LOCK TABLES `user` WRITE;
+/*!40000 ALTER TABLE `user` DISABLE KEYS */;
+INSERT INTO `user` VALUES
+('da616b94-420e-11f1-bb60-ca4e61055d59','Mario','Rossi','AB123CD','pippo@gmail.com','$2y$10$gQeJHilWS5CWRVW.aKk4eucoAw6qTlNkpIUoQyZA2KSuweAMI1Zsi','USER'),
+('da653ca8-420e-11f1-bb60-ca4e61055d59','Tizio','Caio','AB987CD','pippa@gmail.com','$2y$10$SO0.iA.qBMV4AZV2.L0oweo4j/NP5Ohkny/2Q1aOCMDg0Wu1KYJe.','ADMIN');
+/*!40000 ALTER TABLE `user` ENABLE KEYS */;
+UNLOCK TABLES;
 /*!40103 SET TIME_ZONE=@OLD_TIME_ZONE */;
 
 /*!40101 SET SQL_MODE=@OLD_SQL_MODE */;
@@ -89,4 +123,4 @@ UNLOCK TABLES;
 /*!40101 SET COLLATION_CONNECTION=@OLD_COLLATION_CONNECTION */;
 /*!40111 SET SQL_NOTES=@OLD_SQL_NOTES */;
 
--- Dump completed on 2026-03-01  8:59:06
+-- Dump completed on 2026-04-27  7:58:22

@@ -33,7 +33,7 @@ class AdminRepository{
             'hour_tax' => $hour_tax
         ]);
 
-        $id = $this->pdo->lastInsertId();
+        $id = (int) $this->pdo->lastInsertId();
 
         return [
             'id' => $id,

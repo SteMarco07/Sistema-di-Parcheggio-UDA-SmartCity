@@ -66,6 +66,12 @@ class AuthController{
         return $this->JSONResponse($response, $utente);
     }
 
+    public function profileById(Request $request, Response $response, array $args): Response {
+        $utente = $this->userRepository->getUserById($args['id']);
+
+        return $this->JSONResponse($response, $utente);
+    }
+
     public function logout(Request $request, Response $response): Response {
         return $this->JSONResponse($response, [ 'message' => 'Logout effettuato. Elimina il token lato client.' ]);
     }

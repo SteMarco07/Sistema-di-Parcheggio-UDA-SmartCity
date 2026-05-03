@@ -1,5 +1,6 @@
 import { create } from 'zustand';
 import { api } from './api';
+import { formatForBackend } from './utils/time';
 
 
 export const useStore = create((set, get) => ({
@@ -20,7 +21,7 @@ export const useStore = create((set, get) => ({
     showDeleteModalRes: false,
 
     showAddParkModal: false,
-    
+
 
     isLoading: false,
     fieldsets: [],
@@ -34,6 +35,7 @@ export const useStore = create((set, get) => ({
         try {
             const raw = localStorage.getItem('user');
             return raw ? JSON.parse(raw) : {
+                uuid: "",
                 nome: "",
                 cognome: "",
                 email: "",
@@ -44,6 +46,7 @@ export const useStore = create((set, get) => ({
             };
         } catch (e) {
             return {
+                uuid: "",
                 nome: "",
                 cognome: "",
                 email: "",
@@ -53,7 +56,7 @@ export const useStore = create((set, get) => ({
                 admin: false,
             };
         }
-        return { nome: "", cognome: "", email: "", targa: "", password: "", iniziali: "" }
+        return { uuid: "", nome: "", cognome: "", email: "", targa: "", password: "", iniziali: "" }
     })(),
     addFieldset: () =>
         set((state) => ({
@@ -108,6 +111,7 @@ export const useStore = create((set, get) => ({
             if (data && data.token) {
                 const token = data['token'];
                 const userInfo = {
+                    "uuid": data['uuid'],
                     "nome": data['first_name'],
                     "cognome": data['last_name'],
                     "email": data['email'],
@@ -151,12 +155,37 @@ export const useStore = create((set, get) => ({
         }
     },
 
+    profileById: async (id) => {
+        try {
+            const data = await api.profiloById(id, get().token);
+            return data;
+        } catch (err) {
+            console.error("Errore durante il recupero del profilo:", err);
+            return { success: false, message: err.message };
+        }
+    },
 
+    addPrenotazione: async (prenotazione) => {
+        try {
+            const body = { ...prenotazione };
+            // accept both camelCase and snake_case from UI
+            if (body.startTime) body.start_time = formatForBackend(body.startTime);
+            else if (body.start_time) body.start_time = formatForBackend(body.start_time);
+            if (body.endTime) body.end_time = formatForBackend(body.endTime);
+            else if (body.end_time) body.end_time = formatForBackend(body.end_time);
 
-    addPrenotazione: ({prenotazione}) => {
-        prenotazione.id = get().prenotazioni.length+1;
-        //console.log(`Lo store aggiunge ${JSON.stringify(prenotazione)}`)
-        set({ prenotazioni: [...get().prenotazioni, prenotazione] });
+            const data = await api.aggiungiPrenotazione(body, get().token);
+
+            if (data) {
+                const updatedPrenotazioni = [...get().prenotazioni, data];
+                set({ prenotazioni: updatedPrenotazioni });
+                return { success: true };
+            } else {
+                return { success: false, message: data?.message || "Prenotazione fallita" };
+            }
+        } catch (err) {
+            return { success: false, message: err.message };
+        }
     },
 
     // Modifica modalità di autenticazione (login/signup)
@@ -207,10 +236,36 @@ export const useStore = create((set, get) => ({
         }
     },
 
-    fetchPrenotazioni: async (token) => {
+    // Fetch only available parking lots (used in the main UI)
+    fetchParcheggiDisponibili: async () => {
         set({ isLoading: true, error: null });
         try {
-            const data = await api.fetchPrenotazioni(token);
+            const startStr = get().getTimeStampInizio();
+            const endStr = get().getTimeStampFine();
+            const opts = {};
+            if (startStr) opts.start = startStr;
+            if (endStr) opts.end = endStr;
+            const data = await api.fetchPargeggiDisponibili(opts);
+            set({ parcheggi: data, parcheggiFiltrati: data, isLoading: false });
+        } catch (err) {
+            set({ error: err.message, isLoading: false });
+        }
+    },
+
+    fetchPrenotazioni: async () => {
+        set({ isLoading: true, error: null });
+        try {
+            const data = await api.fetchPrenotazioni(get().token);
+            set({ prenotazioni: data, isLoading: false });
+        } catch (err) {
+            set({ error: err.message, isLoading: false });
+        }
+    },
+
+    fetchAllPrenotazioni: async () => {
+        set({ isLoading: true, error: null });
+        try {
+            const data = await api.fetchAllPrenotazioni(get().token);
             set({ prenotazioni: data, isLoading: false });
         } catch (err) {
             set({ error: err.message, isLoading: false });
@@ -226,9 +281,8 @@ export const useStore = create((set, get) => ({
     filtraParcheggi: () => {
         const { parcheggi, ricerca } = get();
         const filtrati = parcheggi.filter((p) =>
-            ((p.name ??  "")).toLowerCase().includes(ricerca.toLowerCase()) ||
-            ((p.description ??  "")).toLowerCase().includes(ricerca.toLowerCase())
-            ((p.description ??  "")).toLowerCase().includes(ricerca.toLowerCase())
+            ((p.name ?? "")).toLowerCase().includes(ricerca.toLowerCase()) ||
+            ((p.description ?? "")).toLowerCase().includes(ricerca.toLowerCase())
         );
         set({ parcheggiFiltrati: filtrati });
     },
@@ -238,16 +292,20 @@ export const useStore = create((set, get) => ({
         set({ isLoading: true, error: null });
         try {
             const data = await api.deleteParcheggio(id, get().token);
-            // console.log(`Risposta eliminazione parcheggio con id ${id}:`, data);
-            if (data && data.success) {
-                const filtrati = get().parcheggi.filter((p) => p.id !== data.id);
 
-                set({ parcheggi: filtrati, parcheggiFiltrati: filtrati, isLoading: false });
-                // console.log("Eliminato parcheggio con id:", data.id);
-                get().fetchPrenotazioni();
-            } else {
-                set({ isLoading: false });
-            }
+            const successFlag = Boolean(data && (data.success || data.successo || data.deleted));
+
+            // Determine which id was removed: prefer backend-provided id, fallback to requested id
+            const removedId = (data && (data.id || data.removedId)) ? (data.id || data.removedId) : (successFlag ? id : null);
+
+            // Remove locally (use removedId when available, otherwise fallback to requested id)
+            const targetId = removedId ?? id;
+            const filtrati = get().parcheggi.filter((p) => p.id !== targetId);
+            set({ parcheggi: filtrati, parcheggiFiltrati: filtrati, isLoading: false });
+
+            // Refresh dependent data: reservations and available parks (best-effort)
+            try { get().fetchAllPrenotazioni(); } catch (e) { /* ignore */ }
+
         } catch (err) {
             set({ error: err.message, isLoading: false });
         }
@@ -256,10 +314,20 @@ export const useStore = create((set, get) => ({
     deletePrenotazione: async (id) => {
         set({ isLoading: true, error: null });
         try {
-            const data = await api.deletePrenotazione(id);
-            if (data && data.successo) {
-                const remaining = get().prenotazioni.filter((p) => p.id !== data.id);
-                set({ prenotazioni: remaining, isLoading: false });
+            // console.log("Eliminazione prenotazione con id:", id);
+            const data = await api.deletePrenotazione(id, get().token);
+            if (data) {
+                // console.log(data)
+                let prenotazioniFiltrate = get().prenotazioni
+                prenotazioniFiltrate.map((p) => {
+                    if (p.uuid === data.id) {
+                        // console.log("Cancellazione prenotazione con id:", p.uuid);
+                        p.status = "CANCELLED";
+                    }
+                    return p
+                })
+                // console.log(JSON.stringify(prenotazioniFiltrate))
+                set({ prenotazioni: prenotazioniFiltrate, isLoading: false });
                 // console.log("Eliminata prenotazione con id:", data.id);
             } else {
                 set({ isLoading: false });
@@ -274,9 +342,13 @@ export const useStore = create((set, get) => ({
         try {
             const data = await api.modificaParcheggio(payload, get().token);
             if (data) {
-                const parcheggi = get().parcheggi.map((p) => p.id === data.id ? {...payload } : p);
+                const parcheggi = get().parcheggi.map((p) => p.id === data.id ? { ...payload } : p);
                 set({ parcheggi, parcheggiFiltrati: parcheggi, isLoading: false });
                 // console.log("Modificato parcheggio con id:", id);
+                // refresh available parks for main UI
+                try {
+                    get().fetchAllPrenotazioni();
+                } catch (e) { }
             } else {
                 set({ isLoading: false });
             }
@@ -288,16 +360,58 @@ export const useStore = create((set, get) => ({
     modificaPrenotazione: async (id, payload) => {
         set({ isLoading: true, error: null });
         try {
-            const data = await api.modificaPrenotazione(id, payload);
-            if (data && data.successo) {
-                const prenotazioni = get().prenotazioni.map((p) => p.id === id ? { ...p, ...data.prenotazione } : p);
+            // build body including id and normalize fields
+            const body = { id, ...payload };
+
+            // normalize parking id into id_parking_lot
+            if (body.parkingId) {
+                body.id_parking_lot = body.parkingId;
+                delete body.parkingId;
+            }
+            if (body.parking_id) {
+                body.id_parking_lot = body.parking_id;
+                delete body.parking_id;
+            }
+
+            // Format dates for backend and remove camelCase keys
+            if (body.startTime) {
+                body.start_time = formatForBackend(body.startTime);
+                delete body.startTime;
+            } else if (body.start_time) {
+                body.start_time = formatForBackend(body.start_time);
+            }
+
+            if (body.endTime) {
+                body.end_time = formatForBackend(body.endTime);
+                delete body.endTime;
+            } else if (body.end_time) {
+                body.end_time = formatForBackend(body.end_time);
+            }
+
+            const data = await api.modificaPrenotazione(body, get().token);
+            console.log("Risposta modifica prenotazione:", data);
+            if (data) {
+                const updated = data.prenotazione || data.reservation || body;
+                const prenotazioni = get().prenotazioni.map((p) => (p.id === id || p.uuid === id) ? { ...p, ...updated } : p);
                 set({ prenotazioni, isLoading: false });
-                // console.log("Modificata prenotazione con id:", id);
             } else {
                 set({ isLoading: false });
             }
         } catch (err) {
             set({ error: err.message, isLoading: false });
+        }
+    },
+
+    verificaDisponibilitaPrenotazione: async (parkingId, startIso, endIso) => {
+        set({ isLoading: true, error: null });
+        try {
+            const data = await api.checkAvailability(parkingId, startIso, endIso);
+            console.log("Risposta verifica disponibilità:", data);
+            set({ isLoading: false });
+            return data;
+        } catch (err) {
+            set({ error: err.message, isLoading: false });
+            throw err;
         }
     },
 
@@ -349,10 +463,15 @@ export const useStore = create((set, get) => ({
             // console.log(`Aggiungo parcheggio: ${JSON.stringify(payload)}`);
             const data = await api.aggiungiParcheggio(payload, get().token);
             if (data) {
-                const nuovoParcheggio = { id: data.id, ...payload };
-                const parcheggi = [...get().parcheggi, nuovoParcheggio];
+                console.log(`Parcheggio aggiunto con id ${data.id}:`, data);
+                const parcheggi = [...get().parcheggi, data];
                 set({ parcheggi, parcheggiFiltrati: parcheggi, isLoading: false });
                 // console.log("Aggiunto nuovo parcheggio con id:", data.id);
+                // refresh available parks for main UI
+                try {
+                    get().fetchParcheggiDisponibili();
+                    get().fetchAllPrenotazioni();
+                } catch (e) { }
             } else {
                 alert(data)
                 set({ isLoading: false });
@@ -369,6 +488,22 @@ export const useStore = create((set, get) => ({
     formatDate(iso) {
         try {
             return new Date(iso).toLocaleString();
+        } catch (e) {
+            return iso;
+        }
+    },
+
+    formatDateOnly(iso) {
+        try {
+            return new Date(iso).toLocaleDateString();
+        } catch (e) {
+            return iso;
+        }
+    },
+
+    formatTime(iso) {
+        try {
+            return new Date(iso).toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
         } catch (e) {
             return iso;
         }
@@ -402,10 +537,10 @@ export const useStore = create((set, get) => ({
         const { dataOraInizio, oraInizio } = get();
         if (!dataOraInizio || !oraInizio) return null;
 
-        const timestamp = new Date(dataOraInizio);
-        const [hours, minutes] = oraInizio.split(':').map(Number);
-        timestamp.setHours(hours, minutes, 0, 0);
-        return timestamp.getTime();
+        const d = new Date(dataOraInizio);
+        const [hours, minutes] = (oraInizio || '00:00').split(':').map(Number);
+        d.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+        return formatForBackend(d);
     },
 
     getTimeStampFine: () => {
@@ -413,10 +548,10 @@ export const useStore = create((set, get) => ({
         // console.log(`getTimeStampFine: dataOraFine=${dataOraFine}, oraFine=${oraFine}`);
         if (!dataOraFine || !oraFine) return null;
 
-        const timestamp = new Date(dataOraFine);
-        const [hours, minutes] = oraFine.split(':').map(Number);
-        timestamp.setHours(hours, minutes, 0, 0);
-        return timestamp.getTime();
+        const d = new Date(dataOraFine);
+        const [hours, minutes] = (oraFine || '00:00').split(':').map(Number);
+        d.setHours(hours ?? 0, minutes ?? 0, 0, 0);
+        return formatForBackend(d);
     },
 
     getRemember: () => {

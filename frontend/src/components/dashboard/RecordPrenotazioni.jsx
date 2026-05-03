@@ -1,22 +1,50 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { useStore } from "../../store";
+import UserProfileModal from '../modals/UserProfileModal';
 
 
-function RecordPrenotazioni({ numero, prenotazione, parcheggiMap }) {
-    const parkingName = parcheggiMap?.get(prenotazione.parkingId) ?? prenotazione.parkingId;
-    const { mostraModaleEliminaRes, mostraModaleModificaRes, formatDate } = useStore();
+function RecordPrenotazioni({ numero, prenotazione }) {
+    const { mostraModaleEliminaRes, mostraModaleModificaRes, formatDate, profileById } = useStore();
+    const [profile, setProfile] = useState(null);
+    const [profileLoading, setProfileLoading] = useState(false);
+    const [profileOpen, setProfileOpen] = useState(false);
+
+    async function handleClick(id) {
+        setProfile(null);
+        setProfileLoading(true);
+        setProfileOpen(true);
+        try {
+            const data = await profileById(id);
+            setProfile(data || null);
+        } catch (e) {
+            setProfile(null);
+            console.error('Errore recupero profilo', e);
+        } finally {
+            setProfileLoading(false);
+        }
+    }
 
     return (
         <>
             <tr>
                 <td>{numero}</td>
-                <td>{prenotazione.userId}</td>
-                <td>{parkingName}</td>
-                <td>{formatDate(prenotazione.startTime)}</td>
-                <td>{formatDate(prenotazione.endTime)}</td>
-                <td><button className="btn btn-ghost" onClick={() => mostraModaleModificaRes(prenotazione)}><img src="src/assets/icona_modifica.svg" alt="Modifica" className='h-8 ' /></button></td>
-                <td><button className="btn btn-ghost" onClick={() => mostraModaleEliminaRes(prenotazione)}><img src="src/assets/icona_cestino.svg" alt="Elimina" className='h-8 ' /></button></td>
+                <td><button className="btn btn-ghost" onClick={() => handleClick(prenotazione.id_user)}>{prenotazione.id_user}</button></td>
+                <td>{prenotazione.parking_name}</td>
+                <td>{prenotazione.status}</td>
+                <td>{prenotazione.start_time}</td>
+                <td>{prenotazione.end_time}</td>
+                <td><button className={"btn btn-ghost" + (prenotazione.status === "CANCELLED" ? " btn-disabled" : "")}
+                    onClick={() => mostraModaleModificaRes(prenotazione)}><img src="src/assets/icona_modifica.svg" alt="Modifica" className='h-8 ' /></button></td>
+                <td><button className={"btn btn-ghost" + (prenotazione.status === "CANCELLED" ? " btn-disabled" : "")}
+                    onClick={() => mostraModaleEliminaRes(prenotazione)}><img src="src/assets/icona_cestino.svg" alt="Elimina" className='h-8 ' /></button></td>
             </tr>
+
+            <UserProfileModal
+                open={profileOpen}
+                onClose={() => setProfileOpen(false)}
+                user={profile}
+                loading={profileLoading}
+            />
         </>
 
     );

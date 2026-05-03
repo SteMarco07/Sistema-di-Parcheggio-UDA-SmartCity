@@ -1,5 +1,6 @@
 import { use } from "react"
 import { data } from "react-router-dom"
+import { formatForBackend } from './utils/time';
 
 const BASE = 'http://127.0.0.1:9080/api/'
 
@@ -50,40 +51,45 @@ function GET(path, options = {}) {
 
 export const api = {
 
-    fetchPargeggiDisponibili: (token) => {
-        return []
+    fetchPargeggiDisponibili: (opts = {}) => {
+        let start = opts.start;
+        let end = opts.end;
+
+        if (start && end) {
+            const sRaw = formatForBackend(start) || String(start);
+            const eRaw = formatForBackend(end) || String(end);
+            const s = encodeURIComponent(sRaw);
+            const e = encodeURIComponent(eRaw);
+            const rotta = `park/available/${s}/${e}`;
+            console.log(`fetchPargeggiDisponibili:, rotta: ${rotta}`);
+            return GET(rotta);
+        }
+
+        return GET("park/available");
     },
 
-    fetchParcheggi: (token) => {
+    fetchParcheggi: () => {
         return GET("park")
     },
+
+    checkAvailability: (parkingId, start, end) => {
+        const sRaw = formatForBackend(start) || String(start);
+        const eRaw = formatForBackend(end) || String(end);
+        const s = encodeURIComponent(sRaw);
+        const e = encodeURIComponent(eRaw);
+        const rotta = `park/${parkingId}/available/${s}/${e}`;
+
+        console.log(`Verifico disponibilità con rotta: ${rotta}`)
+        const data = GET(rotta)
+        return data;
+    },
+
     fetchPrenotazioni: (token) => {
-        return [
-            {
-                id: 1,
-                nome: 'Prenotazione 1',
-                parkingId: 1,
-                userId: 1,
-                startTime: '2026-03-24T10:00:00Z',
-                endTime: '2026-03-25T12:00:00Z'
-            },
-            {
-                id: 2,
-                nome: 'Prenotazione 2',
-                parkingId: 2,
-                userId: 2,
-                startTime: '2026-06-01T10:00:00Z',
-                endTime: '2026-06-03T12:00:00Z'
-            },
-            {
-                id: 3,
-                nome: 'Prenotazione 3',
-                parkingId: 3,
-                userId: 3,
-                startTime: '2026-06-01T10:00:00Z',
-                endTime: '2026-06-01T12:00:00Z'
-            }
-        ]
+        return GET("reservation/search-user", { token })
+    },
+
+    fetchAllPrenotazioni: (token) => {
+        return GET("reservation", { token })
     },
 
     login: (username, password) => {
@@ -105,9 +111,19 @@ export const api = {
         })
     },
 
+    profiloById: (id, token) => {
+        return GET(`profile/${String(id)}`, { token })
+    },
+
     aggiungiParcheggio: (payload, token) => {
         const data = PUT("park", payload, { token })
         // console.log(`Aggiungi parcheggio: ${JSON.stringify(payload)}, risposta: ${JSON.stringify(data)}`)
+        return data
+    },
+
+    aggiungiPrenotazione: (payload, token) => {
+        console.log(`Aggiungo prenotazione: ${JSON.stringify(payload)}, con token: ${token}`)
+        const data = PUT("reservation", payload, { token })
         return data
     },
   
@@ -116,21 +132,16 @@ export const api = {
          
     },
 
-    deletePrenotazione: (id) => {
-        return {
-            id: id,
-            successo: true
-        }
+    deletePrenotazione: (id, token) => {
+        return DELETE(`reservation`, { id }, { token })
     },
 
     modificaParcheggio: (payload, token) => {
         return POST(`park`, payload, { token })
     },
-    modificaPrenotazione: (id, payload) => {
-        return {
-            prenotazione: payload,
-            successo: true
-        }
+    modificaPrenotazione: (payload, token) => {
+        console.log(`Modifico prenotazione con payload: ${JSON.stringify(payload)}`)
+        return POST('reservation', payload, { token })
     }
 
 }

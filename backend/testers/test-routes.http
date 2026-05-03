@@ -25,6 +25,12 @@ GET http://localhost:9080/api/park
 ### Get Parcheggio
 GET http://localhost:9080/api/park/1
 
+### Get Parcheggi disponibili in un intervallo
+GET http://localhost:9080/api/park/available/2026-04-26%2018:00:00/2026-04-26%2019:00:00
+
+### Check disponibilita singolo parcheggio in un intervallo
+GET http://localhost:9080/api/park/1/available/2026-04-26%2018:00:00/2026-04-26%2019:00:00
+
 ### Get Profilo
 GET http://localhost:9080/api/profile
 Authorization: Bearer {{token}}

@@ -29,6 +29,7 @@ class UserRepository
             $token = self::generateToken($user['uuid'], $email, $user['role']);
             return [
                 'token' => $token,
+                'uuid' => $user['uuid'],
                 'first_name' => $user['first_name'],
                 'last_name' => $user['last_name'],
                 'license_plate' => $user['license_plate'],
@@ -62,6 +63,22 @@ class UserRepository
         $user = $stmt->fetch();
 
         return [
+            'uuid' => $user['uuid'],
+            'first_name' => $user['first_name'],
+            'last_name' => $user['last_name'],
+            'license_plate' => $user['license_plate'],
+            'email' => $user['email'],
+            'role' => $user['role']
+        ];
+    }
+
+    public function getUserById(string $id) {
+        $stmt = $this->pdo->prepare('SELECT * FROM user WHERE uuid = :id');
+        $stmt->execute([ 'id' => $id ]);
+        $user = $stmt->fetch();
+
+        return [
+            'uuid' => $user['uuid'],
             'first_name' => $user['first_name'],
             'last_name' => $user['last_name'],
             'license_plate' => $user['license_plate'],

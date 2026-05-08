@@ -5,6 +5,15 @@ Il progetto "Parcheggio" nasce con l'obiettivo di offrire una soluzione completa
 ## Funzionalità principali
 L'applicazione permette di cercare e visualizzare parcheggi su una mappa, applicando filtri per orari, disponibilità e tipologia. Gli utenti possono effettuare prenotazioni, visualizzare e cancellare le proprie prenotazioni, mentre gli amministratori dispongono di un pannello per eseguire operazioni CRUD sui parcheggi e gestire gli utenti. Le API espongono in modo RESTful tutte le operazioni necessarie per il funzionamento del servizio.
 
+
+https://github.com/user-attachments/assets/a50ab77b-4c81-4809-8fb4-82624dadd0f4
+
+Per gli amministratori è stata aggiunta una sezione apposita per aggiungere, modificare o eliminare dei parhceggi. Un'altra sezione è dedicata alla gestione e visualizzazione delle prenotazioni, con i relativi utenti. Inoltre, sono presenti dei grafici, con lo scopo di dare un'idea immediata della situazione della situazione corrente
+
+
+https://github.com/user-attachments/assets/17ec6213-9d3e-45e1-ab27-6e5104b63177
+
+
 ## Architettura e componenti (sintesi)
 Il backend è scritto in PHP con un'architettura di tipo controller/repository; gestisce le rotte e la logica applicativa ed espone le API. Tra i file principali troviamo `index.php` come punto di ingresso, `conf/config.php` per le configurazioni (database, chiavi JWT), la cartella `Controller/` che contiene `AdminController.php`, `AuthController.php` e `ParcheggiController.php`, i repository in `Model/` per l'accesso ai dati e i middleware in `Middleware/` (`JWTMiddleware.php`, `JWTAdminMiddleware.php`) che proteggono le rotte. La connessione al database è incapsulata in `Util/Connection.php`.
 

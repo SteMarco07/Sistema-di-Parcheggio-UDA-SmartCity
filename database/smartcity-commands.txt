@@ -1,0 +1,67 @@
+DROP DATABASE IF EXISTS smartcity;
+CREATE DATABASE smartcity;
+USE smartcity;
+
+CREATE TABLE parking_lot(
+    id INTEGER AUTO_INCREMENT PRIMARY KEY,
+    name CHAR(50) UNIQUE NOT NULL,
+    total_spots INT NOT NULL,
+    latitude FLOAT(23, 20) NOT NULL,
+    longitude FLOAT(23, 20) NOT NULL,
+    description TEXT(1024) NOT NULL,
+    hour_tax FLOAT(5, 2) NOT NULL
+);
+
+CREATE TABLE user(
+    uuid UUID PRIMARY KEY,
+    first_name CHAR(100) NOT NULL,
+    last_name CHAR(100) NOT NULL,
+    license_plate CHAR(10) NOT NULL,
+    email CHAR(100) UNIQUE NOT NULL,
+    password CHAR(100) NOT NULL,
+    role enum('USER', 'ADMIN') NOT NULL
+);
+
+CREATE TABLE reservation(
+                            uuid UUID PRIMARY KEY,
+                            start_time DATETIME NOT NULL,
+                            end_time DATETIME NOT NULL,
+                            status ENUM('ACTIVE', 'CANCELLED', 'EXPIRED'),
+                            id_parking_lot INTEGER NOT NULL,
+                            id_user UUID NOT NULL,
+                            CONSTRAINT fk_id_parking_lot
+                                FOREIGN KEY (id_parking_lot)
+                                    REFERENCES parking_lot(id),
+                            CONSTRAINT fk_id_user
+                                FOREIGN KEY (id_user)
+                                    REFERENCES user(uuid)
+);
+
+CREATE INDEX indx_license_plate
+    ON user(license_plate);
+
+# casi test
+-- Parcheggio nel cuore del centro storico (Park Vittoria)
+INSERT INTO parking_lot(name, total_spots, latitude, longitude, description, hour_tax) 
+VALUES('Parcheggio Piazza Vittoria', 500, 45.5381, 10.2192, 'Parcheggio interrato multipiano in pieno centro storico.', 3.0);
+
+-- Parcheggio zona Castello (panoramico e vicino ai musei)
+INSERT INTO parking_lot(name, total_spots, latitude, longitude, description, hour_tax) 
+VALUES('Parcheggio Castello di Brescia', 120, 45.5435, 10.2248, 'Area sosta panoramica presso il Castello di Brescia.', 1.5);
+
+-- Parcheggio scambiatore zona Nord (vicino alla Metro)
+INSERT INTO parking_lot(name, total_spots, latitude, longitude, description, hour_tax) 
+VALUES('Parcheggio Metro Prealpino', 400, 45.5786, 10.2312, 'Parcheggio scambiatore gratuito con collegamento diretto alla metropolitana.', 0.0);
+
+
+-- Parcheggio zona Ospedale Civile
+INSERT INTO parking_lot(name, total_spots, latitude, longitude, description, hour_tax) 
+VALUES('Parcheggio Ospedale Civile Sud', 600, 45.5564, 10.2289, 'Parcheggio a servizio degli Spedali Civili di Brescia.', 1.2);
+INSERT INTO user (uuid, first_name, last_name, license_plate, email, password, role)
+    VALUES (UUID(), 'Mario', 'Rossi', 'AB123CD', 'pippo@gmail.com', '$2y$10$gQeJHilWS5CWRVW.aKk4eucoAw6qTlNkpIUoQyZA2KSuweAMI1Zsi', 'USER');
+# password: user
+
+INSERT INTO user (uuid, first_name, last_name, license_plate, email, password, role)
+    VALUES (UUID(), 'Tizio', 'Caio', 'AB987CD', 'pippa@gmail.com',  '$2y$10$SO0.iA.qBMV4AZV2.L0oweo4j/NP5Ohkny/2Q1aOCMDg0Wu1KYJe.', 'ADMIN');
+# password: admin
+

@@ -53,7 +53,7 @@ Per il backend:
 - installare docker
 - Clonare la [repository](https://github.com/ProfAndreaPollini/docker_lamp) per avere l'ambiente docker pronto
 - Spostare i file contenuti nella cartella `backend\` nella cartella `www\` di docker_lamp e seguire i comandi presenti nella repository
-- Pre importare il DataBase seguire le istruzioni persenti in `database\export-import-db.md`
+- Per importare il DataBase seguire le istruzioni persenti in `database\export-import-db.md`
 
 Per il frontend:
 
@@ -75,10 +75,9 @@ L'autenticazione e l'autorizzazione si basano su JWT; i middleware verificano la
 Prima di utilizzare l'app in modalità completa è opportuno importare il database con gli script presenti in `database/`. Il file `testers/test-routes.http` contiene esempi di richieste per testare le API in fase di sviluppo.
 
 ## Come contribuire
-Per contribuire al progetto, aprire issue per bug o proposte di funzionalità, creare un branch per la feature, implementare i cambiamenti con eventuali test e inviare una pull request per la revisione.
+Per contribuire al progetto, aprire issue per bug o proposte di funzionalità, creare una fork per la feature, implementare i cambiamenti con eventuali test e inviare una pull request per la revisione.
 
 ---
-Se preferisci, posso tradurre questo README in inglese, sovrascrivere il `README.md` esistente con questa versione o aggiungere sezioni dettagliate per le rotte API con esempi di richieste.
 
 <a href="https://github.com/SteMarco07/Parcheggio">Parcheggio</a> © 2026 is licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a><br/>
 <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/sa.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;">

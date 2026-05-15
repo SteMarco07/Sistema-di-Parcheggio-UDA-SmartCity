@@ -1,8 +1,8 @@
-# Parcheggio — Progetto Smart City
+# Sistema-di-Parcheggio-UDA-SmartCity
 
 https://github.com/user-attachments/assets/a227422d-8461-4248-afb7-4fff789b9c80
 
-Il progetto "Parcheggio" nasce con l'obiettivo di offrire una soluzione completa per la ricerca, la visualizzazione e la prenotazione dei parcheggi in un contesto Smart City. Il sistema mette a disposizione un backend leggero per la gestione di utenti, parcheggi e prenotazioni, e un frontend reattivo che consente agli utenti di esplorare la mappa, filtrare i risultati e prenotare posti. Le API sono progettate per essere sicure (JWT) e facilmente integrabili con client esterni; è prevista inoltre un'area amministrativa protetta per le operazioni di gestione.
+Il progetto "Sistema-di-Parcheggio-UDA-SmartCity" nasce con l'obiettivo di offrire una soluzione completa per la ricerca, la visualizzazione e la prenotazione dei parcheggi in un contesto Smart City. Il sistema mette a disposizione un backend leggero per la gestione di utenti, parcheggi e prenotazioni, e un frontend reattivo che consente agli utenti di esplorare la mappa, filtrare i risultati e prenotare posti. Le API sono progettate per essere sicure (JWT) e facilmente integrabili con client esterni; è prevista inoltre un'area amministrativa protetta per le operazioni di gestione.
 
 ## Funzionalità principali
 L'applicazione permette di cercare e visualizzare parcheggi su una mappa, applicando filtri per orari, disponibilità e tipologia. Gli utenti possono effettuare prenotazioni, visualizzare e cancellare le proprie prenotazioni, mentre gli amministratori dispongono di un pannello per eseguire operazioni CRUD sui parcheggi e gestire gli utenti. Le API espongono in modo RESTful tutte le operazioni necessarie per il funzionamento del servizio.

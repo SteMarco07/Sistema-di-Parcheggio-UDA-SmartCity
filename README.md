@@ -1,10 +1,30 @@
 # Sistema-di-Parcheggio-UDA-SmartCity
 
-
 https://github.com/user-attachments/assets/729eaa21-a0c2-4da1-a669-e91fbd2cba63
 
-
 Il progetto "Sistema-di-Parcheggio-UDA-SmartCity" nasce con l'obiettivo di offrire una soluzione completa per la ricerca, la visualizzazione e la prenotazione dei parcheggi in un contesto Smart City. Il sistema mette a disposizione un backend leggero per la gestione di utenti, parcheggi e prenotazioni, e un frontend reattivo che consente agli utenti di esplorare la mappa, filtrare i risultati e prenotare posti. Le API sono progettate per essere sicure (JWT) e facilmente integrabili con client esterni; è prevista inoltre un'area amministrativa protetta per le operazioni di gestione.
+
+## Indice
+- [Funzionalità principali](#funzionalita-principali)
+- [Architettura e componenti (riassunto)](#architettura-e-componenti-riassunto)
+- [Requisiti funzionali](#requisiti-funzionali)
+- [Requisiti non funzionali](#requisiti-non-funzionali)
+- [Struttura delle cartelle (riassunto)](#struttura-delle-cartelle-riassunto)
+- [Installazione e avvio (sviluppo)](#installazione-e-avvio-sviluppo)
+- [API e rotte (panoramica)](#api-e-rotte-panoramica)
+- [Sicurezza](#sicurezza)
+- [Note operative](#note-operative)
+- [Come contribuire](#come-contribuire)
+- [Documentazione UDA SmartCity](#documentazione-uda-smartcity)
+- [Tabella generale](#tabella-generale)
+- [Attività GANTT](#attivita-gantt)
+- [WBS](#wbs)
+- [Budget](#budget)
+- [Stakehoder](#stakehoder)
+- [Rischi](#rischi)
+
+
+https://github.com/user-attachments/assets/729eaa21-a0c2-4da1-a669-e91fbd2cba63
 
 ## Funzionalità principali
 L'applicazione permette di cercare e visualizzare parcheggi su una mappa, applicando filtri per orari, disponibilità e tipologia. Gli utenti possono effettuare prenotazioni, visualizzare e cancellare le proprie prenotazioni, mentre gli amministratori dispongono di un pannello per eseguire operazioni CRUD sui parcheggi e gestire gli utenti. Le API espongono in modo RESTful tutte le operazioni necessarie per il funzionamento del servizio.

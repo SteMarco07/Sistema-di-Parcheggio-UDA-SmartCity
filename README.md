@@ -81,8 +81,6 @@ Per contribuire al progetto, aprire issue per bug o proposte di funzionalità, c
 
 ## Documentazione UDA SmartCity
 
-Questa sezione riassume i contenuti estratti dall'Excel "GPO Uda - smartcity.xlsx" e dai PDF/GANTT allegati. I dati principali (tabelle, percentuali, grafici GANTT, WBS e immagini) sono inclusi direttamente in questo README oppure riportati come immagini nella cartella [docs/uda-smartcity/images/](docs/uda-smartcity/images/). Non ho creato file .md separati in `docs/uda-smartcity/`.
-
 Di seguito una breve descrizione delle sezioni presenti e di cosa contengono:
 
 - **Timeline (GANTT):** sintesi cronologica delle attività con date e dipendenze; il grafico GANTT è disponibile in [docs/uda-smartcity/images/](docs/uda-smartcity/images/).

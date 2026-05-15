@@ -17,14 +17,11 @@ Il progetto "Sistema-di-Parcheggio-UDA-SmartCity" nasce con l'obiettivo di offri
 - [Come contribuire](#come-contribuire)
 - [Documentazione UDA SmartCity](#documentazione-uda-smartcity)
 - [Tabella generale](#tabella-generale)
-- [Attività GANTT](#attivita-gantt)
+- [Tabella fasi di GANTT](#tabella-fasi-di-gantt)
 - [WBS](#wbs)
 - [Budget](#budget)
-- [Stakehoder](#stakehoder)
+- [Stakeholder](#stakeholder)
 - [Rischi](#rischi)
-
-
-https://github.com/user-attachments/assets/729eaa21-a0c2-4da1-a669-e91fbd2cba63
 
 ## Funzionalità principali
 L'applicazione permette di cercare e visualizzare parcheggi su una mappa, applicando filtri per orari, disponibilità e tipologia. Gli utenti possono effettuare prenotazioni, visualizzare e cancellare le proprie prenotazioni, mentre gli amministratori dispongono di un pannello per eseguire operazioni CRUD sui parcheggi e gestire gli utenti. Le API espongono in modo RESTful tutte le operazioni necessarie per il funzionamento del servizio.
@@ -33,7 +30,7 @@ L'applicazione permette di cercare e visualizzare parcheggi su una mappa, applic
 https://github.com/user-attachments/assets/9582e5c2-2d99-4e91-9061-4633e376f00c
 
 
-Per gli amministratori è stata aggiunta una sezione apposita per aggiungere, modificare o eliminare dei parhceggi. Un'altra sezione è dedicata alla gestione e visualizzazione delle prenotazioni, con i relativi utenti. Inoltre, sono presenti dei grafici, con lo scopo di dare un'idea immediata della situazione della situazione corrente
+Per gli amministratori è stata aggiunta una sezione apposita per aggiungere, modificare o eliminare dei parcheggi. Un'altra sezione è dedicata alla gestione e visualizzazione delle prenotazioni, con i relativi utenti. Inoltre, sono presenti dei grafici, con lo scopo di dare un'idea immediata della situazione corrente.
 
 
 https://github.com/user-attachments/assets/26271dd8-2dfe-4f05-96cf-2855105b203a
@@ -78,7 +75,7 @@ Per il backend:
 - installare docker
 - Clonare la [repository](https://github.com/ProfAndreaPollini/docker_lamp) per avere l'ambiente docker pronto
 - Spostare i file contenuti nella cartella `backend\` nella cartella `www\` di docker_lamp e seguire i comandi presenti nella repository
-- Per importare il DataBase seguire le istruzioni persenti in `database\export-import-db.md`
+- Per importare il DataBase seguire le istruzioni presenti in `database\export-import-db.md`
 
 Per il frontend:
 
@@ -140,7 +137,7 @@ Di seguito una breve descrizione delle sezioni presenti e di cosa contengono:
 | BUDGET | Totale indicativo | €3695 |
 
 
-## Attività GANTT
+## Tabella fasi di GANTT
 
 | ID | Nome | Durata | Data di Avvio | Data di chiusura | Predecessori |
 | --- | --- | --- | --- | --- | --- |
@@ -211,18 +208,18 @@ Di seguito una breve descrizione delle sezioni presenti e di cosa contengono:
 | Totale | 186 | 135 | €3695 |  |
 
 
-## Stakehoder
+## Stakeholder
 
 | Nome | Ruolo | Descrizione |
 | --- | --- | --- |
-| Robolini Paolo | Project Manager, Sviluppatore frontend | Coordinatore delle attività ed exploritory tester |
+| Robolini Paolo | Project Manager, Sviluppatore frontend | Coordinatore delle attività ed exploratory tester |
 | Stellino Marco | Sviluppatore full stack | Sviluppatore multifunzione |
 | Russo Massimo Tammaro | Sviluppatore backend | Sviluppo del backend in PHP |
 | Singh Gurjinder | Sviluppatore frontend | Sviluppo della mappa e del mockup frontend |
 | Fogazzi Matteo | Sviluppatore frontend | Fixer di bug minori e tester |
 | Mogildea Igor | Addetto al database | Creazione di dati e manutenzione DB SQL |
 | Nardi Simone | Docente di GPO | Definizione delle caratteristiche del documento di Business Plan |
-|  Scandale Gaetano | Docente di GPO | Definizione delle caratteristiche del documento di Business Plan |
+| Scandale Gaetano | Docente di GPO | Definizione delle caratteristiche del documento di Business Plan |
 | Bugatti Alessandro | Docente di informatica | Definizione delle caratteristiche del backend |
 | Capasso Andrea | Docente di informatica | Definizione delle caratteristiche del backend |
 | Pollini Andrea | Docente di TPSIT | Definizione delle funzionalità del frontend |
@@ -253,7 +250,7 @@ Di seguito una breve descrizione delle sezioni presenti e di cosa contengono:
 | Manutenzione | Codice difficile da mantenere | Media | Medio | 3 | 4.0 | 12 |
 | TOTALE RISCHIO |  |  |  |  |  | 372 |
 
-Il rischio risulta essere molto basso
+Il rischio risulta essere molto basso.
 
 ### Legenda
 
@@ -263,7 +260,7 @@ Il rischio risulta essere molto basso
 | Media/o = 2 |
 | Alta/o = 3 |
 | Molto Alta/o = 4 |
-
+| Massimo/a = 5 |
 
 VALUTAZIONE = Probabilità x Impatto
 
@@ -280,5 +277,5 @@ VALUTAZIONE PESATA = Peso x Valutazione
 
 ---
 
-<a href="https://github.com/SteMarco07/Parcheggio">Parcheggio</a> © 2026 is licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a><br/>
+<a href="https://github.com/SteMarco07/Sistema-di-Parcheggio-UDA-SmartCity">Parcheggio</a> © 2026 is licensed under <a href="https://creativecommons.org/licenses/by-nc-sa/4.0/">CC BY-NC-SA 4.0</a><br/>
 <img src="https://mirrors.creativecommons.org/presskit/icons/cc.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/by.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/nc.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;"><img src="https://mirrors.creativecommons.org/presskit/icons/sa.svg" alt="" style="max-width: 1em;max-height:1em;margin-left: .2em;">

@@ -5,17 +5,14 @@ Il progetto "Parcheggio" nasce con l'obiettivo di offrire una soluzione completa
 ## Funzionalità principali
 L'applicazione permette di cercare e visualizzare parcheggi su una mappa, applicando filtri per orari, disponibilità e tipologia. Gli utenti possono effettuare prenotazioni, visualizzare e cancellare le proprie prenotazioni, mentre gli amministratori dispongono di un pannello per eseguire operazioni CRUD sui parcheggi e gestire gli utenti. Le API espongono in modo RESTful tutte le operazioni necessarie per il funzionamento del servizio.
 
-<video controls>
-  <source src="docs/uda-smartcity/videos/dimostarazione.mp4" type="video/mp4">
-</video>
+
+https://github.com/user-attachments/assets/89816008-e83c-4705-a982-5091cd098173
+
 
 Per gli amministratori è stata aggiunta una sezione apposita per aggiungere, modificare o eliminare dei parhceggi. Un'altra sezione è dedicata alla gestione e visualizzazione delle prenotazioni, con i relativi utenti. Inoltre, sono presenti dei grafici, con lo scopo di dare un'idea immediata della situazione della situazione corrente
 
 
-<video controls>
-  <source src="docs/uda-smartcity/videos/dashboard.mp4" type="video/mp4">
-</video>
-
+https://github.com/user-attachments/assets/26271dd8-2dfe-4f05-96cf-2855105b203a
 
 
 ## Architettura e componenti (riassunto)

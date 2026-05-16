@@ -17,7 +17,7 @@ function App() {
 
   useEffect(() => {
     loadFromLocalStorage();
-  }, [loadFromLocalStorage, token]);
+  }, [loadFromLocalStorage, token, utente]);
 
   return (
     <BrowserRouter>
@@ -64,13 +64,15 @@ function App() {
                 }
                 />
 
-                <Route path="/dashboard" element={
-                  <>
-                    <Navbar />
-                    <PaginaDashboard />
-                  </>
-                }
-                />
+                {utente.admin && (
+                  <Route path="/dashboard" element={
+                    <>
+                      <Navbar />
+                      <PaginaDashboard />
+                    </>
+                  }
+                  />
+                )}
 
               </>
             ) : (
@@ -80,7 +82,7 @@ function App() {
           }
 
           <Route path="*" element={<Navigate to="/auth" replace />} />
-          
+
         </Routes>
 
       </div>

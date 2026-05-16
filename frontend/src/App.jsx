@@ -79,7 +79,8 @@ function App() {
             )
           }
 
-
+          <Route path="*" element={<Navigate to="/auth" replace />} />
+          
         </Routes>
 
       </div>

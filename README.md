@@ -118,14 +118,14 @@ Di seguito una breve descrizione delle sezioni presenti e di cosa contengono:
 | --- | --- | --- |
 | INFORMAZIONI GENERALI | Nome Progetto | Sistema di Parcheggio - UDA SmartCity |
 |  | Codice Progetto | UDA-SMC-4 |
-|  | Data | 2026-01-30 |
-|  | Revisione | 2026-05-08 |
+|  | Data | 30/01/2026 |
+|  | Revisione | 08/05/2026 |
 |  | Repository | GitHub |
 | DEFINIZIONE | Scopo del progetto | Ridurre l'inquinamento atmosferico |
 |  | Obiettivi di progetto | Ridurre gli agenti inquinanti prodotti dai veicoli in cerca di parcheggio |
 |  | Requisiti di alto livello | 1) Database utenti/parcheggi/prenotazioni; 2) BackEnd REST API; 3) FrontEnd responsive |
-| TEMPISTICHE | Data inizio | 2026-01-30 |
-|  | Data fine | 2026-05-08 |
+| TEMPISTICHE | Data inizio | 30/01/2026 |
+|  | Data fine | 08/05/2026 |
 |  | Durata (gg) | 98 |
 | TEAM E STAKEHOLDER | Project Manager | Robolini Paolo |
 |  | Membri del team | Stellino Marco; Russo Massimo Tammaro; Singh Gurjinder; Fogazzi Matteo; Mogildea Igor |
